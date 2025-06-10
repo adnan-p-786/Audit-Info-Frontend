@@ -3,7 +3,7 @@ import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
 } from '@ant-design/icons';
-import { Button, Layout, Menu, theme } from 'antd';
+import { Button, ConfigProvider, Layout, Menu, theme } from 'antd';
 import { RiDashboardFill } from 'react-icons/ri';
 import { Link, Outlet } from 'react-router-dom';
 import SubMenu from 'antd/es/menu/SubMenu';
@@ -20,6 +20,29 @@ function App() {
 
   return (
     <>
+    <ConfigProvider
+      theme={{
+        token: {
+          colorPrimary: '#e89207',
+          colorBgContainer: '#ffffff',
+        },
+        components: {
+          Layout: {
+            siderBg: '#001529', 
+            headerBg: '#f0f2f5',
+            bodyBg: '#fafafa',
+          },
+          Menu: {
+            itemColor: '#ffffff',
+            itemSelectedColor: '#1890ff',
+            itemBg: '#001529',
+            itemSelectedBg: '#003a8c',
+            itemHoverColor: '#40a9ff',
+            itemHoverBg: '#000c17',
+          },
+        },
+      }}
+    >
       <Layout className='h-screen'>
         <Sider className='overflow-y-scroll sidebarHidden' trigger={null} collapsible collapsed={collapsed}>
           <div className="demo-logo-vertical" />
@@ -103,6 +126,7 @@ function App() {
           </Content>
         </Layout>
       </Layout>
+      </ConfigProvider>
     </>
   )
 }

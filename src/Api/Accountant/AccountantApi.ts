@@ -9,10 +9,12 @@ export const postAccountant =(data:any)=>{
     return apiCLient.post('/api/accountant/create',data)
 }
 
-export const putAccountant = (data:any)=>{
-    return apiCLient.put('/api/accountant/update',data)
+export const putAccountant = (data: any) => {
+  const { _id, ...rest } = data;
+  return apiCLient.put(`/api/accountant/update/${_id}`, rest);
 }
 
-export const deleteAccountant = (data:any)=>{
-    return apiCLient.put('/api/accountant/delete',data)
+
+export const deleteAccountant = (id: string) => {
+    return apiCLient.delete(`/api/accountant/delete/${id}`)
 }
