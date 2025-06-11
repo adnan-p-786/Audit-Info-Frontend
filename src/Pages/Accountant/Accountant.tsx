@@ -73,15 +73,13 @@ function Accountant() {
   const [addModal, setAddModal] = useState(false)
   const [editModal, setEditModal] = useState(false)
   const [editingRecord, setEditingRecord] = useState<DataType | null>(null)
-  
+
   const { mutate: Create } = useCreateAccountant()
   const { mutate: Update } = useUpdateAccountant()
   const { mutate: Delete } = useDeleteAccountant()
-  
+
   const [form] = Form.useForm()
   const [editForm] = Form.useForm()
-  
-  console.log("Data from API:", data?.data);
 
   const onFinish = (value: any) => {
     Create(value, {
@@ -99,7 +97,7 @@ function Accountant() {
 
   const onUpdateFinish = (values: any) => {
     if (!editingRecord) return;
-    
+
     const updateData = {
       ...values,
       _id: editingRecord._id
@@ -122,8 +120,7 @@ function Accountant() {
   const handleEdit = (record: DataType) => {
     setEditingRecord(record);
     setEditModal(true);
-    
-    // Pre-fill the form with existing data
+
     editForm.setFieldsValue({
       name: record.name,
       email: record.email,
@@ -166,93 +163,105 @@ function Accountant() {
         dataSource={data?.data}
         loading={isLoading}
         size="middle"
-        rowKey="_id" 
+        rowKey="_id"
       />
 
-      {/* Add Modal */}
+
       <Modal
         title="Add Accountant"
         open={addModal}
         onCancel={() => setAddModal(false)}
         footer={null}
+        width={800}
       >
         <Form layout='vertical' onFinish={onFinish} form={form}>
-          <Form.Item name={'name'} label="Name" rules={[{ required: true, message: "Please enter name" }]}>
-            <Input placeholder='Name' />
-          </Form.Item>
+          <div className="grid grid-flow-row grid-cols-2 gap-x-2">
 
-          <Form.Item name={'email'} label="Email" rules={[{ required: true, message: "Please enter email" }]}>
-            <Input placeholder='Email' />
-          </Form.Item>
+            <Form.Item name={'name'} label="Name" rules={[{ required: true, message: "Please enter name" }]}>
+              <Input placeholder='Name' />
+            </Form.Item>
 
-          <Form.Item name={'password'} label="Password" rules={[{ required: true, message: "Please enter password" }]}>
-            <Input placeholder='Password' />
-          </Form.Item>
+            <Form.Item name={'email'} label="Email" rules={[{ required: true, message: "Please enter email" }]}>
+              <Input placeholder='Email' />
+            </Form.Item>
 
-          <Form.Item name={'employee_code'} label="Employee Code" rules={[{ required: true, message: "Please enter Employee Code" }]}>
-            <Input placeholder='Employee Code' />
-          </Form.Item>
+            <Form.Item name={'password'} label="Password" rules={[{ required: true, message: "Please enter password" }]}>
+              <Input placeholder='Password' />
+            </Form.Item>
 
-          <Form.Item name={'phone_number'} label="Phone Number" rules={[{ required: true, message: "Please enter Phone Number" }]}>
-            <Input placeholder='Phone Number' />
-          </Form.Item>
+            <Form.Item name={'employee_code'} label="Employee Code" rules={[{ required: true, message: "Please enter Employee Code" }]}>
+              <Input placeholder='Employee Code' />
+            </Form.Item>
 
-          <Form.Item name={'status'} label="Status" valuePropName="checked">
-            <Switch />
-          </Form.Item>
+            <Form.Item name={'phone_number'} label="Phone Number" rules={[{ required: true, message: "Please enter Phone Number" }]}>
+              <Input placeholder='Phone Number' />
+            </Form.Item>
 
-          <Form.Item name={'date_of_joining'} label="Date of Joining" rules={[{ required: true, message: "Please enter Date of Joining" }]}>
-            <DatePicker format="DD-MM-YYYY" className="w-full" />
-          </Form.Item>
+            <Form.Item name={'status'} label="Status" valuePropName="checked">
+              <Switch />
+            </Form.Item>
 
-          <Form.Item name={'address'} label="Address" rules={[{ required: true, message: "Please enter address" }]}>
-            <Input placeholder='Address' />
-          </Form.Item>
+            <Form.Item name={'date_of_joining'} label="Date of Joining" rules={[{ required: true, message: "Please enter Date of Joining" }]}>
+              <DatePicker format="DD-MM-YYYY" className="w-full" />
+            </Form.Item>
 
+            <Form.Item name={'address'} label="Address" rules={[{ required: true, message: "Please enter address" }]}>
+              <Input placeholder='Address' />
+            </Form.Item>
+
+          </div>
           <Form.Item>
-            <Button htmlType='submit' className='w-full'>Create</Button>
+            <Button htmlType='submit' type="primary" className='w-full'>Create</Button>
           </Form.Item>
         </Form>
       </Modal>
 
-    
+
       <Modal
         title="Edit Accountant"
         open={editModal}
         onCancel={handleCancelEdit}
         footer={null}
+        width={800}
       >
         <Form layout='vertical' onFinish={onUpdateFinish} form={editForm}>
-          <Form.Item name={'name'} label="Name" rules={[{ required: true, message: "Please enter name" }]}>
-            <Input placeholder='Name' />
-          </Form.Item>
+          <div className="grid grid-flow-row grid-cols-2 gap-x-2">
 
-          <Form.Item name={'email'} label="Email" rules={[{ required: true, message: "Please enter email" }]}>
-            <Input placeholder='Email' />
-          </Form.Item>
+            <Form.Item name={'name'} label="Name" rules={[{ required: true, message: "Please enter name" }]}>
+              <Input placeholder='Name' />
+            </Form.Item>
 
-          <Form.Item name={'employee_code'} label="Employee Code" rules={[{ required: true, message: "Please enter Employee Code" }]}>
-            <Input placeholder='Employee Code' />
-          </Form.Item>
+            <Form.Item name={'email'} label="Email" rules={[{ required: true, message: "Please enter email" }]}>
+              <Input placeholder='Email' />
+            </Form.Item>
 
-          <Form.Item name={'phone_number'} label="Phone Number" rules={[{ required: true, message: "Please enter Phone Number" }]}>
-            <Input placeholder='Phone Number' />
-          </Form.Item>
+            <Form.Item name={'password'} label="Password" rules={[{ required: true, message: "Please enter password" }]}>
+              <Input placeholder='Password' />
+            </Form.Item>
 
-          <Form.Item name={'status'} label="Status" valuePropName="checked">
-            <Switch />
-          </Form.Item>
+            <Form.Item name={'employee_code'} label="Employee Code" rules={[{ required: true, message: "Please enter Employee Code" }]}>
+              <Input placeholder='Employee Code' />
+            </Form.Item>
 
-          <Form.Item name={'date_of_joining'} label="Date of Joining" rules={[{ required: true, message: "Please enter Date of Joining" }]}>
-            <DatePicker format="DD-MM-YYYY" className="w-full" />
-          </Form.Item>
+            <Form.Item name={'phone_number'} label="Phone Number" rules={[{ required: true, message: "Please enter Phone Number" }]}>
+              <Input placeholder='Phone Number' />
+            </Form.Item>
 
-          <Form.Item name={'address'} label="Address" rules={[{ required: true, message: "Please enter address" }]}>
-            <Input placeholder='Address' />
-          </Form.Item>
+            <Form.Item name={'status'} label="Status" valuePropName="checked">
+              <Switch />
+            </Form.Item>
 
+            <Form.Item name={'date_of_joining'} label="Date of Joining" rules={[{ required: true, message: "Please enter Date of Joining" }]}>
+              <DatePicker format="DD-MM-YYYY" className="w-full" />
+            </Form.Item>
+
+            <Form.Item name={'address'} label="Address" rules={[{ required: true, message: "Please enter address" }]}>
+              <Input placeholder='Address' />
+            </Form.Item>
+
+          </div>
           <Form.Item>
-            <Button htmlType='submit' className='w-full' type="primary">Update</Button>
+            <Button htmlType='submit' type="primary" className='w-full'>Create</Button>
           </Form.Item>
         </Form>
       </Modal>
