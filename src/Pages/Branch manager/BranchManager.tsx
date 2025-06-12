@@ -1,8 +1,281 @@
-import React from 'react'
+import { Button, DatePicker, Divider, Form, Input, message, Modal, Switch, Table, type TableColumnsType } from 'antd';
+import dayjs from 'dayjs';
+import { useState } from 'react';
+import { CiEdit } from 'react-icons/ci';
+import { MdDeleteOutline } from 'react-icons/md';
+import { useQuery } from 'react-query';
+import { useCreateBranchManager, useDeleteBranchManager, useUpdateBranchManager } from '../../Api/Branch Manager/branchManagerHooks';
+import { getBranchManager } from '../../Api/Branch Manager/branchManagerApi';
+
+interface DataType {
+  key: React.Key;
+  name: string;
+  email: string;
+  employee_code: string;
+  phone_number: string;
+  date_of_joining: string;
+  point_amount: number;
+  salary: number;
+  address: string;
+  status: boolean;
+  _id: string;
+}
 
 function BranchManager() {
+  const columns: TableColumnsType<DataType> = [
+    {
+      title: 'Name',
+      dataIndex: 'name',
+    },
+    {
+      title: 'Email',
+      dataIndex: 'email',
+    },
+    {
+      title: 'Employee Code',
+      dataIndex: 'employee_code',
+    },
+    {
+      title: 'Phone Number',
+      dataIndex: 'phone_number',
+    },
+    {
+      title: 'Date of Joining',
+      dataIndex: 'date_of_joining',
+    },
+    {
+      title: 'Address',
+      dataIndex: 'address',
+    },
+    {
+      title: 'Point Amount',
+      dataIndex: 'point_amount',
+    },
+    {
+      title: 'Salary',
+      dataIndex: 'salary',
+    },
+    {
+      title: 'Action',
+      render: (_, record: any) => (
+        <div className="flex gap-2">
+          <Button onClick={() => handleEdit(record)}>
+            <CiEdit />
+          </Button>
+          <Button danger onClick={() => handleDelete(record._id)}>
+            <MdDeleteOutline />
+          </Button>
+        </div>
+      )
+    }
+  ];
+
+  const { data, isLoading, refetch } = useQuery('branchManager', getBranchManager)
+  const [addModal, setAddModal] = useState(false)
+  const [editModal, setEditModal] = useState(false)
+  const [editingRecord, setEditingRecord] = useState<DataType | null>(null)
+
+  const { mutate: Create } = useCreateBranchManager()
+  const { mutate: Update } = useUpdateBranchManager()
+  const { mutate: Delete } = useDeleteBranchManager()
+
+  const [form] = Form.useForm()
+  const [editForm] = Form.useForm()
+
+  const onFinish = (value: any) => {
+    Create(value, {
+      onSuccess() {
+        message.success("Added successfully")
+        refetch()
+        setAddModal(false)
+        form.resetFields()
+      },
+      onError() {
+        message.error("Failed to add")
+      }
+    })
+  }
+
+  const onUpdateFinish = (values: any) => {
+    if (!editingRecord) return;
+
+    const updateData = {
+      ...values,
+      _id: editingRecord._id
+    };
+
+    Update(updateData, {
+      onSuccess: () => {
+        message.success('Updated successfully');
+        refetch();
+        setEditModal(false);
+        setEditingRecord(null);
+        editForm.resetFields();
+      },
+      onError: () => {
+        message.error('Failed to update');
+      }
+    });
+  };
+
+  const handleEdit = (record: DataType) => {
+    setEditingRecord(record);
+    setEditModal(true);
+
+    editForm.setFieldsValue({
+      name: record.name,
+      email: record.email,
+      employee_code: record.employee_code,
+      phone_number: record.phone_number,
+      address: record.address,
+      point_amount: record.point_amount,
+      salary: record.salary,
+      date_of_joining: record.date_of_joining ? dayjs(record.date_of_joining) : null,
+    });
+  };
+
+  const handleDelete = (_id: string) => {
+    Delete(_id, {
+      onSuccess: () => {
+        message.success('Deleted successfully');
+        refetch();
+      },
+      onError: () => {
+        message.error('Failed to delete');
+      }
+    });
+  };
+
+  const handleCancelEdit = () => {
+    setEditModal(false);
+    setEditingRecord(null);
+    editForm.resetFields();
+  };
+
   return (
-    <div>BranchManager</div>
+    <div>
+      <Divider>Branch Manager</Divider>
+      <div className="w-full flex justify-end">
+        <Button type='primary' onClick={() => setAddModal(true)}>Add</Button>
+      </div>
+      <Table
+        columns={columns}
+        style={{ height: '350px', overflowY: 'auto' }}
+        pagination={false}
+        dataSource={data?.data}
+        loading={isLoading}
+        size="middle"
+        rowKey="_id"
+      />
+
+
+      <Modal
+        title="Add Branch Manager"
+        open={addModal}
+        onCancel={() => setAddModal(false)}
+        footer={null}
+        width={800}
+      >
+        <Form layout='vertical' onFinish={onFinish} form={form}>
+          <div className="grid grid-flow-row grid-cols-2 gap-x-2">
+
+            <Form.Item name={'name'} label="Name" rules={[{ required: true, message: "Please enter name" }]}>
+              <Input placeholder='Name' />
+            </Form.Item>
+
+            <Form.Item name={'email'} label="Email" rules={[{ required: true, message: "Please enter email" }]}>
+              <Input placeholder='Email' />
+            </Form.Item>
+
+            <Form.Item name={'password'} label="Password" rules={[{ required: true, message: "Please enter password" }]}>
+              <Input placeholder='Password' />
+            </Form.Item>
+
+            <Form.Item name={'employee_code'} label="Employee Code" rules={[{ required: true, message: "Please enter Employee Code" }]}>
+              <Input placeholder='Employee Code' />
+            </Form.Item>
+
+            <Form.Item name={'phone_number'} label="Phone Number" rules={[{ required: true, message: "Please enter Phone Number" }]}>
+              <Input placeholder='Phone Number' />
+            </Form.Item>
+
+            <Form.Item name={'date_of_joining'} label="Date of Joining" rules={[{ required: true, message: "Please enter Date of Joining" }]}>
+              <DatePicker format="DD-MM-YYYY" className="w-full" />
+            </Form.Item>
+
+            <Form.Item name={'address'} label="Address" rules={[{ required: true, message: "Please enter address" }]}>
+              <Input placeholder='Address' />
+            </Form.Item>
+
+            <Form.Item name={'point_amount'} label="Point Amount" rules={[{ required: true, message: "Please enter Point Amount" }]}>
+              <Input placeholder='Point Amount' />
+            </Form.Item>
+
+            <Form.Item name={'salary'} label="salary" rules={[{ required: true, message: "Please enter Salary" }]}>
+              <Input placeholder='Salary' />
+            </Form.Item>
+
+          </div>
+          <Form.Item>
+            <Button htmlType='submit' type="primary" className='w-full'>Create</Button>
+          </Form.Item>
+        </Form>
+      </Modal>
+
+
+      <Modal
+        title="Edit Branch Manager"
+        open={editModal}
+        onCancel={handleCancelEdit}
+        footer={null}
+        width={800}
+      >
+        <Form layout='vertical' onFinish={onUpdateFinish} form={editForm}>
+          <div className="grid grid-flow-row grid-cols-2 gap-x-2">
+
+            <Form.Item name={'name'} label="Name" rules={[{ required: true, message: "Please enter name" }]}>
+              <Input placeholder='Name' />
+            </Form.Item>
+
+            <Form.Item name={'email'} label="Email" rules={[{ required: true, message: "Please enter email" }]}>
+              <Input placeholder='Email' />
+            </Form.Item>
+
+            <Form.Item name={'password'} label="Password" rules={[{ required: true, message: "Please enter password" }]}>
+              <Input placeholder='Password' />
+            </Form.Item>
+
+            <Form.Item name={'employee_code'} label="Employee Code" rules={[{ required: true, message: "Please enter Employee Code" }]}>
+              <Input placeholder='Employee Code' />
+            </Form.Item>
+
+            <Form.Item name={'phone_number'} label="Phone Number" rules={[{ required: true, message: "Please enter Phone Number" }]}>
+              <Input placeholder='Phone Number' />
+            </Form.Item>
+
+            <Form.Item name={'date_of_joining'} label="Date of Joining" rules={[{ required: true, message: "Please enter Date of Joining" }]}>
+              <DatePicker format="DD-MM-YYYY" className="w-full" />
+            </Form.Item>
+
+            <Form.Item name={'address'} label="Address" rules={[{ required: true, message: "Please enter address" }]}>
+              <Input placeholder='Address' />
+            </Form.Item>
+
+            <Form.Item name={'point_amount'} label="Point Amount" rules={[{ required: true, message: "Please enter Point Amount" }]}>
+              <Input placeholder='Point Amount' />
+            </Form.Item>
+
+            <Form.Item name={'salary'} label="salary" rules={[{ required: true, message: "Please enter Salary" }]}>
+              <Input placeholder='Salary' />
+            </Form.Item>
+
+          </div>
+          <Form.Item>
+            <Button htmlType='submit' type="primary" className='w-full'>Update</Button>
+          </Form.Item>
+        </Form>
+      </Modal>
+    </div>
   )
 }
 

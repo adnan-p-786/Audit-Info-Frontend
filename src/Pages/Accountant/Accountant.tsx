@@ -261,7 +261,7 @@ function Accountant() {
 
           </div>
           <Form.Item>
-            <Button htmlType='submit' type="primary" className='w-full'>Create</Button>
+            <Button htmlType='submit' type="primary" className='w-full'>Update</Button>
           </Form.Item>
         </Form>
       </Modal>

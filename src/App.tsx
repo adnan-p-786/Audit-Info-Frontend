@@ -9,7 +9,7 @@ import SubMenu from 'antd/es/menu/SubMenu';
 import { IoSettingsOutline } from 'react-icons/io5';
 import { useState } from 'react';
 import { MdAccountCircle } from 'react-icons/md';
-import { FaUsersCog, FaUserTie } from 'react-icons/fa';
+import { FaArrowRight, FaUsersCog, FaUserSecret, FaUserTie } from 'react-icons/fa';
 import { FaBuildingUser } from 'react-icons/fa6';
 
 
@@ -78,7 +78,7 @@ function App() {
               <Link to='officeadministration'>Office Administration</Link>
             </Menu.Item>
 
-            <Menu.Item key={'7'} icon={<RiDashboardFill />}>
+            <Menu.Item key={'7'} icon={<FaUserSecret />}>
               <Link to='/agent'>Agent</Link>
             </Menu.Item>
 
@@ -91,16 +91,16 @@ function App() {
             </Menu.Item>
 
             <SubMenu key={'10'} title="Settings" icon={<IoSettingsOutline />}>
-              <Menu.Item>
+              <Menu.Item icon={<FaArrowRight />}>
                 <Link to='/particularmanagement'>Particular Management</Link>
               </Menu.Item>
-              <Menu.Item >
+              <Menu.Item icon={<FaArrowRight />}>
                 <Link to='/schoolmanagement'>School Management</Link>
               </Menu.Item>
-              <Menu.Item >
+              <Menu.Item icon={<FaArrowRight />}>
                 <Link to='/collegemanagement'>College Management</Link>
               </Menu.Item>
-              <Menu.Item >
+              <Menu.Item icon={<FaArrowRight />}>
                 <Link to='/branchmanagement'>Branch Management</Link>
               </Menu.Item>
             </SubMenu>
