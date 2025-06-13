@@ -27,8 +27,8 @@ function Schoolmanagement() {
       dataIndex: 'school_code',
     },
     {
-      title: 'Branch Id',
-      dataIndex: 'branchId',
+      title: 'Branch Name',
+      dataIndex: ['branchId','name'],
     },
     {
       title: 'Action',

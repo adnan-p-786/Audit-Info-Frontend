@@ -1,4 +1,4 @@
-import { Button, DatePicker, Divider, Form, Input, message, Modal, Select, Switch, Table, type TableColumnsType } from 'antd';
+import { Button, DatePicker, Divider, Form, Input, message, Modal, Select, Table, type TableColumnsType } from 'antd';
 import dayjs from 'dayjs';
 import { useState } from 'react';
 import { CiEdit } from 'react-icons/ci';
@@ -49,9 +49,9 @@ function BranchManager() {
       title: 'Address',
       dataIndex: 'address',
     },
-    {
-      title: 'Branch Name',
-      dataIndex: ['branchId', 'name'],
+   {
+      title: 'Branch Id',
+      dataIndex: ['branchId', '_id'],
     },
     {
       title: 'Point Amount',
@@ -137,6 +137,7 @@ function BranchManager() {
       address: record.address,
       point_amount: record.point_amount,
       salary: record.salary,
+      branchId: record.branchId,
       date_of_joining: record.date_of_joining ? dayjs(record.date_of_joining) : null,
     });
   };
@@ -174,8 +175,6 @@ function BranchManager() {
         size="middle"
         rowKey="_id"
       />
-
-
       <Modal
         title="Add Branch Manager"
         open={addModal}
@@ -214,7 +213,7 @@ function BranchManager() {
               <Input placeholder='Address' />
             </Form.Item>
 
-            <Form.Item
+             <Form.Item
               name={'branchId'}
               label="Branch"
               rules={[{ required: true, message: "Please select a  branch" }]}
@@ -223,8 +222,8 @@ function BranchManager() {
                 placeholder="Select a branch"
                 options={
                   !branchloading && branchdata?.data.map((branch: { _id: string; }) => ({
-                    label: branch._id,
-                    value: branch._id
+                    value: branch._id,
+                    label : branch._id
                   }))
                 }
               />
@@ -284,7 +283,7 @@ function BranchManager() {
               <Input placeholder='Address' />
             </Form.Item>
 
-            <Form.Item
+             <Form.Item
               name={'branchId'}
               label="Branch"
               rules={[{ required: true, message: "Please select a  branch" }]}
@@ -292,9 +291,9 @@ function BranchManager() {
               <Select
                 placeholder="Select a branch"
                 options={
-                  !branchloading && branchdata?.data.map((branch: { name: string; }) => ({
-                    label: branch.name,
-                    value: branch.name
+                  !branchloading && branchdata?.data.map((branch: { _id:string, name: string; }) => ({
+                    value: branch._id,
+                    label: branch.name
                   }))
                 }
               />

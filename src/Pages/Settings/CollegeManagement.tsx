@@ -214,8 +214,8 @@ function CollegeManagement() {
               <Select
                 placeholder="Select a branch"
                 options={
-                  !branchloading && branchdata?.data.map((branch: { name: string; }) => ({
-                    value: branch.name
+                  !branchloading && branchdata?.data.map((branch: { _id: string; }) => ({
+                    value: branch._id
                   }))
                 }
               />
