@@ -41,8 +41,8 @@ function CollegeManagement() {
       dataIndex: 'category',
     },
     {
-      title: 'BranchId',
-      dataIndex: 'branchId',
+      title: 'Branch Name',
+      dataIndex: ['branchId','name'],
     },
     {
       title: 'Src Point',
@@ -214,8 +214,8 @@ function CollegeManagement() {
               <Select
                 placeholder="Select a branch"
                 options={
-                  !branchloading && branchdata?.data.map((branch: { _id: string; }) => ({
-                    value: branch._id
+                  !branchloading && branchdata?.data.map((branch: { name: string; }) => ({
+                    value: branch.name
                   }))
                 }
               />
@@ -279,8 +279,8 @@ function CollegeManagement() {
               <Select
                 placeholder="Select a branch"
                 options={
-                  !branchloading && branchdata?.data.map((branch: { _id: string; }) => ({
-                    value: branch._id
+                  !branchloading && branchdata?.data.map((branch: { _id: string; name:string}) => ({
+                    value: branch.name
                   }))
                 }
               />

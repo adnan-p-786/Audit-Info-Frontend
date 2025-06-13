@@ -46,7 +46,7 @@ function OfficeAdministration() {
     },
     {
       title: 'Branch Id',
-      dataIndex: 'branchId',
+      dataIndex: ['branchId', '_id'],
     },
     {
       title: 'Address',

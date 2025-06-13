@@ -1,4 +1,4 @@
-import { Button, DatePicker, Divider, Form, Input, message, Modal, Switch, Table, type TableColumnsType } from 'antd';
+import { Button, DatePicker, Divider, Form, Input, message, Modal, Select, Switch, Table, type TableColumnsType } from 'antd';
 import dayjs from 'dayjs';
 import { useState } from 'react';
 import { CiEdit } from 'react-icons/ci';
@@ -6,11 +6,13 @@ import { MdDeleteOutline } from 'react-icons/md';
 import { useQuery } from 'react-query';
 import { useCreateBranchManager, useDeleteBranchManager, useUpdateBranchManager } from '../../Api/Branch Manager/branchManagerHooks';
 import { getBranchManager } from '../../Api/Branch Manager/branchManagerApi';
+import { getBranch } from '../../Api/Branch/branchApi';
 
 interface DataType {
   key: React.Key;
   name: string;
   email: string;
+  branchId: string;
   employee_code: string;
   phone_number: string;
   date_of_joining: string;
@@ -48,6 +50,10 @@ function BranchManager() {
       dataIndex: 'address',
     },
     {
+      title: 'Branch Name',
+      dataIndex: ['branchId', 'name'],
+    },
+    {
       title: 'Point Amount',
       dataIndex: 'point_amount',
     },
@@ -71,6 +77,7 @@ function BranchManager() {
   ];
 
   const { data, isLoading, refetch } = useQuery('branchManager', getBranchManager)
+  const { data: branchdata, isLoading: branchloading } = useQuery('branch', getBranch)
   const [addModal, setAddModal] = useState(false)
   const [editModal, setEditModal] = useState(false)
   const [editingRecord, setEditingRecord] = useState<DataType | null>(null)
@@ -207,6 +214,22 @@ function BranchManager() {
               <Input placeholder='Address' />
             </Form.Item>
 
+            <Form.Item
+              name={'branchId'}
+              label="Branch"
+              rules={[{ required: true, message: "Please select a  branch" }]}
+            >
+              <Select
+                placeholder="Select a branch"
+                options={
+                  !branchloading && branchdata?.data.map((branch: { _id: string; }) => ({
+                    label: branch._id,
+                    value: branch._id
+                  }))
+                }
+              />
+            </Form.Item>
+
             <Form.Item name={'point_amount'} label="Point Amount" rules={[{ required: true, message: "Please enter Point Amount" }]}>
               <Input placeholder='Point Amount' />
             </Form.Item>
@@ -259,6 +282,22 @@ function BranchManager() {
 
             <Form.Item name={'address'} label="Address" rules={[{ required: true, message: "Please enter address" }]}>
               <Input placeholder='Address' />
+            </Form.Item>
+
+            <Form.Item
+              name={'branchId'}
+              label="Branch"
+              rules={[{ required: true, message: "Please select a  branch" }]}
+            >
+              <Select
+                placeholder="Select a branch"
+                options={
+                  !branchloading && branchdata?.data.map((branch: { name: string; }) => ({
+                    label: branch.name,
+                    value: branch.name
+                  }))
+                }
+              />
             </Form.Item>
 
             <Form.Item name={'point_amount'} label="Point Amount" rules={[{ required: true, message: "Please enter Point Amount" }]}>

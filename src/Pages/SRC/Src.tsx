@@ -50,7 +50,7 @@ function Src() {
     },
     {
       title: 'Branch Id',
-      dataIndex: 'branchId',
+      dataIndex: ['branchId', '_id'],
     },
     {
       title: 'Address',
@@ -231,7 +231,8 @@ function Src() {
                 placeholder="Select a branch"
                 options={
                   !branchloading && branchdata?.data.map((branch: { _id: string; }) => ({
-                    value: branch._id
+                    value: branch._id,
+                    label : branch._id
                   }))
                 }
               />
