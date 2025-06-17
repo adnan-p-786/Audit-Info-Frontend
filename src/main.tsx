@@ -17,6 +17,7 @@ import CollegeManagement from './Pages/Settings/CollegeManagement.tsx'
 import BranchManagement from './Pages/Settings/BranchManagement.tsx'
 import { QueryClient, QueryClientProvider } from 'react-query'
 import BranchManager from './Pages/Branch manager/BranchManager.tsx'
+import LeadHistory from './Pages/Lead Management/LeadHistory.tsx'
 
 
 const router = createBrowserRouter([
@@ -79,6 +80,10 @@ const router = createBrowserRouter([
       {
         path: '/branchmanager',
         element: <BranchManager />
+      },
+      {
+        path: '/leadhistory',
+        element: <LeadHistory />
       },
     ]
   }
