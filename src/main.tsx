@@ -20,6 +20,14 @@ import BranchManager from './Pages/Branch manager/BranchManager.tsx'
 import LeadHistory from './Pages/Lead Management/LeadHistory.tsx'
 import { Provider } from 'react-redux'
 import store from './App/store.ts'
+import AgentCollege from './Pages/Reports/AgentCollege.tsx'
+import CancelledStudents from './Pages/Reports/CancelledStudents.tsx'
+import EmployeeSales from './Pages/Reports/EmployeeSales.tsx'
+import SeatBokkings from './Pages/Reports/SeatBokkings.tsx'
+import Accounts from './Pages/Accounts/Accounts.tsx'
+import AgentAccount from './Pages/Accounts/AgentAccount.tsx'
+import CollegeAccount from './Pages/Accounts/CollegeAccount.tsx'
+import EmployeeAccount from './Pages/Accounts/EmployeeAccount.tsx'
 
 
 
@@ -88,6 +96,38 @@ const router = createBrowserRouter([
         path: '/leadhistory',
         element: <LeadHistory />
       },
+      {
+        path: '/agentcollege',
+        element: <AgentCollege />
+      },
+      {
+        path: '/cancelledstudent',
+        element: <CancelledStudents />
+      },
+      {
+        path: '/employeesales',
+        element: <EmployeeSales />
+      },
+      {
+        path: '/seatbooking',
+        element: <SeatBokkings />
+      },
+      {
+        path: '/accounts',
+        element: <Accounts />
+      },
+      {
+        path: '/agentaccounts',
+        element: <AgentAccount />
+      },
+      {
+        path: '/collegeaccounts',
+        element: <CollegeAccount />
+      },
+      {
+        path: '/employeeaccounts',
+        element: <EmployeeAccount />
+      },
     ]
   }
 ])
@@ -99,7 +139,7 @@ createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
       <Provider store={store}>
-      <RouterProvider router={router}/>
+        <RouterProvider router={router} />
       </Provider>
     </QueryClientProvider>
   </StrictMode>

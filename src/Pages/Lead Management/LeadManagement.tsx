@@ -1,4 +1,4 @@
-import { Button, DatePicker, Divider, Form, Input, message, Modal, Select, Table, type TableColumnsType } from 'antd';
+import { Button, DatePicker, Divider, Form, Input, message, Modal, Select, Table, Upload, type TableColumnsType } from 'antd';
 import dayjs from 'dayjs';
 import { useState } from 'react';
 import { CiEdit } from 'react-icons/ci';
@@ -16,6 +16,7 @@ import { useDispatch } from 'react-redux';
 import { setLeadHistory } from '../../Redux/leadSlice';
 import { AiFillPhone } from 'react-icons/ai';
 import { RiAddBoxLine } from 'react-icons/ri';
+import { InboxOutlined } from '@ant-design/icons';
 
 interface DataType {
   key: React.Key;
@@ -71,7 +72,7 @@ function LeadManagement() {
       title: 'School Name',
       dataIndex: ['schoolId', 'name'],
     },
-     {
+    {
       title: 'SRC',
       dataIndex: ['sRCId', 'name'],
     },
@@ -91,7 +92,7 @@ function LeadManagement() {
       title: 'Action',
       render: (_, record: any) => (
         <div className="flex gap-2">
-          <Link to='/leadhistory'><Button onClick={()=>{
+          <Link to='/leadhistory'><Button onClick={() => {
             dispatch(setLeadHistory(record))
             navigate('/leadhistory')
           }}><GrView /></Button></Link>
@@ -195,17 +196,41 @@ function LeadManagement() {
     });
   };
 
+  // const { Dragger } = Upload;
+
+  // const props: UploadProps = {
+  //   name: 'file',
+  //   multiple: true,
+  //   action: 'https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload',
+  //   onChange(info) {
+  //     const { status } = info.file;
+  //     if (status !== 'uploading') {
+  //       console.log(info.file, info.fileList);
+  //     }
+  //     if (status === 'done') {
+  //       message.success(`${info.file.name} file uploaded successfully.`);
+  //     } else if (status === 'error') {
+  //       message.error(`${info.file.name} file upload failed.`);
+  //     }
+  //   },
+  //   onDrop(e) {
+  //     console.log('Dropped files', e.dataTransfer.files);
+  //   },
+  // };
+
+
   const handleCancelEdit = () => {
     setEditModal(false);
     setEditingRecord(null);
     editForm.resetFields();
   };
+
   return (
     <div>
       <Divider>Lead Management</Divider>
       <div className="w-full flex justify-end gap-3">
-        <Button type='primary'><RiAddBoxLine className='text-lg'/>Upload Lead</Button>
-        <Button type='primary' onClick={() => setAddModal(true)}><RiAddBoxLine className='text-lg'/>Add New</Button>
+        <Button type='primary'><RiAddBoxLine className='text-lg' />Upload Lead</Button>
+        <Button type='primary' onClick={() => setAddModal(true)}><RiAddBoxLine className='text-lg' />Add New</Button>
       </div>
       <Table
         className='mt-4'
@@ -333,6 +358,17 @@ function LeadManagement() {
           </Form.Item>
         </Form>
       </Modal>
+
+      {/* <Dragger {...props}>
+        <p className="ant-upload-drag-icon">
+          <InboxOutlined />
+        </p>
+        <p className="ant-upload-text">Click or drag file to this area to upload</p>
+        <p className="ant-upload-hint">
+          Support for a single or bulk upload. Strictly prohibited from uploading company data or other
+          banned files.
+        </p>
+      </Dragger> */}
 
 
       <Modal

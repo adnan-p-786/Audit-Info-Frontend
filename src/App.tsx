@@ -9,8 +9,10 @@ import SubMenu from 'antd/es/menu/SubMenu';
 import { IoSettingsOutline } from 'react-icons/io5';
 import { useState } from 'react';
 import { MdAccountCircle } from 'react-icons/md';
-import { FaArrowRight, FaUsersCog, FaUserSecret, FaUserTie } from 'react-icons/fa';
+import { FaArrowRight, FaUsers, FaUsersCog, FaUserSecret, FaUserTie } from 'react-icons/fa';
 import { FaBuildingUser } from 'react-icons/fa6';
+import { TbReportAnalytics } from 'react-icons/tb';
+import { PiStudent } from 'react-icons/pi';
 
 
 function App() {
@@ -82,11 +84,11 @@ function App() {
               <Link to='/agent'>Agent</Link>
             </Menu.Item>
 
-            <Menu.Item key={'8'} icon={<RiDashboardFill />}>
+            <Menu.Item key={'8'} icon={<FaUsers  />}>
               <Link to='/leadmanagement'>Lead Management</Link>
             </Menu.Item>
 
-            <Menu.Item key={'9'} icon={<RiDashboardFill />}>
+            <Menu.Item key={'9'} icon={<PiStudent />}>
               <Link to='/studentmanagement'>Student Management</Link>
             </Menu.Item>
 
@@ -103,6 +105,35 @@ function App() {
               <Menu.Item icon={<FaArrowRight />}>
                 <Link to='/branchmanagement'>Branch Management</Link>
               </Menu.Item>
+            </SubMenu>
+
+            <SubMenu key={'11'} title="Reports" icon={<TbReportAnalytics />}>
+              <Menu.Item icon={<FaArrowRight />}>
+                <Link to='/seatbooking'>Seat Bookings</Link>
+              </Menu.Item>
+              <Menu.Item icon={<FaArrowRight />}>
+                <Link to='/employeesales'>Employee Sales</Link>
+              </Menu.Item>
+              <Menu.Item icon={<FaArrowRight />}>
+                <Link to='/agentcollege'>Agent College</Link>
+              </Menu.Item>
+              <Menu.Item icon={<FaArrowRight />}>
+                <Link to='/cancelledstudent'>Cancelled Students</Link>
+              </Menu.Item>
+              <SubMenu title='Accounts'>
+                <Menu.Item icon={<FaArrowRight />}>
+                <Link to='/accounts'>Accounts</Link>
+              </Menu.Item>
+              <Menu.Item icon={<FaArrowRight />}>
+                <Link to='/collegeaccounts'>College Account</Link>
+              </Menu.Item>
+              <Menu.Item icon={<FaArrowRight />}>
+                <Link to='/employeeaccounts'>Employee Account</Link>
+              </Menu.Item>
+              <Menu.Item icon={<FaArrowRight />}>
+                <Link to='/agentaccounts'>Agent Account</Link>
+              </Menu.Item>
+              </SubMenu>
             </SubMenu>
 
           </Menu>
