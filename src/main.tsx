@@ -18,6 +18,9 @@ import BranchManagement from './Pages/Settings/BranchManagement.tsx'
 import { QueryClient, QueryClientProvider } from 'react-query'
 import BranchManager from './Pages/Branch manager/BranchManager.tsx'
 import LeadHistory from './Pages/Lead Management/LeadHistory.tsx'
+import { Provider } from 'react-redux'
+import store from './App/store.ts'
+
 
 
 const router = createBrowserRouter([
@@ -95,7 +98,9 @@ const queryClient = new QueryClient()
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
-      <RouterProvider router={router} />
+      <Provider store={store}>
+      <RouterProvider router={router}/>
+      </Provider>
     </QueryClientProvider>
   </StrictMode>
 )

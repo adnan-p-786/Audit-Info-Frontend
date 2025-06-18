@@ -50,8 +50,8 @@ function BranchManager() {
       dataIndex: 'address',
     },
    {
-      title: 'Branch Id',
-      dataIndex: ['branchId', '_id'],
+      title: 'Branch ID',
+      dataIndex: ['branchId', 'name'],
     },
     {
       title: 'Point Amount',

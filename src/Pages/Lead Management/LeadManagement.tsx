@@ -11,7 +11,11 @@ import { getSro } from '../../Api/SRO/SroApi';
 import { useCreateLead, useDeleteLead, useUpdateLead } from '../../Api/Lead/leadHooks';
 import { getSchoolmanagement } from '../../Api/School Management/schoolManagementApi';
 import { GrView } from 'react-icons/gr';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { setLeadHistory } from '../../Redux/leadSlice';
+import { AiFillPhone } from 'react-icons/ai';
+import { RiAddBoxLine } from 'react-icons/ri';
 
 interface DataType {
   key: React.Key;
@@ -31,6 +35,8 @@ interface DataType {
   _id: string;
 }
 function LeadManagement() {
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
   const columns: TableColumnsType<DataType> = [
     {
       title: 'Date',
@@ -85,12 +91,18 @@ function LeadManagement() {
       title: 'Action',
       render: (_, record: any) => (
         <div className="flex gap-2">
-          <Link to='/leadhistory'><Button><GrView /></Button></Link>
+          <Link to='/leadhistory'><Button onClick={()=>{
+            dispatch(setLeadHistory(record))
+            navigate('/leadhistory')
+          }}><GrView /></Button></Link>
           <Button onClick={() => handleEdit(record)}>
             <CiEdit />
           </Button>
           <Button danger onClick={() => handleDelete(record._id)}>
             <MdDeleteOutline />
+          </Button>
+          <Button>
+            <AiFillPhone />
           </Button>
         </div>
       )
@@ -191,10 +203,12 @@ function LeadManagement() {
   return (
     <div>
       <Divider>Lead Management</Divider>
-      <div className="w-full flex justify-end">
-        <Button type='primary' onClick={() => setAddModal(true)}>Add</Button>
+      <div className="w-full flex justify-end gap-3">
+        <Button type='primary'><RiAddBoxLine className='text-lg'/>Upload Lead</Button>
+        <Button type='primary' onClick={() => setAddModal(true)}><RiAddBoxLine className='text-lg'/>Add New</Button>
       </div>
       <Table
+        className='mt-4'
         columns={columns}
         style={{ height: '350px', overflowY: 'auto' }}
         pagination={false}
@@ -208,10 +222,10 @@ function LeadManagement() {
         open={addModal}
         onCancel={() => setAddModal(false)}
         footer={null}
-        width={800}
+        width={900}
       >
         <Form layout='vertical' onFinish={onFinish} form={form}>
-          <div className="grid grid-flow-row grid-cols-2 gap-x-2">
+          <div className="grid grid-flow-row grid-cols-3 gap-x-2">
 
             <Form.Item name={'name'} label="Name" rules={[{ required: true, message: "Please enter name" }]}>
               <Input placeholder='Name' />
@@ -326,10 +340,10 @@ function LeadManagement() {
         open={editModal}
         onCancel={handleCancelEdit}
         footer={null}
-        width={800}
+        width={900}
       >
         <Form layout='vertical' onFinish={onUpdateFinish} form={editForm}>
-          <div className="grid grid-flow-row grid-cols-2 gap-x-2">
+          <div className="grid grid-flow-row grid-cols-3 gap-x-2">
 
             <Form.Item name={'name'} label="Name" rules={[{ required: true, message: "Please enter name" }]}>
               <Input placeholder='Name' />
