@@ -102,9 +102,10 @@ function LeadManagement() {
           <Button danger onClick={() => handleDelete(record._id)}>
             <MdDeleteOutline />
           </Button>
-          <Button>
-            <AiFillPhone />
-          </Button>
+          <Link to='/leadcallmanagement'><Button onClick={() => {
+            dispatch(setLeadHistory(record))
+            navigate('/leadcallmanagement')
+          }}><AiFillPhone /></Button></Link>
         </div>
       )
     }

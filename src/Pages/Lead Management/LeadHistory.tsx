@@ -13,7 +13,6 @@ interface DataType {
 
 function LeadHistory() {
     const leaddata = useSelector((state:any)=>state?.leadHistory?.leadHistory)
-    console.log(leaddata)
     const columns: TableColumnsType<DataType> = [
         {
             title: 'Date',
@@ -39,7 +38,7 @@ function LeadHistory() {
                     Student Name: { leaddata?.name }
                 </h1>
                 <h1 className='font-semibold'>
-                     SRC: { leaddata?.sRC }
+                     SRC Name: { leaddata?.sRC }
                 </h1>
                 <h1 className='font-semibold'>
                     Phone Number: { leaddata?.phone_number}
