@@ -34,18 +34,25 @@ function LeadCallManagement() {
     const { data, isLoading, refetch } = useQuery('leadHistory', getLeadHistory)
     const { mutate: Create } = useCreateLeadHistory()
     const [form] = Form.useForm()
+
     const onFinish = (values: any) => {
-        Create(values, {
-            onSuccess() {
-                message.success("Added successfully");
-                refetch();
-                form.resetFields();
-            },
-            onError() {
-                message.error("Failed to add");
-            }
-        });
+    const payload = {
+        ...values,
+        leadId: leaddata?._id, 
     };
+
+    Create(payload, {
+        onSuccess() {
+            message.success("Added successfully");
+            refetch();
+            form.resetFields();
+        },
+        onError() {
+            message.error("Failed to add");
+        }
+    });
+};
+
     return (
         <div>
             <Divider>Lead Call Management</Divider>

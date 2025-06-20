@@ -48,27 +48,6 @@ function LeadManagement() {
       dataIndex: 'name',
     },
     {
-      title: 'Phone Number',
-      dataIndex: 'phone_number',
-    },
-    // {
-    //   title: 'Status',
-    //   dataIndex: 'status',
-    // },
-    // {
-    //   title: 'Delete',
-    //   dataIndex: 'delete',
-    //   render: (status: boolean) => (
-    //     <span style={{ color: status ? 'green' : 'red', fontWeight: 500 }}>
-    //       {status ? 'Registered' : 'Not Registered'}
-    //     </span>
-    //   )
-    // },
-    // {
-    //   title: 'Address',
-    //   dataIndex: 'address',
-    // },
-    {
       title: 'School Name',
       dataIndex: ['schoolId', 'name'],
     },
@@ -77,16 +56,12 @@ function LeadManagement() {
       dataIndex: ['sRCId', 'name'],
     },
     {
-      title: 'Mark',
-      dataIndex: 'mark',
+      title: 'Phone Number',
+      dataIndex: 'phone_number',
     },
     {
-      title: 'Subject Name',
-      dataIndex: 'subject_name',
-    },
-    {
-      title: 'Course',
-      dataIndex: 'course',
+      title: 'Status',
+      dataIndex: 'status',
     },
     {
       title: 'Action',
