@@ -16,7 +16,7 @@ function LeadHistory() {
     const columns: TableColumnsType<DataType> = [
         {
             title: 'Date',
-            dataIndex: 'date',
+            dataIndex: 'createdAt',
         },
         {
             title: 'Status',

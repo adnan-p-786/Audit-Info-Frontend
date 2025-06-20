@@ -1,4 +1,4 @@
-import { Button, DatePicker, Divider, Form, Input, message, Modal, Select, Table, Upload, type TableColumnsType } from 'antd';
+import { Button, DatePicker, Divider, Form, Input, message, Modal, Select, Switch, Table, Upload, type TableColumnsType } from 'antd';
 import dayjs from 'dayjs';
 import { useState } from 'react';
 import { CiEdit } from 'react-icons/ci';
@@ -62,6 +62,11 @@ function LeadManagement() {
     {
       title: 'Status',
       dataIndex: 'status',
+      render: (status: boolean) => (
+        <span style={{ color: status ? 'green' : 'red', fontWeight: 500 }}>
+          {status ? 'Registered' : 'Not Registered'}
+        </span>
+      )
     },
     {
       title: 'Action',
@@ -240,13 +245,9 @@ function LeadManagement() {
               <DatePicker format="DD-MM-YYYY" className="w-full" />
             </Form.Item>
 
-            {/* <Form.Item name={'status'} label="Status" rules={[{ required: true, message: "Please enter Date of Joining" }]}>
-              <Input placeholder='Status' />
-            </Form.Item>
-
-            <Form.Item name={'delete'} label="Delete" valuePropName="checked">
+            <Form.Item name={'status'} label="Status" valuePropName="checked">
               <Switch />
-            </Form.Item> */}
+            </Form.Item>
 
             <Form.Item name={'address'} label="Address" rules={[{ required: true, message: "Please enter address" }]}>
               <Input placeholder='Address' />
@@ -369,13 +370,9 @@ function LeadManagement() {
               <DatePicker format="DD-MM-YYYY" className="w-full" />
             </Form.Item>
 
-            {/* <Form.Item name={'status'} label="Status" rules={[{ required: true, message: "Please enter Date of Joining" }]}>
-              <Input placeholder='Status' />
-            </Form.Item>
-
-            <Form.Item name={'delete'} label="Delete" valuePropName="checked">
+            <Form.Item name={'status'} label="Status" valuePropName="checked">
               <Switch />
-            </Form.Item> */}
+            </Form.Item>
 
             <Form.Item name={'address'} label="Address" rules={[{ required: true, message: "Please enter address" }]}>
               <Input placeholder='Address' />
