@@ -262,14 +262,21 @@ function StudentManagement() {
               <Input placeholder='Recieved Amount' />
             </Form.Item>
 
-            <Form.Item name={'certificates'} label="Certificates" rules={[{ required: true, message: "Please enter Certificates" }]}>
-              <Checkbox>SSLC</Checkbox>
-              <Checkbox>Plus Two</Checkbox>
-              <Checkbox>TC</Checkbox>
-              <Checkbox>CC</Checkbox>
-              <Checkbox>Migration</Checkbox>
-              <Checkbox>Photo</Checkbox>
+            <Form.Item
+              name="certificates"
+              label="Certificates"
+              rules={[{ required: true, message: "Please select at least one certificate" }]}
+            >
+              <Checkbox.Group>
+                <Checkbox value="SSLC">SSLC</Checkbox>
+                <Checkbox value="Plus Two">Plus Two</Checkbox>
+                <Checkbox value="TC">TC</Checkbox>
+                <Checkbox value="CC">CC</Checkbox>
+                <Checkbox value="Migration">Migration</Checkbox>
+                <Checkbox value="Photo">Photo</Checkbox>
+              </Checkbox.Group>
             </Form.Item>
+
 
             <Form.Item name={'comment'} label="Comment" rules={[{ required: true, message: "Please enter Comment" }]}>
               <TextArea rows={2} placeholder="comment" />

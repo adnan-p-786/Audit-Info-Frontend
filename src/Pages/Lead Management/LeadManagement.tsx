@@ -1,4 +1,4 @@
-import { Button, DatePicker, Divider, Form, Input, message, Modal, Select, Switch, Table, Upload, type TableColumnsType } from 'antd';
+import { Button, Checkbox, DatePicker, Divider, Form, Input, message, Modal, Select, Switch, Table, Upload, type TableColumnsType } from 'antd';
 import dayjs from 'dayjs';
 import { useState } from 'react';
 import { CiEdit } from 'react-icons/ci';
@@ -15,8 +15,11 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { setLeadHistory } from '../../Redux/leadSlice';
 import { AiFillPhone } from 'react-icons/ai';
-import { RiAddBoxLine } from 'react-icons/ri';
+import { RiAddBoxLine, RiSave3Line } from 'react-icons/ri';
 import { InboxOutlined } from '@ant-design/icons';
+import { useCreateRegister } from '../../Api/Registration Table/registerTableHooks';
+import TextArea from 'antd/es/input/TextArea';
+import { getCollegeManagement } from '../../Api/College Management/collegeMgmtApi';
 
 interface DataType {
   key: React.Key;
@@ -35,9 +38,11 @@ interface DataType {
   schoolId: string;
   _id: string;
 }
+
 function LeadManagement() {
   const dispatch = useDispatch()
   const navigate = useNavigate()
+  
   const columns: TableColumnsType<DataType> = [
     {
       title: 'Date',
@@ -82,6 +87,9 @@ function LeadManagement() {
           <Button danger onClick={() => handleDelete(record._id)}>
             <MdDeleteOutline />
           </Button>
+          <Button onClick={() => handleRegister(record)}>
+            <RiSave3Line />
+          </Button>
           <Link to='/leadcallmanagement'><Button onClick={() => {
             dispatch(setLeadHistory(record))
             navigate('/leadcallmanagement')
@@ -95,17 +103,42 @@ function LeadManagement() {
   const { data: branchdata, isLoading: branchloading } = useQuery('branch', getBranch)
   const { data: srcdata, isLoading: srcloading } = useQuery('src', getSrc)
   const { data: srodata, isLoading: sroloading } = useQuery('sro', getSro)
+  const { data: collegedata, isLoading: collegeloading } = useQuery('college', getCollegeManagement)
   const { data: schooldata, isLoading: schoolloading } = useQuery('school', getSchoolmanagement)
   const [addModal, setAddModal] = useState(false)
   const [editModal, setEditModal] = useState(false)
+  const [registerModal, setRegisterModal] = useState(false)
   const [editingRecord, setEditingRecord] = useState<DataType | null>(null)
+  const [registeringRecord, setRegisteringRecord] = useState<DataType | null>(null)
 
   const { mutate: Create } = useCreateLead()
+  const { mutate: Register } = useCreateRegister()
   const { mutate: Update } = useUpdateLead()
   const { mutate: Delete } = useDeleteLead()
 
   const [form] = Form.useForm()
   const [editForm] = Form.useForm()
+  const [registerForm] = Form.useForm()
+
+  const onRegister = (value: any) => {
+    Register(value, {
+      onSuccess() {
+        message.success("Registered successfully")
+        refetch()
+        setRegisterModal(false)
+        setRegisteringRecord(null)
+        registerForm.resetFields()
+      },
+      onError() {
+        message.error("Failed to register")
+      }
+    })
+  }
+
+  const handleRegister = (record: DataType) => {
+    setRegisteringRecord(record);
+    setRegisterModal(true);
+  };
 
   const onFinish = (value: any) => {
     Create(value, {
@@ -161,7 +194,6 @@ function LeadManagement() {
       address: record.address,
       branchId: record.branchId,
       mark: record.mark,
-
     });
   };
 
@@ -177,33 +209,16 @@ function LeadManagement() {
     });
   };
 
-  // const { Dragger } = Upload;
-
-  // const props: UploadProps = {
-  //   name: 'file',
-  //   multiple: true,
-  //   action: 'https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload',
-  //   onChange(info) {
-  //     const { status } = info.file;
-  //     if (status !== 'uploading') {
-  //       console.log(info.file, info.fileList);
-  //     }
-  //     if (status === 'done') {
-  //       message.success(`${info.file.name} file uploaded successfully.`);
-  //     } else if (status === 'error') {
-  //       message.error(`${info.file.name} file upload failed.`);
-  //     }
-  //   },
-  //   onDrop(e) {
-  //     console.log('Dropped files', e.dataTransfer.files);
-  //   },
-  // };
-
-
   const handleCancelEdit = () => {
     setEditModal(false);
     setEditingRecord(null);
     editForm.resetFields();
+  };
+
+  const handleCancelRegister = () => {
+    setRegisterModal(false);
+    setRegisteringRecord(null);
+    registerForm.resetFields();
   };
 
   return (
@@ -223,6 +238,7 @@ function LeadManagement() {
         size="middle"
         rowKey="_id"
       />
+      
       <Modal
         title="Add Lead"
         open={addModal}
@@ -232,7 +248,6 @@ function LeadManagement() {
       >
         <Form layout='vertical' onFinish={onFinish} form={form}>
           <div className="grid grid-flow-row grid-cols-3 gap-x-2">
-
             <Form.Item name={'name'} label="Name" rules={[{ required: true, message: "Please enter name" }]}>
               <Input placeholder='Name' />
             </Form.Item>
@@ -268,7 +283,6 @@ function LeadManagement() {
             <Form.Item
               name={'sROId'}
               label="SRO"
-              rules={[{ required: true, message: "Please select a  Sro" }]}
             >
               <Select
                 placeholder="Select a Sro"
@@ -284,7 +298,6 @@ function LeadManagement() {
             <Form.Item
               name={'sRCId'}
               label="SRC"
-              rules={[{ required: true, message: "Please select a  Src" }]}
             >
               <Select
                 placeholder="Select a Src"
@@ -319,7 +332,7 @@ function LeadManagement() {
               rules={[{ required: true, message: "Please select a  School" }]}
             >
               <Select
-                placeholder="Select a branch"
+                placeholder="Select a school"
                 options={
                   !schoolloading && schooldata?.data.map((school: { _id: string; }) => ({
                     value: school._id,
@@ -328,25 +341,12 @@ function LeadManagement() {
                 }
               />
             </Form.Item>
-
           </div>
           <Form.Item>
             <Button htmlType='submit' type="primary" className='w-full'>Create</Button>
           </Form.Item>
         </Form>
       </Modal>
-
-      {/* <Dragger {...props}>
-        <p className="ant-upload-drag-icon">
-          <InboxOutlined />
-        </p>
-        <p className="ant-upload-text">Click or drag file to this area to upload</p>
-        <p className="ant-upload-hint">
-          Support for a single or bulk upload. Strictly prohibited from uploading company data or other
-          banned files.
-        </p>
-      </Dragger> */}
-
 
       <Modal
         title="Edit Lead"
@@ -357,7 +357,6 @@ function LeadManagement() {
       >
         <Form layout='vertical' onFinish={onUpdateFinish} form={editForm}>
           <div className="grid grid-flow-row grid-cols-3 gap-x-2">
-
             <Form.Item name={'name'} label="Name" rules={[{ required: true, message: "Please enter name" }]}>
               <Input placeholder='Name' />
             </Form.Item>
@@ -393,7 +392,6 @@ function LeadManagement() {
             <Form.Item
               name={'sROId'}
               label="SRO"
-              rules={[{ required: true, message: "Please select a  Sro" }]}
             >
               <Select
                 placeholder="Select a Sro"
@@ -409,7 +407,6 @@ function LeadManagement() {
             <Form.Item
               name={'sRCId'}
               label="SRC"
-              rules={[{ required: true, message: "Please select a  Src" }]}
             >
               <Select
                 placeholder="Select a Src"
@@ -444,7 +441,7 @@ function LeadManagement() {
               rules={[{ required: true, message: "Please select a  School" }]}
             >
               <Select
-                placeholder="Select a branch"
+                placeholder="Select a school"
                 options={
                   !schoolloading && schooldata?.data.map((school: { _id: string; }) => ({
                     value: school._id,
@@ -453,10 +450,103 @@ function LeadManagement() {
                 }
               />
             </Form.Item>
-
           </div>
           <Form.Item>
             <Button htmlType='submit' type="primary" className='w-full'>Update</Button>
+          </Form.Item>
+        </Form>
+      </Modal>
+
+      <Modal
+        title="Register"
+        open={registerModal}
+        onCancel={handleCancelRegister}
+        footer={null}
+        width={1250}
+      >
+        <Form layout='vertical' onFinish={onRegister} form={registerForm}>
+          <div className="grid grid-flow-row grid-cols-3 gap-x-2">
+            <Form.Item name={'name'} label="Name" rules={[{ required: true, message: "Please enter name" }]}>
+              <Input placeholder='Name' />
+            </Form.Item>
+
+            <Form.Item
+              name={'schoolId'}
+              label="School"
+              rules={[{ required: true, message: "Please select School" }]}
+            >
+              <Select
+                placeholder="Select School"
+                options={
+                  !schoolloading && schooldata?.data.map((school: { _id: string; name?: string }) => ({
+                    value: school._id,
+                    label: school.name || school._id
+                  }))
+                }
+              />
+            </Form.Item>
+
+            <Form.Item name={'address'} label="Address" rules={[{ required: true, message: "Please enter address" }]}>
+              <Input placeholder='Address' />
+            </Form.Item>
+
+            <Form.Item name={'phone_number'} label="Phone Number" rules={[{ required: true, message: "Please enter Phone Number" }]}>
+              <Input placeholder='Phone Number' />
+            </Form.Item>
+
+            <Form.Item
+              name={'collegeId'}
+              label="College"
+              rules={[{ required: true, message: "Please select College" }]}
+            >
+              <Select
+                placeholder="Select College"
+                options={
+                  !collegeloading && collegedata?.data.map((college: { _id: string; name?: string }) => ({
+                    value: college._id,
+                    label: college.name || college._id
+                  }))
+                }
+              />
+            </Form.Item>
+
+            <Form.Item name={'course'} label="Course" rules={[{ required: true, message: "Please enter Course" }]}>
+              <Input placeholder='Enter Course' />
+            </Form.Item>
+
+            <Form.Item name={'total_fee'} label="Total Fee Amount" rules={[{ required: true, message: "Please enter Total Fee" }]}>
+              <Input placeholder='Total Fee Amount' />
+            </Form.Item>
+
+            <Form.Item name={'recived_amount'} label="Received Amount" rules={[{ required: true, message: "Please enter Received Amount" }]}>
+              <Input placeholder='Received Amount' />
+            </Form.Item>
+
+            <Form.Item
+              name="certificates"
+              label="Certificates"
+              rules={[{ required: true, message: "Please select at least one certificate" }]}
+            >
+              <Checkbox.Group>
+                <Checkbox value="SSLC">SSLC</Checkbox>
+                <Checkbox value="Plus Two">Plus Two</Checkbox>
+                <Checkbox value="TC">TC</Checkbox>
+                <Checkbox value="CC">CC</Checkbox>
+                <Checkbox value="Migration">Migration</Checkbox>
+                <Checkbox value="Photo">Photo</Checkbox>
+              </Checkbox.Group>
+            </Form.Item>
+
+            <Form.Item name={'comment'} label="Comment" rules={[{ required: true, message: "Please enter Comment" }]}>
+              <TextArea rows={2} placeholder="comment" />
+            </Form.Item>
+
+            <Form.Item name={'commission'} label="Commission" rules={[{ required: true, message: "Please enter Commission" }]}>
+              <Input placeholder='Commission' />
+            </Form.Item>
+          </div>
+          <Form.Item>
+            <Button htmlType='submit' type="primary" className='w-full'>Register</Button>
           </Form.Item>
         </Form>
       </Modal>
