@@ -29,6 +29,7 @@ import AgentAccount from './Pages/Accounts/AgentAccount.tsx'
 import CollegeAccount from './Pages/Accounts/CollegeAccount.tsx'
 import EmployeeAccount from './Pages/Accounts/EmployeeAccount.tsx'
 import LeadCallManagement from './Pages/Lead Management/LeadCallManagement.tsx'
+import Request from './Pages/Requests/Request.tsx'
 
 
 
@@ -132,6 +133,10 @@ const router = createBrowserRouter([
       {
         path: '/leadcallmanagement',
         element: <LeadCallManagement />
+      },
+      {
+        path: '/request',
+        element: <Request />
       },
     ]
   }

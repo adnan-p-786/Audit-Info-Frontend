@@ -15,115 +15,115 @@ interface DataType {
 }
 
 function BranchManagement() {
-   const columns: TableColumnsType<DataType> = [
-      {
-        title: 'Branch Name',
-        dataIndex: 'name',
-      },
-      {
-        title: 'Code',
-        dataIndex: 'code',
-      },
-      {
-        title: 'Status',
-        dataIndex: 'status',
-        render: (status: boolean) => (
-          <span style={{ color: status ? 'green' : 'red', fontWeight: 500 }}>
-            {status ? 'Registered' : 'Not Registered'}
-          </span>
-        )
-      },
-      {
-        title: 'Action',
-        render: (_, record: any) => (
-          <div className="flex gap-2">
-            <Button onClick={() => handleEdit(record)}>
-              <CiEdit />
-            </Button>
-            <Button danger onClick={() => handleDelete(record._id)}>
-              <MdDeleteOutline />
-            </Button>
-          </div>
-        )
-      }
-    ];
-  
-    const { data, isLoading, refetch } = useQuery('branch', getBranch)
-    const [addModal, setAddModal] = useState(false)
-    const [editModal, setEditModal] = useState(false)
-    const [editingRecord, setEditingRecord] = useState<DataType | null>(null)
-  
-    const { mutate: Create } = useCreateBranch()
-    const { mutate: Update } = useUpdateBranch()
-    const { mutate: Delete } = useDeleteBranch()
-  
-    const [form] = Form.useForm()
-    const [editForm] = Form.useForm()
-  
-    const onFinish = (value: any) => {
-      Create(value, {
-        onSuccess() {
-          message.success("Added successfully")
-          refetch()
-          setAddModal(false)
-          form.resetFields()
-        },
-        onError() {
-          message.error("Failed to add")
-        }
-      })
+  const columns: TableColumnsType<DataType> = [
+    {
+      title: 'Branch Name',
+      dataIndex: 'name',
+    },
+    {
+      title: 'Code',
+      dataIndex: 'code',
+    },
+    {
+      title: 'Status',
+      dataIndex: 'status',
+      render: (status: boolean) => (
+        <span style={{ color: status ? 'green' : 'red', fontWeight: 500 }}>
+          {status ? 'Registered' : 'Not Registered'}
+        </span>
+      )
+    },
+    {
+      title: 'Action',
+      render: (_, record: any) => (
+        <div className="flex gap-2">
+          <Button onClick={() => handleEdit(record)}>
+            <CiEdit />
+          </Button>
+          <Button danger onClick={() => handleDelete(record._id)}>
+            <MdDeleteOutline />
+          </Button>
+        </div>
+      )
     }
-  
-    const onUpdateFinish = (values: any) => {
-      if (!editingRecord) return;
-  
-      const updateData = {
-        ...values,
-        _id: editingRecord._id
-      };
-  
-      Update(updateData, {
-        onSuccess: () => {
-          message.success('Updated successfully');
-          refetch();
-          setEditModal(false);
-          setEditingRecord(null);
-          editForm.resetFields();
-        },
-        onError: () => {
-          message.error('Failed to update');
-        }
-      });
+  ];
+
+  const { data, isLoading, refetch } = useQuery('branch', getBranch)
+  const [addModal, setAddModal] = useState(false)
+  const [editModal, setEditModal] = useState(false)
+  const [editingRecord, setEditingRecord] = useState<DataType | null>(null)
+
+  const { mutate: Create } = useCreateBranch()
+  const { mutate: Update } = useUpdateBranch()
+  const { mutate: Delete } = useDeleteBranch()
+
+  const [form] = Form.useForm()
+  const [editForm] = Form.useForm()
+
+  const onFinish = (value: any) => {
+    Create(value, {
+      onSuccess() {
+        message.success("Added successfully")
+        refetch()
+        setAddModal(false)
+        form.resetFields()
+      },
+      onError() {
+        message.error("Failed to add")
+      }
+    })
+  }
+
+  const onUpdateFinish = (values: any) => {
+    if (!editingRecord) return;
+
+    const updateData = {
+      ...values,
+      _id: editingRecord._id
     };
-  
-    const handleEdit = (record: DataType) => {
-      setEditingRecord(record);
-      setEditModal(true);
-  
-      editForm.setFieldsValue({
-        name: record.name,
-        code: record.code,
-        status: record.status,
-      });
-    };
-  
-    const handleDelete = (_id: string) => {
-      Delete(_id, {
-        onSuccess: () => {
-          message.success('Deleted successfully');
-          refetch();
-        },
-        onError: () => {
-          message.error('Failed to delete');
-        }
-      });
-    };
-  
-    const handleCancelEdit = () => {
-      setEditModal(false);
-      setEditingRecord(null);
-      editForm.resetFields();
-    };
+
+    Update(updateData, {
+      onSuccess: () => {
+        message.success('Updated successfully');
+        refetch();
+        setEditModal(false);
+        setEditingRecord(null);
+        editForm.resetFields();
+      },
+      onError: () => {
+        message.error('Failed to update');
+      }
+    });
+  };
+
+  const handleEdit = (record: DataType) => {
+    setEditingRecord(record);
+    setEditModal(true);
+
+    editForm.setFieldsValue({
+      name: record.name,
+      code: record.code,
+      status: record.status,
+    });
+  };
+
+  const handleDelete = (_id: string) => {
+    Delete(_id, {
+      onSuccess: () => {
+        message.success('Deleted successfully');
+        refetch();
+      },
+      onError: () => {
+        message.error('Failed to delete');
+      }
+    });
+  };
+
+  const handleCancelEdit = () => {
+    setEditModal(false);
+    setEditingRecord(null);
+    editForm.resetFields();
+  };
 
   return (
     <div>

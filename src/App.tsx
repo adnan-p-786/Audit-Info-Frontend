@@ -136,6 +136,10 @@ function App() {
               </SubMenu>
             </SubMenu>
 
+            <Menu.Item key={'12'} icon={<FaUserSecret />}>
+              <Link to='/request'>Request</Link>
+            </Menu.Item>
+
           </Menu>
         </Sider>
         <Layout>
