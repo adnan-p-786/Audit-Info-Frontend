@@ -144,7 +144,7 @@ const Request = () => {
                 <div className="mt-4">
                     <Table
                         columns={registerdcolumns}
-                        dataSource={registerData}
+                        dataSource={registerData?.data}
                         loading={registerloading}
                         rowKey="_id"
                         bordered
