@@ -16,7 +16,6 @@ import { useDispatch } from 'react-redux';
 import { setLeadHistory } from '../../Redux/leadSlice';
 import { AiFillPhone } from 'react-icons/ai';
 import { RiAddBoxLine, RiSave3Line } from 'react-icons/ri';
-import { InboxOutlined } from '@ant-design/icons';
 import { useCreateRegister } from '../../Api/Registration Table/registerTableHooks';
 import TextArea from 'antd/es/input/TextArea';
 import { getCollegeManagement } from '../../Api/College Management/collegeMgmtApi';
