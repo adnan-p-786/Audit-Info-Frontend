@@ -9,6 +9,10 @@ export const postLead =(data:any)=>{
     return apiCLient.post('/api/lead/create',data)
 }
 
+export const uploadLeadExcel =(data:any)=>{
+    return apiCLient.post('/api/lead/uploadEXCEL',data)
+}
+
 export const putLead = (data: any) => {
   const { _id, ...rest } = data;
   return apiCLient.put(`/api/lead/update/${_id}`, rest);

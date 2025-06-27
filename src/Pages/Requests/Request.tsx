@@ -1,10 +1,9 @@
 import { useState } from 'react';
 import { useQuery } from 'react-query';
 import { getRegister } from '../../Api/Registration Table/registerTableApi';
-import { Button, Form, Input, message, Modal, Select, Table, type TableColumnsType, } from 'antd';
+import { Button, Form, Input, message, Modal, Select, Table, type TableColumnsType } from 'antd';
 import { useCreateAccount } from '../../Api/Account/AccountHooks';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
-
 
 const Request = () => {
     const [table, setTable] = useState("Registered");
@@ -12,25 +11,22 @@ const Request = () => {
 
     const { data: registerData, isLoading: registerloading } = useQuery('register', getRegister);
 
-    const [addModal, setAddModal] = useState(false)
-
+    const [addModal, setAddModal] = useState<any>(false);
     const { mutate: Collectpayment } = useCreateAccount();
-
-    const [form] = Form.useForm()
+    const [form] = Form.useForm();
 
     const onFinish = (value: any) => {
         Collectpayment(value, {
             onSuccess() {
-                message.success("Added successfully")
-                setAddModal(false)
-                form.resetFields()
+                message.success("Added successfully");
+                setAddModal(false);
+                form.resetFields();
             },
             onError() {
-                message.error("Failed to add")
+                message.error("Failed to add");
             }
-        })
-    }
-
+        });
+    };
 
     const registeredColumns: TableColumnsType<any> = [
         {
@@ -55,7 +51,13 @@ const Request = () => {
                 <div className="flex gap-2">
                     <Button
                         style={{ backgroundColor: '#F68B1F', color: 'white' }}
-                        onClick={() => setAddModal(record)}
+                        onClick={() => {
+                            setAddModal(record);
+                            form.setFieldsValue({
+                                recieved_amount: record.recived_amount,
+                                amount_type: undefined
+                            });
+                        }}
                     >
                         Collect Payment
                     </Button>
@@ -141,7 +143,6 @@ const Request = () => {
                 ) : null}
             </div>
 
-
             {table === "Registered" && (
                 <div className="mt-4">
                     <Table
@@ -156,8 +157,11 @@ const Request = () => {
             )}
 
             <Modal
-                open={addModal}
-                onCancel={() => setAddModal(false)}
+                open={!!addModal}
+                onCancel={() => {
+                    setAddModal(false);
+                    form.resetFields();
+                }}
                 footer={null}
                 width={400}
                 title={
@@ -170,15 +174,15 @@ const Request = () => {
                 <Form layout='vertical' onFinish={onFinish} form={form}>
                     <div className="flex gap-3">
                         <Form.Item
-                            name={'recieved_amount'}
+                            name="recieved_amount"
                             label="Received Amount"
                             rules={[{ required: true, message: "Please enter received amount" }]}
                             className="w-1/2"
                         >
-                            <Input placeholder='recieved amount' />
+                            <Input placeholder="Received amount" />
                         </Form.Item>
                         <Form.Item
-                            name={'amount_type'}
+                            name="amount_type"
                             label="Payment Type"
                             rules={[{ required: true, message: "Please select payment type" }]}
                             className="w-1/2"
@@ -190,14 +194,12 @@ const Request = () => {
                         </Form.Item>
                     </div>
                     <Form.Item>
-                        <Button htmlType='submit' type="primary" className='w-full'>Yes, Collected</Button>
+                        <Button htmlType='submit' type="primary" className="w-full">Yes, Collected</Button>
                     </Form.Item>
                 </Form>
             </Modal>
-
         </div>
     );
 };
-
 
 export default Request;

@@ -1,4 +1,4 @@
-import { Button, Checkbox, DatePicker, Divider, Form, Input, message, Modal, Select, Switch, Table, Upload, type TableColumnsType } from 'antd';
+import { Button, Checkbox, DatePicker, Divider, Form, Input, message, Modal, Select, Switch, Table, type TableColumnsType } from 'antd';
 import dayjs from 'dayjs';
 import { useState } from 'react';
 import { CiEdit } from 'react-icons/ci';
@@ -8,7 +8,7 @@ import { getBranch } from '../../Api/Branch/branchApi';
 import { getLead } from '../../Api/Lead/leadApi';
 import { getSrc } from '../../Api/SRC/SrcApi';
 import { getSro } from '../../Api/SRO/SroApi';
-import { useCreateLead, useDeleteLead, useUpdateLead } from '../../Api/Lead/leadHooks';
+import { useCreateLead, useDeleteLead, useUpdateLead, useUploadLead } from '../../Api/Lead/leadHooks';
 import { getSchoolmanagement } from '../../Api/School Management/schoolManagementApi';
 import { GrView } from 'react-icons/gr';
 import { Link, useNavigate } from 'react-router-dom';
@@ -41,7 +41,7 @@ interface DataType {
 function LeadManagement() {
   const dispatch = useDispatch()
   const navigate = useNavigate()
-  
+
   const columns: TableColumnsType<DataType> = [
     {
       title: 'Date',
@@ -105,6 +105,7 @@ function LeadManagement() {
   const { data: collegedata, isLoading: collegeloading } = useQuery('college', getCollegeManagement)
   const { data: schooldata, isLoading: schoolloading } = useQuery('school', getSchoolmanagement)
   const [addModal, setAddModal] = useState(false)
+  const [uploadModal, setUploadModal] = useState(false)
   const [editModal, setEditModal] = useState(false)
   const [registerModal, setRegisterModal] = useState(false)
   const [editingRecord, setEditingRecord] = useState<DataType | null>(null)
@@ -114,10 +115,12 @@ function LeadManagement() {
   const { mutate: Register } = useCreateRegister()
   const { mutate: Update } = useUpdateLead()
   const { mutate: Delete } = useDeleteLead()
+  const { mutate: Upload } = useUploadLead()
 
   const [form] = Form.useForm()
   const [editForm] = Form.useForm()
   const [registerForm] = Form.useForm()
+  const [uploadForm] = Form.useForm()
 
   const onRegister = (value: any) => {
     Register(value, {
@@ -152,6 +155,31 @@ function LeadManagement() {
       }
     })
   }
+
+  const onUpload = (values: any) => {
+    const { file } = values;
+
+    if (!file || !file.fileList || file.fileList.length === 0) {
+      message.error("Please select a file");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('file', file.fileList[0].originFileObj);
+
+    Upload(formData, {
+      onSuccess() {
+        message.success("Uploaded successfully");
+        refetch();
+        setUploadModal(false);
+        uploadForm.resetFields(); // Use uploadForm instead of form
+      },
+      onError() {
+        message.error("Failed to upload");
+      }
+    });
+  };
+
 
   const onUpdateFinish = (values: any) => {
     if (!editingRecord) return;
@@ -224,7 +252,9 @@ function LeadManagement() {
     <div>
       <Divider>Lead Management</Divider>
       <div className="w-full flex justify-end gap-3">
-        <Button type='primary'><RiAddBoxLine className='text-lg' />Upload Lead</Button>
+        <Button type='primary' onClick={() => setUploadModal(true)}>
+          <RiAddBoxLine className='text-lg' />Upload Lead
+        </Button>
         <Button type='primary' onClick={() => setAddModal(true)}><RiAddBoxLine className='text-lg' />Add New</Button>
       </div>
       <Table
@@ -237,7 +267,37 @@ function LeadManagement() {
         size="middle"
         rowKey="_id"
       />
-      
+
+      <Modal
+        title="Upload Lead"
+        open={uploadModal}
+        onCancel={() => setUploadModal(false)}
+        footer={null}
+        width={600}
+      >
+        <Form layout='vertical' onFinish={onUpload} form={uploadForm}>
+          <Form.Item
+            name="file"
+            label="Upload File"
+            rules={[{ required: true, message: "Please select a file to upload" }]}
+          >
+            {/* <Upload
+              beforeUpload={() => false}
+              accept=".csv,.xlsx,.xls"
+              maxCount={1}
+              listType="text"
+            >
+              <Button>Select File</Button>
+            </Upload> */}
+          </Form.Item>
+          <Form.Item>
+            <Button htmlType='submit' type="primary" className='w-full'>
+              Upload
+            </Button>
+          </Form.Item>
+        </Form>
+      </Modal>
+
       <Modal
         title="Add Lead"
         open={addModal}
