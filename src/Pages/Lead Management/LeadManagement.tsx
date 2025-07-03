@@ -116,6 +116,7 @@ function LeadManagement() {
   const { mutate: Update } = useUpdateLead()
   const { mutate: Delete } = useDeleteLead()
   const { mutate: Upload } = useUploadLead()
+  // const { mutate: Upload } = useUploadLead()
 
   const [form] = Form.useForm()
   const [editForm] = Form.useForm()
