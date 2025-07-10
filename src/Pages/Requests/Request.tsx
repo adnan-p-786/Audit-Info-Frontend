@@ -4,16 +4,22 @@ import { getRegister } from '../../Api/Registration Table/registerTableApi';
 import { Button, Form, Input, message, Modal, Select, Table, type TableColumnsType } from 'antd';
 import { useCreateAccount } from '../../Api/Account/AccountHooks';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
+import { useCreateRegister } from '../../Api/Registration Table/registerTableHooks';
 
 const Request = () => {
     const [table, setTable] = useState("Registered");
+    const [admissiontable, setAdmissionTable] = useState("Admission");
     const user = { position: "Admin", head_administractor: true };
 
     const { data: registerData, isLoading: registerloading } = useQuery('register', getRegister);
+    const { data: admissionData, isLoading: admissionloading } = useQuery('admission', getRegister);
 
     const [addModal, setAddModal] = useState<any>(false);
+    const [addAmountModal, setAddAmountModal] = useState<any>(false);
     const { mutate: Collectpayment } = useCreateAccount();
+    const { mutate: AddAmount } = useCreateRegister();
     const [form] = Form.useForm();
+    const [addamountform] = Form.useForm();
 
     const onFinish = (value: any) => {
         Collectpayment(value, {
@@ -21,6 +27,19 @@ const Request = () => {
                 message.success("Added successfully");
                 setAddModal(false);
                 form.resetFields();
+            },
+            onError() {
+                message.error("Failed to add");
+            }
+        });
+    };
+
+    const onAddamount = (value: any) => {
+        AddAmount(value, {
+            onSuccess() {
+                message.success("Added successfully");
+                setAddAmountModal(false);
+                addamountform.resetFields();
             },
             onError() {
                 message.error("Failed to add");
@@ -66,9 +85,57 @@ const Request = () => {
         },
     ];
 
+    const admissionColumns: TableColumnsType<any> = [
+        {
+            title: 'SI.NO',
+            dataIndex: '_id',
+        },
+        {
+            title: 'Student Name',
+            dataIndex: 'name',
+        },
+        {
+            title: 'College Name',
+            dataIndex: ['collegeId', 'college'],
+        },
+         {
+            title: 'Course Name',
+            dataIndex: 'course',
+        },
+        {
+            title: 'Full Amount',
+            dataIndex: 'total_fee',
+        },
+        {
+            title: 'Received Amount',
+            dataIndex: 'recived_amount',
+        },
+        {
+            title: 'Action',
+            render: (_, record: any) => (
+                <div className="flex gap-2">
+                    <Button
+                        style={{ backgroundColor: '#F68B1F', color: 'white' }}
+                        onClick={() => {
+                            setAddAmountModal(record);
+                            addamountform.setFieldsValue({
+                                recieved_amount: record.recived_amount,
+                                amount_type: undefined
+                            });
+                        }}
+                    >
+                        Add Amount
+                    </Button>
+                </div>
+            ),
+        },
+    ];
+
     return (
         <div className="w-full py-[10px] px-[5px]">
             <div className="w-full flex space-x-2 flex-wrap">
+
+
                 {((user && user.position === "Admin") || user.position === "Administrator") && user.head_administractor && (
                     <button
                         onClick={() => setTable("Admission")}
@@ -77,6 +144,8 @@ const Request = () => {
                         Admission
                     </button>
                 )}
+
+
 
                 {(user && user.position === "Admin") || user.position === "Accountant" ? (
                     <button
@@ -87,6 +156,8 @@ const Request = () => {
                     </button>
                 ) : null}
 
+
+
                 {(user && user.position === "Admin") || user.position === "Administrator" ? (
                     <button
                         onClick={() => setTable("CollectPayments")}
@@ -95,6 +166,8 @@ const Request = () => {
                         Bookings
                     </button>
                 ) : null}
+
+
 
                 {(user && user.position === "Admin") || user.position === "Accountant" ? (
                     <>
@@ -155,6 +228,59 @@ const Request = () => {
                     />
                 </div>
             )}
+
+            {table === "Admission" && (
+                <div className="mt-4">
+                    <Table
+                        columns={admissionColumns}
+                        dataSource={admissionData?.data}
+                        loading={admissionloading}
+                        rowKey="_id"
+                        bordered
+                        pagination={{ pageSize: 10 }}
+                    />
+                </div>
+            )}
+
+            <Modal
+                open={!!addAmountModal}
+                onCancel={() => {
+                    setAddAmountModal(false);
+                    form.resetFields();
+                }}
+                footer={null}
+                width={400}
+                title={
+                    <div className="text-center">
+                        <ExclamationCircleOutlined style={{ fontSize: '70px', color: '#F68B1F' }} />
+                        <div className="mt-3 text-xl font-bold">Are you sure, This process cannot be undo</div>
+                    </div>
+                }
+            >
+                <Form layout='vertical' onFinish={onAddamount} form={addamountform}>
+                    <div>
+                        <Form.Item
+                            name="recieved_amount"
+                            label="Received Amount"
+                            rules={[{ required: true, message: "Please enter received amount" }]}
+                            className="w-full"
+                        >
+                            <Input placeholder="Received amount" />
+                        </Form.Item>
+                        <Form.Item
+                            name="service_charge"
+                            label="Service Charge:"
+                            rules={[{ required: true }]}
+                            className="w-full"
+                        >
+                            <input className='px-2 border-gray-200 border-2 rounded-md' placeholder='enter amount'/>
+                        </Form.Item>
+                    </div>
+                    <Form.Item>
+                        <Button htmlType='submit' type="primary" className="w-full">Submit</Button>
+                    </Form.Item>
+                </Form>
+            </Modal>
 
             <Modal
                 open={!!addModal}
