@@ -98,7 +98,7 @@ const Request = () => {
             title: 'College Name',
             dataIndex: ['collegeId', 'college'],
         },
-         {
+        {
             title: 'Course Name',
             dataIndex: 'course',
         },
@@ -259,23 +259,26 @@ const Request = () => {
             >
                 <Form layout='vertical' onFinish={onAddamount} form={addamountform}>
                     <div>
-                        <Form.Item
-                            name="recieved_amount"
-                            label="Received Amount"
-                            rules={[{ required: true, message: "Please enter received amount" }]}
-                            className="w-full"
-                        >
-                            <Input placeholder="Received amount" />
-                        </Form.Item>
-                        <Form.Item
-                            name="service_charge"
-                            label="Service Charge:"
-                            rules={[{ required: true }]}
-                            className="w-full"
-                        >
-                            <input className='px-2 border-gray-200 border-2 rounded-md' placeholder='enter amount'/>
-                        </Form.Item>
+                        <div className="mb-4 flex items-center justify-center">
+                            <label className="block text-gray-700 font-medium">Received Amount :</label>
+                            {addAmountModal && (
+                                <p className="px-2">{addAmountModal.recived_amount}</p>
+                            )}
+                        </div>
+
+                        <div className="flex items-center justify-center">
+                            <div className="w-full"> 
+                                <Form.Item
+                                    name="service_charge"
+                                    label="Service Charge :"
+                                    rules={[{ required: true, message: 'Please enter service charge' }]}
+                                >
+                                    <Input placeholder="Enter amount" />
+                                </Form.Item>
+                            </div>
+                        </div>
                     </div>
+
                     <Form.Item>
                         <Button htmlType='submit' type="primary" className="w-full">Submit</Button>
                     </Form.Item>
