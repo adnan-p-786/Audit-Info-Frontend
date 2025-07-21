@@ -4,7 +4,7 @@ import { getRegister } from '../../Api/Registration Table/registerTableApi';
 import { Button, Form, Input, message, Modal, Select, Table, type TableColumnsType } from 'antd';
 import { useCreateAccount } from '../../Api/Account/AccountHooks';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
-import { useCreateRegister } from '../../Api/Registration Table/registerTableHooks';
+import { useCreateRegister, useCreateservice } from '../../Api/Registration Table/registerTableHooks';
 
 const Request = () => {
     const [table, setTable] = useState("Registered");
@@ -17,7 +17,7 @@ const Request = () => {
     const [addModal, setAddModal] = useState<any>(false);
     const [addAmountModal, setAddAmountModal] = useState<any>(false);
     const { mutate: Collectpayment } = useCreateAccount();
-    const { mutate: AddAmount } = useCreateRegister();
+    const { mutate: AddAmount } = useCreateservice();
     const [form] = Form.useForm();
     const [addamountform] = Form.useForm();
 
