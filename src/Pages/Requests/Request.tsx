@@ -4,15 +4,15 @@ import { getRegister } from '../../Api/Registration Table/registerTableApi';
 import { Button, Form, Input, message, Modal, Select, Table, type TableColumnsType } from 'antd';
 import { useCreateAccount } from '../../Api/Account/AccountHooks';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
-import { useCreateRegister, useCreateservice } from '../../Api/Registration Table/registerTableHooks';
+import { useCreateservice } from '../../Api/Registration Table/registerTableHooks';
 
 const Request = () => {
     const [table, setTable] = useState("Registered");
-    const [admissiontable, setAdmissionTable] = useState("Admission");
     const user = { position: "Admin", head_administractor: true };
 
     const { data: registerData, isLoading: registerloading } = useQuery('register', getRegister);
     const { data: admissionData, isLoading: admissionloading } = useQuery('admission', getRegister);
+    const { data: bookingData, isLoading: bookingloading } = useQuery('booking', getRegister);
 
     const [addModal, setAddModal] = useState<any>(false);
     const [addAmountModal, setAddAmountModal] = useState<any>(false);
@@ -131,6 +131,52 @@ const Request = () => {
         },
     ];
 
+    const bookingColumns: TableColumnsType<any> = [
+        {
+            title: 'SI.NO',
+            dataIndex: '_id',
+        },
+        {
+            title: 'Student Name',
+            dataIndex: 'name',
+        },
+         {
+            title: 'College Name',
+            dataIndex: ['collegeId', 'college'],
+        },
+         {
+            title: 'Course Name',
+            dataIndex: 'course',
+        },
+        {
+            title: 'Full Amount',
+            dataIndex: 'total_fee',
+        },
+        {
+            title: 'Booking Amount',
+            dataIndex: 'booking_amount',
+        },
+        // {
+        //     title: 'Action',
+        //     render: (_, record: any) => (
+        //         <div className="flex gap-2">
+        //             <Button
+        //                 style={{ backgroundColor: '#F68B1F', color: 'white' }}
+        //                 onClick={() => {
+        //                     setAddModal(record);
+        //                     form.setFieldsValue({
+        //                         recieved_amount: record.recived_amount,
+        //                         amount_type: undefined
+        //                     });
+        //                 }}
+        //             >
+        //                 Collect Payment
+        //             </Button>
+        //         </div>
+        //     ),
+        // },
+    ];
+
     return (
         <div className="w-full py-[10px] px-[5px]">
             <div className="w-full flex space-x-2 flex-wrap">
@@ -160,8 +206,8 @@ const Request = () => {
 
                 {(user && user.position === "Admin") || user.position === "Administrator" ? (
                     <button
-                        onClick={() => setTable("CollectPayments")}
-                        className={`${table === "CollectPayments" ? "bg-[#F68B1F]" : "bg-[#414042]"} text-white py-[5px] px-[10px] rounded-md hover:bg-[#F68B1F] transition-colors`}
+                        onClick={() => setTable("Booking")}
+                        className={`${table === "Booking" ? "bg-[#F68B1F]" : "bg-[#414042]"} text-white py-[5px] px-[10px] rounded-md hover:bg-[#F68B1F] transition-colors`}
                     >
                         Bookings
                     </button>
@@ -172,8 +218,8 @@ const Request = () => {
                 {(user && user.position === "Admin") || user.position === "Accountant" ? (
                     <>
                         <button
-                            onClick={() => setTable("Booking")}
-                            className={`${table === "Booking" ? "bg-[#F68B1F]" : "bg-[#414042]"} text-white py-[5px] px-[10px] rounded-md hover:bg-[#F68B1F] transition-colors`}
+                            onClick={() => setTable("Bookingconfirmation")}
+                            className={`${table === "Bookingconfirmation" ? "bg-[#F68B1F]" : "bg-[#414042]"} text-white py-[5px] px-[10px] rounded-md hover:bg-[#F68B1F] transition-colors`}
                         >
                             Booking Confirmation
                         </button>
@@ -235,6 +281,19 @@ const Request = () => {
                         columns={admissionColumns}
                         dataSource={admissionData?.data}
                         loading={admissionloading}
+                        rowKey="_id"
+                        bordered
+                        pagination={{ pageSize: 10 }}
+                    />
+                </div>
+            )}
+
+            {table === "Booking" && (
+                <div className="mt-4">
+                    <Table
+                        columns={bookingColumns}
+                        dataSource={bookingData?.data}
+                        loading={bookingloading}
                         rowKey="_id"
                         bordered
                         pagination={{ pageSize: 10 }}
