@@ -16,10 +16,13 @@ const Request = () => {
 
     const [addModal, setAddModal] = useState<any>(false);
     const [addAmountModal, setAddAmountModal] = useState<any>(false);
+    const [bookingModal, setbookingModal] = useState<any>(false);
     const { mutate: Collectpayment } = useCreateAccount();
     const { mutate: AddAmount } = useCreateservice();
+    const { mutate: booking } = useCreateAccount();
     const [form] = Form.useForm();
     const [addamountform] = Form.useForm();
+    const [bookingform] = Form.useForm();
 
     const onFinish = (value: any) => {
         Collectpayment(value, {
@@ -27,6 +30,19 @@ const Request = () => {
                 message.success("Added successfully");
                 setAddModal(false);
                 form.resetFields();
+            },
+            onError() {
+                message.error("Failed to add");
+            }
+        });
+    };
+
+    const onBooking = (value: any) => {
+        booking(value, {
+            onSuccess() {
+                message.success("Added successfully");
+                setbookingModal(false);
+                bookingform.resetFields();
             },
             onError() {
                 message.error("Failed to add");
@@ -156,25 +172,21 @@ const Request = () => {
             title: 'Booking Amount',
             dataIndex: 'booking_amount',
         },
-        // {
-        //     title: 'Action',
-        //     render: (_, record: any) => (
-        //         <div className="flex gap-2">
-        //             <Button
-        //                 style={{ backgroundColor: '#F68B1F', color: 'white' }}
-        //                 onClick={() => {
-        //                     setAddModal(record);
-        //                     form.setFieldsValue({
-        //                         recieved_amount: record.recived_amount,
-        //                         amount_type: undefined
-        //                     });
-        //                 }}
-        //             >
-        //                 Collect Payment
-        //             </Button>
-        //         </div>
-        //     ),
-        // },
+        {
+            title: 'Action',
+            render: (_, record: any) => (
+                <div className="flex gap-2">
+                    <Button
+                        style={{ backgroundColor: '#F68B1F', color: 'white' }}
+                        onClick={() => {
+                            setbookingModal(record);
+                        }}
+                    >
+                        Send amount
+                    </Button>
+                </div>
+            ),
+        },
     ];
 
     return (
@@ -369,6 +381,35 @@ const Request = () => {
                         >
                             <Input placeholder="Received amount" />
                         </Form.Item>
+                        <Form.Item
+                            name="amount_type"
+                            label="Payment Type"
+                            rules={[{ required: true, message: "Please select payment type" }]}
+                            className="w-1/2"
+                        >
+                            <Select placeholder="Select payment type">
+                                <Select.Option value="cash">Cash</Select.Option>
+                                <Select.Option value="online">Bank</Select.Option>
+                            </Select>
+                        </Form.Item>
+                    </div>
+                    <Form.Item>
+                        <Button htmlType='submit' type="primary" className="w-full">Yes, Collected</Button>
+                    </Form.Item>
+                </Form>
+            </Modal>
+
+            <Modal
+                open={!!bookingModal}
+                onCancel={() => {
+                    setbookingModal(false);
+                    bookingform.resetFields();
+                }}
+                footer={null}
+                width={400}
+            >
+                <Form layout='vertical' onFinish={onBooking} form={bookingform}>
+                    <div className="flex gap-3">
                         <Form.Item
                             name="amount_type"
                             label="Payment Type"
