@@ -9,6 +9,10 @@ export const postAccount =(data:any)=>{
     return apiCLient.post('/api/account/create',data)
 }
 
+export const postBookingamount =(data:any)=>{
+    return apiCLient.post('/api/account/booking',data)
+}
+
 export const putAccount = (data: any) => {
   const { _id, ...rest } = data;
   return apiCLient.put(`/api/account/update/${_id}`, rest);

@@ -2,9 +2,10 @@ import { useState } from 'react';
 import { useQuery } from 'react-query';
 import { getRegister } from '../../Api/Registration Table/registerTableApi';
 import { Button, Form, Input, message, Modal, Select, Table, type TableColumnsType } from 'antd';
-import { useCreateAccount } from '../../Api/Account/AccountHooks';
+import { useCreateAccount, useCreateBookingAmount } from '../../Api/Account/AccountHooks';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { useCreateservice } from '../../Api/Registration Table/registerTableHooks';
+import { getParticular } from '../../Api/Particular/particularApi';
 
 const Request = () => {
     const [table, setTable] = useState("Registered");
@@ -13,13 +14,14 @@ const Request = () => {
     const { data: registerData, isLoading: registerloading } = useQuery('register', getRegister);
     const { data: admissionData, isLoading: admissionloading } = useQuery('admission', getRegister);
     const { data: bookingData, isLoading: bookingloading } = useQuery('booking', getRegister);
+    const { data: particularData, isLoading: particularloading } = useQuery('particular', getParticular);
 
     const [addModal, setAddModal] = useState<any>(false);
     const [addAmountModal, setAddAmountModal] = useState<any>(false);
     const [bookingModal, setbookingModal] = useState<any>(false);
     const { mutate: Collectpayment } = useCreateAccount();
     const { mutate: AddAmount } = useCreateservice();
-    const { mutate: booking } = useCreateAccount();
+    const { mutate: booking } = useCreateBookingAmount();
     const [form] = Form.useForm();
     const [addamountform] = Form.useForm();
     const [bookingform] = Form.useForm();
@@ -156,11 +158,11 @@ const Request = () => {
             title: 'Student Name',
             dataIndex: 'name',
         },
-         {
+        {
             title: 'College Name',
             dataIndex: ['collegeId', 'college'],
         },
-         {
+        {
             title: 'Course Name',
             dataIndex: 'course',
         },
@@ -338,7 +340,7 @@ const Request = () => {
                         </div>
 
                         <div className="flex items-center justify-center">
-                            <div className="w-full"> 
+                            <div className="w-full">
                                 <Form.Item
                                     name="service_charge"
                                     label="Service Charge :"
@@ -409,17 +411,37 @@ const Request = () => {
                 width={400}
             >
                 <Form layout='vertical' onFinish={onBooking} form={bookingform}>
-                    <div className="flex gap-3">
+                    <div className="">
+                        <h1 className='text-xl my-3 font-semibold'>Sending Amount</h1>
+                        <Form.Item name={'debit'} label="Amount" rules={[{ required: true, message: "Please enter amount" }]}>
+                            <Input placeholder='amount' />
+                        </Form.Item>
+
                         <Form.Item
                             name="amount_type"
-                            label="Payment Type"
-                            rules={[{ required: true, message: "Please select payment type" }]}
-                            className="w-1/2"
+                            label="Amount Type"
+                            rules={[{ required: true, message: "Please select amount type" }]}
                         >
-                            <Select placeholder="Select payment type">
-                                <Select.Option value="cash">Cash</Select.Option>
-                                <Select.Option value="online">Bank</Select.Option>
+                            <Select placeholder="select amount type">
+                                <Select.Option value="Debit">Debit</Select.Option>
+                                <Select.Option value="Credit">Credit</Select.Option>
                             </Select>
+                        </Form.Item>
+
+                        <Form.Item
+                            name={'particularId'}
+                            label="Particular"
+                            rules={[{ required: true, message: "Please select a  particular" }]}
+                        >
+                            <Select
+                                placeholder="Select particular"
+                                options={
+                                    !particularloading && particularData?.data.map((particular: { _id: string; }) => ({
+                                        value: particular._id,
+                                        label: particular._id
+                                    }))
+                                }
+                            />
                         </Form.Item>
                     </div>
                     <Form.Item>
