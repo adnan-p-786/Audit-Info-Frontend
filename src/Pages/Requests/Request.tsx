@@ -14,17 +14,20 @@ const Request = () => {
     const { data: registerData, isLoading: registerloading } = useQuery('register', getRegister);
     const { data: admissionData, isLoading: admissionloading } = useQuery('admission', getRegister);
     const { data: bookingData, isLoading: bookingloading } = useQuery('booking', getRegister);
+    const { data: bookingconfirmationData, isLoading: bookingconfirmationloading } = useQuery('bookingconfirmation', getRegister);
     const { data: particularData, isLoading: particularloading } = useQuery('particular', getParticular);
 
     const [addModal, setAddModal] = useState<any>(false);
     const [addAmountModal, setAddAmountModal] = useState<any>(false);
     const [bookingModal, setbookingModal] = useState<any>(false);
+    const [bookingconfirmationModal, setbookingconfirmationModal] = useState<any>(false);
     const { mutate: Collectpayment } = useCreateAccount();
     const { mutate: AddAmount } = useCreateservice();
     const { mutate: booking } = useCreateBookingAmount();
     const [form] = Form.useForm();
     const [addamountform] = Form.useForm();
     const [bookingform] = Form.useForm();
+    const [bookingconfirmationform] = Form.useForm();
 
     const onFinish = (value: any) => {
         Collectpayment(value, {
@@ -191,6 +194,48 @@ const Request = () => {
         },
     ];
 
+    const bookingConfirmationColumns: TableColumnsType<any> = [
+        {
+            title: 'SI.NO',
+            dataIndex: '_id',
+        },
+        {
+            title: 'Student Name',
+            dataIndex: 'name',
+        },
+        {
+            title: 'College Name',
+            dataIndex: ['collegeId', 'college'],
+        },
+        {
+            title: 'Course Name',
+            dataIndex: 'course',
+        },
+        {
+            title: 'Full Amount',
+            dataIndex: 'total_fee',
+        },
+        {
+            title: 'Booking Amount',
+            dataIndex: 'booking_amount',
+        },
+        {
+            title: 'Action',
+            render: (_, record: any) => (
+                <div className="flex gap-2">
+                    <Button
+                        style={{ backgroundColor: '#F68B1F', color: 'white' }}
+                        onClick={() => {
+                            setbookingconfirmationModal(record);
+                        }}
+                    >
+                        Send amount
+                    </Button>
+                </div>
+            ),
+        },
+    ];
+
     return (
         <div className="w-full py-[10px] px-[5px]">
             <div className="w-full flex space-x-2 flex-wrap">
@@ -308,6 +353,19 @@ const Request = () => {
                         columns={bookingColumns}
                         dataSource={bookingData?.data}
                         loading={bookingloading}
+                        rowKey="_id"
+                        bordered
+                        pagination={{ pageSize: 10 }}
+                    />
+                </div>
+            )}
+
+            {table === "Bookingconfirmation" && (
+                <div className="mt-4">
+                    <Table
+                        columns={bookingConfirmationColumns}
+                        dataSource={bookingconfirmationData?.data}
+                        loading={bookingconfirmationloading}
                         rowKey="_id"
                         bordered
                         pagination={{ pageSize: 10 }}
@@ -447,6 +505,33 @@ const Request = () => {
                     <Form.Item>
                         <Button htmlType='submit' type="primary" className="w-full">Yes, Collected</Button>
                     </Form.Item>
+                </Form>
+            </Modal>
+
+            <Modal
+                open={!!bookingconfirmationModal}
+                onCancel={() => {
+                    setbookingconfirmationModal(false);
+                    bookingconfirmationform.resetFields();
+                }}
+                footer={null}
+                width={450}
+                title={
+                    <div className="text-center">
+                        <ExclamationCircleOutlined style={{ fontSize: '70px', color: '#F68B1F', marginTop:25 }} />
+                        <div className="mt-5 text-3xl font-semibold">Booking Confirmation?</div>
+                    </div>
+                }
+            >
+                <Form layout='vertical' className='flex w-full justify-center items-center' onFinish={onBooking} form={bookingconfirmationform}>
+                    <div>
+                        <h1 className='text-[15px] text-center w-full my-4'>This action cannot be undo</h1>
+                        <Form.Item>
+                            <Button htmlType='submit' type="primary" className='mx-2'>Yes, Confirmed</Button>
+                            <Button htmlType='submit' type="primary" className='mx-2'>cancel</Button>
+                        </Form.Item>
+                    </div>
+
                 </Form>
             </Modal>
         </div>
