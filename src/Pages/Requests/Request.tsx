@@ -229,7 +229,7 @@ const Request = () => {
                             setbookingconfirmationModal(record);
                         }}
                     >
-                        Send amount
+                        Confirm Booking
                     </Button>
                 </div>
             ),
