@@ -6,6 +6,7 @@ import { useCreateAccount, useCreateBookingAmount } from '../../Api/Account/Acco
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { useCreateservice } from '../../Api/Registration Table/registerTableHooks';
 import { getParticular } from '../../Api/Particular/particularApi';
+import { getAccount } from '../../Api/Account/AccountApi';
 
 const Request = () => {
     const [table, setTable] = useState("Registered");
@@ -16,6 +17,7 @@ const Request = () => {
     const { data: bookingData, isLoading: bookingloading } = useQuery('booking', getRegister);
     const { data: bookingconfirmationData, isLoading: bookingconfirmationloading } = useQuery('bookingconfirmation', getRegister);
     const { data: particularData, isLoading: particularloading } = useQuery('particular', getParticular);
+    const { data: registerIDData, isLoading: registerIDIdloading } = useQuery('registerid', getAccount);
 
     const [addModal, setAddModal] = useState<any>(false);
     const [addAmountModal, setAddAmountModal] = useState<any>(false);
@@ -497,6 +499,22 @@ const Request = () => {
                                     !particularloading && particularData?.data.map((particular: { _id: string; }) => ({
                                         value: particular._id,
                                         label: particular._id
+                                    }))
+                                }
+                            />
+                        </Form.Item>
+
+                        <Form.Item
+                            name={'registerId'}
+                            label="Registration ID"
+                            rules={[{ required: true, message: "Please select a  RegisterId" }]}
+                        >
+                            <Select
+                                placeholder="Select register"
+                                options={
+                                    !registerIDIdloading && registerIDData?.data.map((register: { _id: string; }) => ({
+                                        value: register._id,
+                                        label: register._id
                                     }))
                                 }
                             />
