@@ -9,10 +9,11 @@ import SubMenu from 'antd/es/menu/SubMenu';
 import { IoSettingsOutline } from 'react-icons/io5';
 import { useState } from 'react';
 import { MdAccountCircle } from 'react-icons/md';
-import { FaArrowRight, FaUsers, FaUsersCog, FaUserSecret, FaUserTie } from 'react-icons/fa';
+import { FaArrowRight, FaBell, FaUsers, FaUsersCog, FaUserSecret, FaUserTie } from 'react-icons/fa';
 import { FaBuildingUser } from 'react-icons/fa6';
 import { TbReportAnalytics } from 'react-icons/tb';
 import { PiStudent } from 'react-icons/pi';
+import { SiContactlesspayment } from 'react-icons/si';
 
 
 function App() {
@@ -137,8 +138,17 @@ function App() {
             </SubMenu>
 
             <Menu.Item key={'12'} icon={<FaUserSecret />}>
+              <Link to='/expense'>Expense</Link>
+            </Menu.Item>
+
+            <Menu.Item key={'13'} icon={<SiContactlesspayment />}>
+              <Link to='/payment'>Payment</Link>
+            </Menu.Item>
+
+            <Menu.Item key={'14'} icon={<FaBell />}>
               <Link to='/request'>Request</Link>
             </Menu.Item>
+
 
           </Menu>
         </Sider>

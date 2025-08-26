@@ -30,6 +30,8 @@ import CollegeAccount from './Pages/Accounts/CollegeAccount.tsx'
 import EmployeeAccount from './Pages/Accounts/EmployeeAccount.tsx'
 import LeadCallManagement from './Pages/Lead Management/LeadCallManagement.tsx'
 import Request from './Pages/Requests/Request.tsx'
+import Expense from './Pages/Expense/Expense.tsx'
+import Payment from './Pages/Payment/Payment.tsx'
 
 
 
@@ -137,6 +139,14 @@ const router = createBrowserRouter([
       {
         path: '/request',
         element: <Request />
+      },
+      {
+        path: '/payment',
+        element: <Payment />
+      },
+      {
+        path: '/expense',
+        element: <Expense />
       },
     ]
   }
