@@ -18,6 +18,10 @@ function Expense() {
           dataIndex: ['particularId', '_id'],
         },
         {
+          title: 'Comment',
+          dataIndex: 'comment',
+        },
+        {
           title: 'Amount',
           dataIndex: 'amount',
         },
