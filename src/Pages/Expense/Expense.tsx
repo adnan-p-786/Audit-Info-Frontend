@@ -79,13 +79,13 @@ function Expense() {
 
 
 
-const filteredData = useMemo(()=>{
-  let filtered = data?.data;
-  if(selectedBranch){
-    filtered = filtered?.filter((expense: any) => expense.branchId?._id === selectedBranch || expense.branchId === selectedBranch)
-  }
-  return filtered;
-},[selectedBranch])
+  const filteredData = useMemo(() => {
+    let filtered = data?.data;
+    if (selectedBranch) {
+      filtered = filtered?.filter((expense: any) => expense.branchId?._id === selectedBranch || expense.branchId === selectedBranch)
+    }
+    return filtered;
+  }, [selectedBranch])
 
   return (
     <div>
@@ -94,22 +94,22 @@ const filteredData = useMemo(()=>{
       <div className="w-full flex justify-end p-4">
 
         <div className='px-4'>
-        <Select
-          placeholder="Filter by Branch"
-          allowClear
-          style={{ width: 200 }}
-          value={selectedBranch || undefined}
-          onChange={(value) => setSelectedBranch(value)}
-          options={
-            branchdata?.data.map((branch: { _id: string; name: string }) => ({
-              value: branch._id,
-              label: branch.name,
-            }))
-          }
-          loading={branchloading}
-        />
+          <Select
+            placeholder="Filter by Branch"
+            allowClear
+            style={{ width: 200 }}
+            value={selectedBranch || undefined}
+            onChange={(value) => setSelectedBranch(value)}
+            options={
+              branchdata?.data.map((branch: { _id: string; name: string }) => ({
+                value: branch._id,
+                label: branch.name,
+              }))
+            }
+            loading={branchloading}
+          />
 
-      </div>
+        </div>
         <Button type='primary' onClick={() => setAddModal(true)}>Add</Button>
       </div>
 
@@ -150,9 +150,9 @@ const filteredData = useMemo(()=>{
               <Select
                 placeholder="Select a Particular"
                 options={
-                  !particularloading && particulardata?.data.map((particular: { name: string; }) => ({
-                    value: particular.name,
-                    label: particular.name
+                  !particularloading && particulardata?.data.map((particular: { _id: string; }) => ({
+                    value: particular._id,
+                    label: particular._id
                   }))
                 }
               />
@@ -166,9 +166,9 @@ const filteredData = useMemo(()=>{
               <Select
                 placeholder="Select a branch"
                 options={
-                  !branchloading && branchdata?.data.map((branch: { name: string; }) => ({
-                    value: branch.name,
-                    label: branch.name
+                  !branchloading && branchdata?.data.map((branch: { _id: string; }) => ({
+                    value: branch._id,
+                    label: branch._id
                   }))
                 }
               />

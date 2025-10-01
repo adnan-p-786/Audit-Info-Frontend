@@ -332,6 +332,7 @@ const Request = () => {
                         rowKey="_id"
                         bordered
                         pagination={{ pageSize: 10 }}
+                        scroll={{ y: 330 }}
                     />
                 </div>
             )}
@@ -343,6 +344,7 @@ const Request = () => {
                         dataSource={admissionData?.data}
                         loading={admissionloading}
                         rowKey="_id"
+                        scroll={{ y: 330 }}
                         bordered
                         pagination={{ pageSize: 10 }}
                     />
@@ -358,6 +360,7 @@ const Request = () => {
                         rowKey="_id"
                         bordered
                         pagination={{ pageSize: 10 }}
+                        scroll={{ y: 330 }}
                     />
                 </div>
             )}
@@ -371,6 +374,7 @@ const Request = () => {
                         rowKey="_id"
                         bordered
                         pagination={{ pageSize: 10 }}
+                        scroll={{ y: 330 }}
                     />
                 </div>
             )}
@@ -536,7 +540,7 @@ const Request = () => {
                 width={450}
                 title={
                     <div className="text-center">
-                        <ExclamationCircleOutlined style={{ fontSize: '70px', color: '#F68B1F', marginTop:25 }} />
+                        <ExclamationCircleOutlined style={{ fontSize: '70px', color: '#F68B1F', marginTop: 25 }} />
                         <div className="mt-5 text-3xl font-semibold">Booking Confirmation?</div>
                     </div>
                 }
