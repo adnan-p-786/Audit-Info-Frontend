@@ -7,7 +7,7 @@ export const useCreateRegister = () => {
 }
 
 export const useCreateservice = () => {
-    return useMutation((data: any) => postService(data))
+    return useMutation((data: {id:string,data:any}) => postService(data))
 }
 
 export const useUpdateRegister = () => {

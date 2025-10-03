@@ -57,8 +57,26 @@ const Request = () => {
         });
     };
 
+    // const onAddamount = (value: any) => {
+    //     AddAmount(value, {
+    //         onSuccess() {
+    //             message.success("Added successfully");
+    //             setAddAmountModal(false);
+    //             addamountform.resetFields();
+    //         },
+    //         onError() {
+    //             message.error("Failed to add");
+    //         }
+    //     });
+    // };
+
     const onAddamount = (value: any) => {
-        AddAmount(value, {
+    AddAmount(
+        {
+            id: addAmountModal._id,
+            data: value              
+        },
+        {
             onSuccess() {
                 message.success("Added successfully");
                 setAddAmountModal(false);
@@ -67,8 +85,10 @@ const Request = () => {
             onError() {
                 message.error("Failed to add");
             }
-        });
-    };
+        }
+    );
+};
+
 
     const registeredColumns: TableColumnsType<any> = [
         {

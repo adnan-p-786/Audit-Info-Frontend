@@ -5,8 +5,8 @@ export const getRegister = ()=>{
     return apiCLient.get('/api/registrationtable/get')
 }
 
-export const postService =(data:any)=>{
-    return apiCLient.post('/api/registrationtable/create-service',data)    
+export const postService = (data:{id: string, data: any}) => {
+  return apiCLient.post(`/api/registrationtable/create-service/${data.id}`, data.data)
 }
 
 export const postRegister =(data:any)=>{
