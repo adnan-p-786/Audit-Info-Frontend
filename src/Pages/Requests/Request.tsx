@@ -6,7 +6,9 @@ import { useCreateAccount, useCreateBookingAmount } from '../../Api/Account/Acco
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { useCreateservice } from '../../Api/Registration Table/registerTableHooks';
 import { getParticular } from '../../Api/Particular/particularApi';
-import { getAccount } from '../../Api/Account/AccountApi';
+
+
+
 
 const Request = () => {
     const [table, setTable] = useState("Registered");
@@ -17,8 +19,6 @@ const Request = () => {
     const { data: bookingData, isLoading: bookingloading } = useQuery('booking', getRegister);
     const { data: bookingconfirmationData, isLoading: bookingconfirmationloading } = useQuery('bookingconfirmation', getRegister);
     const { data: particularData, isLoading: particularloading } = useQuery('particular', getParticular);
-    const { data: registerIDData, isLoading: registerIDIdloading } = useQuery('registerid', getAccount);
-
     const [addModal, setAddModal] = useState<any>(false);
     const [addAmountModal, setAddAmountModal] = useState<any>(false);
     const [bookingModal, setbookingModal] = useState<any>(false);
@@ -31,8 +31,18 @@ const Request = () => {
     const [bookingform] = Form.useForm();
     const [bookingconfirmationform] = Form.useForm();
 
+    const registeredFiltered = registerData?.data.filter((item: any) => item.status === "registered");
+    const admissionFiltered = admissionData?.data.filter((item: any) => item.status === "foradmmission");
+
+
+
+
     const onFinish = (value: any) => {
-        Collectpayment(value, {
+        Collectpayment(
+            {
+                id: addModal._id,
+                data: value
+            }, {
             onSuccess() {
                 message.success("Added successfully");
                 setAddModal(false);
@@ -71,23 +81,23 @@ const Request = () => {
     // };
 
     const onAddamount = (value: any) => {
-    AddAmount(
-        {
-            id: addAmountModal._id,
-            data: value              
-        },
-        {
-            onSuccess() {
-                message.success("Added successfully");
-                setAddAmountModal(false);
-                addamountform.resetFields();
+        AddAmount(
+            {
+                id: addAmountModal._id,
+                data: value
             },
-            onError() {
-                message.error("Failed to add");
+            {
+                onSuccess() {
+                    message.success("Added successfully");
+                    setAddAmountModal(false);
+                    addamountform.resetFields();
+                },
+                onError() {
+                    message.error("Failed to add");
+                }
             }
-        }
-    );
-};
+        );
+    };
 
 
     const registeredColumns: TableColumnsType<any> = [
@@ -194,10 +204,6 @@ const Request = () => {
         {
             title: 'Full Amount',
             dataIndex: 'total_fee',
-        },
-        {
-            title: 'Booking Amount',
-            dataIndex: 'booking_amount',
         },
         {
             title: 'Action',
@@ -347,7 +353,7 @@ const Request = () => {
                 <div className="mt-4">
                     <Table
                         columns={registeredColumns}
-                        dataSource={registerData?.data}
+                        dataSource={registeredFiltered}
                         loading={registerloading}
                         rowKey="_id"
                         bordered
@@ -361,7 +367,7 @@ const Request = () => {
                 <div className="mt-4">
                     <Table
                         columns={admissionColumns}
-                        dataSource={admissionData?.data}
+                        dataSource={admissionFiltered}
                         loading={admissionloading}
                         rowKey="_id"
                         scroll={{ y: 330 }}
@@ -520,25 +526,9 @@ const Request = () => {
                             <Select
                                 placeholder="Select particular"
                                 options={
-                                    !particularloading && particularData?.data.map((particular: { _id: string; }) => ({
+                                    !particularloading && particularData?.data.map((particular: { _id: string; name: string }) => ({
                                         value: particular._id,
-                                        label: particular._id
-                                    }))
-                                }
-                            />
-                        </Form.Item>
-
-                        <Form.Item
-                            name={'registerId'}
-                            label="Registration ID"
-                            rules={[{ required: true, message: "Please select a  RegisterId" }]}
-                        >
-                            <Select
-                                placeholder="Select register"
-                                options={
-                                    !registerIDIdloading && registerIDData?.data.map((register: { _id: string; }) => ({
-                                        value: register._id,
-                                        label: register._id
+                                        label: particular.name
                                     }))
                                 }
                             />

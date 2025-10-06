@@ -196,9 +196,9 @@ function StudentManagement() {
               <Select
                 placeholder="Select Agent"
                 options={
-                  !agentloading && agentdata?.data.map((branch: { _id: string; }) => ({
+                  !agentloading && agentdata?.data.map((branch: { _id: string; name:string }) => ({
                     value: branch._id,
-                    label: branch._id
+                    label: branch.name
                   }))
                 }
               />
@@ -212,9 +212,9 @@ function StudentManagement() {
               <Select
                 placeholder="Select School"
                 options={
-                  !schoolloading && schooldata?.data.map((branch: { _id: string; }) => ({
-                    value: branch._id,
-                    label: branch._id
+                  !schoolloading && schooldata?.data.map((school: { _id: string; name:string }) => ({
+                    value: school._id,
+                    label: school.name
                   }))
                 }
               />
@@ -236,9 +236,9 @@ function StudentManagement() {
               <Select
                 placeholder="Select College"
                 options={
-                  !collegeloading && collegedata?.data.map((branch: { _id: string; }) => ({
-                    value: branch._id,
-                    label: branch._id
+                  !collegeloading && collegedata?.data.map(( College: { _id: string; college:string }) => ({
+                    value: College._id,
+                    label: College.college
                   }))
                 }
               />
@@ -246,6 +246,10 @@ function StudentManagement() {
 
             <Form.Item name={'course'} label="Course" rules={[{ required: true, message: "Please enter Course" }]}>
               <Input placeholder='Enter Course' />
+            </Form.Item>
+
+            <Form.Item name={'booking_amount'} label="Booking Amount" rules={[{ required: true, message: "Please enter Booking Amount" }]}>
+              <Input placeholder='Enter Amount' />
             </Form.Item>
 
             <Form.Item name={'total_fee'} label="Total Fee Amount" rules={[{ required: true, message: "Please enter Total Fee" }]}>
