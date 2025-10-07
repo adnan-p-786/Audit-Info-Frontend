@@ -40,10 +40,6 @@ function StudentManagement() {
       dataIndex: 'name',
     },
     {
-      title: 'SRC Name',
-      dataIndex: 'sRCId',
-    },
-    {
       title: 'Phone Number',
       dataIndex: 'phone_number',
     },
@@ -236,9 +232,9 @@ function StudentManagement() {
               <Select
                 placeholder="Select College"
                 options={
-                  !collegeloading && collegedata?.data.map(( College: { _id: string; college:string }) => ({
+                  !collegeloading && collegedata?.data.map(( College: { _id: string; name:string }) => ({
                     value: College._id,
-                    label: College.college
+                    label: College.name
                   }))
                 }
               />
@@ -314,9 +310,9 @@ function StudentManagement() {
               <Select
                 placeholder="Select Agent"
                 options={
-                  !agentloading && agentdata?.data.map((branch: { _id: string; }) => ({
+                  !agentloading && agentdata?.data.map((branch: { _id: string; name:string }) => ({
                     value: branch._id,
-                    label: branch._id
+                    label: branch.name
                   }))
                 }
               />
@@ -330,9 +326,9 @@ function StudentManagement() {
               <Select
                 placeholder="Select School"
                 options={
-                  !schoolloading && schooldata?.data.map((branch: { _id: string; }) => ({
+                  !schoolloading && schooldata?.data.map((branch: { _id: string; name:string}) => ({
                     value: branch._id,
-                    label: branch._id
+                    label: branch.name
                   }))
                 }
               />
@@ -354,9 +350,9 @@ function StudentManagement() {
               <Select
                 placeholder="Select College"
                 options={
-                  !collegeloading && collegedata?.data.map((branch: { _id: string; }) => ({
+                  !collegeloading && collegedata?.data.map((branch: { _id: string; college:string}) => ({
                     value: branch._id,
-                    label: branch._id
+                    label: branch.college
                   }))
                 }
               />

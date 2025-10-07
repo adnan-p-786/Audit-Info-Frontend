@@ -346,9 +346,9 @@ function LeadManagement() {
               <Select
                 placeholder="Select a Sro"
                 options={
-                  !sroloading && srodata?.data.map((sro: { _id: string; }) => ({
+                  !sroloading && srodata?.data.map((sro: { _id: string; name:string}) => ({
                     value: sro._id,
-                    label: sro._id
+                    label: sro.name
                   }))
                 }
               />
@@ -361,9 +361,9 @@ function LeadManagement() {
               <Select
                 placeholder="Select a Src"
                 options={
-                  !srcloading && srcdata?.data.map((src: { _id: string; }) => ({
+                  !srcloading && srcdata?.data.map((src: { _id: string; name:string}) => ({
                     value: src._id,
-                    label: src._id
+                    label: src.name
                   }))
                 }
               />
@@ -377,9 +377,9 @@ function LeadManagement() {
               <Select
                 placeholder="Select a branch"
                 options={
-                  !branchloading && branchdata?.data.map((branch: { _id: string; }) => ({
+                  !branchloading && branchdata?.data.map((branch: { _id: string; name:string }) => ({
                     value: branch._id,
-                    label: branch._id
+                    label: branch.name
                   }))
                 }
               />
@@ -393,9 +393,9 @@ function LeadManagement() {
               <Select
                 placeholder="Select a school"
                 options={
-                  !schoolloading && schooldata?.data.map((school: { _id: string; }) => ({
+                  !schoolloading && schooldata?.data.map((school: { _id: string; name:string}) => ({
                     value: school._id,
-                    label: school._id
+                    label: school.name
                   }))
                 }
               />
@@ -455,9 +455,9 @@ function LeadManagement() {
               <Select
                 placeholder="Select a Sro"
                 options={
-                  !sroloading && srodata?.data.map((sro: { _id: string; }) => ({
+                  !sroloading && srodata?.data.map((sro: { _id: string; name:string}) => ({
                     value: sro._id,
-                    label: sro._id
+                    label: sro.name
                   }))
                 }
               />
@@ -470,9 +470,9 @@ function LeadManagement() {
               <Select
                 placeholder="Select a Src"
                 options={
-                  !srcloading && srcdata?.data.map((src: { _id: string; }) => ({
+                  !srcloading && srcdata?.data.map((src: { _id: string; name:string}) => ({
                     value: src._id,
-                    label: src._id
+                    label: src.name
                   }))
                 }
               />
@@ -486,9 +486,9 @@ function LeadManagement() {
               <Select
                 placeholder="Select a branch"
                 options={
-                  !branchloading && branchdata?.data.map((branch: { _id: string; }) => ({
+                  !branchloading && branchdata?.data.map((branch: { _id: string; name:string}) => ({
                     value: branch._id,
-                    label: branch._id
+                    label: branch.name
                   }))
                 }
               />
@@ -502,9 +502,9 @@ function LeadManagement() {
               <Select
                 placeholder="Select a school"
                 options={
-                  !schoolloading && schooldata?.data.map((school: { _id: string; }) => ({
+                  !schoolloading && schooldata?.data.map((school: { _id: string; name:string}) => ({
                     value: school._id,
-                    label: school._id
+                    label: school.name
                   }))
                 }
               />

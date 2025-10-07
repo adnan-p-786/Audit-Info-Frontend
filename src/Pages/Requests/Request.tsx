@@ -6,6 +6,7 @@ import { useCreateAccount, useCreateBookingAmount } from '../../Api/Account/Acco
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { useCreateservice } from '../../Api/Registration Table/registerTableHooks';
 import { getParticular } from '../../Api/Particular/particularApi';
+import { data } from 'react-router-dom';
 
 
 
@@ -18,6 +19,7 @@ const Request = () => {
     const { data: admissionData, isLoading: admissionloading } = useQuery('admission', getRegister);
     const { data: bookingData, isLoading: bookingloading } = useQuery('booking', getRegister);
     const { data: bookingconfirmationData, isLoading: bookingconfirmationloading } = useQuery('bookingconfirmation', getRegister);
+    const { data: acknowledgmentData, isLoading: acknowledgmentloading } = useQuery('acknwoledgment', getRegister);
     const { data: particularData, isLoading: particularloading } = useQuery('particular', getParticular);
     const [addModal, setAddModal] = useState<any>(false);
     const [addAmountModal, setAddAmountModal] = useState<any>(false);
@@ -33,6 +35,8 @@ const Request = () => {
 
     const registeredFiltered = registerData?.data.filter((item: any) => item.status === "registered");
     const admissionFiltered = admissionData?.data.filter((item: any) => item.status === "foradmmission");
+    const bookingFiltered = bookingData?.data.filter((item: any) => item.status === "forbooking");
+    const bookingconfirmationFiltered = bookingconfirmationData?.data.filter((item: any) => item.status === "forbookingconfirmation");
 
 
 
@@ -54,31 +58,6 @@ const Request = () => {
         });
     };
 
-    const onBooking = (value: any) => {
-        booking(value, {
-            onSuccess() {
-                message.success("Added successfully");
-                setbookingModal(false);
-                bookingform.resetFields();
-            },
-            onError() {
-                message.error("Failed to add");
-            }
-        });
-    };
-
-    // const onAddamount = (value: any) => {
-    //     AddAmount(value, {
-    //         onSuccess() {
-    //             message.success("Added successfully");
-    //             setAddAmountModal(false);
-    //             addamountform.resetFields();
-    //         },
-    //         onError() {
-    //             message.error("Failed to add");
-    //         }
-    //     });
-    // };
 
     const onAddamount = (value: any) => {
         AddAmount(
@@ -98,6 +77,33 @@ const Request = () => {
             }
         );
     };
+
+    const onBooking = (value: any) => {
+        booking(
+            {
+                id: bookingModal._id,
+                data: value
+            },
+            {
+                onSuccess() {
+                    message.success("Added successfully");
+                    setbookingModal(false);
+                    bookingform.resetFields();
+                },
+                onError() {
+                    message.error("Failed to add");
+                }
+            });
+    };
+
+
+
+    const onCancelBooking = () => {
+        setbookingconfirmationModal(false);
+        bookingconfirmationform.resetFields();
+    };
+
+
 
 
     const registeredColumns: TableColumnsType<any> = [
@@ -264,6 +270,48 @@ const Request = () => {
         },
     ];
 
+    const aknwoledgmentColumns: TableColumnsType<any> = [
+        {
+            title: 'SI.NO',
+            dataIndex: '_id',
+        },
+        {
+            title: 'Student Name',
+            dataIndex: 'name',
+        },
+        {
+            title: 'College Name',
+            dataIndex: ['collegeId', 'college'],
+        },
+        {
+            title: 'Course Name',
+            dataIndex: 'course',
+        },
+        {
+            title: 'Full Amount',
+            dataIndex: 'total_fee',
+        },
+        {
+            title: 'Booking Amount',
+            dataIndex: 'booking_amount',
+        },
+        // {
+        //     title: 'Action',
+        //     render: (_, record: any) => (
+        //         <div className="flex gap-2">
+        //             <Button
+        //                 style={{ backgroundColor: '#F68B1F', color: 'white' }}
+        //                 onClick={() => {
+        //                     setbookingconfirmationModal(record);
+        //                 }}
+        //             >
+        //                 Confirm Booking
+        //             </Button>
+        //         </div>
+        //     ),
+        // },
+    ];
+
     return (
         <div className="w-full py-[10px] px-[5px]">
             <div className="w-full flex space-x-2 flex-wrap">
@@ -381,7 +429,7 @@ const Request = () => {
                 <div className="mt-4">
                     <Table
                         columns={bookingColumns}
-                        dataSource={bookingData?.data}
+                        dataSource={bookingFiltered}
                         loading={bookingloading}
                         rowKey="_id"
                         bordered
@@ -395,8 +443,22 @@ const Request = () => {
                 <div className="mt-4">
                     <Table
                         columns={bookingConfirmationColumns}
-                        dataSource={bookingconfirmationData?.data}
+                        dataSource={bookingconfirmationFiltered}
                         loading={bookingconfirmationloading}
+                        rowKey="_id"
+                        bordered
+                        pagination={{ pageSize: 10 }}
+                        scroll={{ y: 330 }}
+                    />
+                </div>
+            )}
+
+            {table === "Acknowledgement" && (
+                <div className="mt-4">
+                    <Table
+                        columns={aknwoledgmentColumns}
+                        dataSource={acknowledgmentData?.data}
+                        loading={acknowledgmentloading}
                         rowKey="_id"
                         bordered
                         pagination={{ pageSize: 10 }}
@@ -560,7 +622,7 @@ const Request = () => {
                         <h1 className='text-[15px] text-center w-full my-4'>This action cannot be undo</h1>
                         <Form.Item>
                             <Button htmlType='submit' type="primary" className='mx-2'>Yes, Confirmed</Button>
-                            <Button htmlType='submit' type="primary" className='mx-2'>cancel</Button>
+                            <Button onClick={onCancelBooking} type="primary" className='mx-2'>cancel</Button>
                         </Form.Item>
                     </div>
 

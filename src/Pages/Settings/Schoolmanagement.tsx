@@ -1,5 +1,5 @@
 import { Button, Divider, Form, Input, message, Modal, Select,Table, type TableColumnsType } from 'antd';
-import { useState } from 'react';
+import { lazy, useState } from 'react';
 import { CiEdit } from 'react-icons/ci';
 import { MdDeleteOutline } from 'react-icons/md';
 import { useQuery } from 'react-query';
@@ -166,8 +166,9 @@ function Schoolmanagement() {
               <Select
                 placeholder="Select a branch"
                 options={
-                  !branchloading && branchdata?.data.map((branch: { _id: string; }) => ({
-                    value: branch._id
+                  !branchloading && branchdata?.data.map((branch: { _id: string; name:string}) => ({
+                    value: branch._id,
+                    label: branch.name
                   }))
                 }
               />
@@ -207,8 +208,9 @@ function Schoolmanagement() {
               <Select
                 placeholder="Select a branch"
                 options={
-                  !branchloading && branchdata?.data.map((branch: { _id: string; }) => ({
-                    value: branch._id
+                  !branchloading && branchdata?.data.map((branch: { _id: string; name:string}) => ({
+                    value: branch._id,
+                    label: branch.name
                   }))
                 }
               />

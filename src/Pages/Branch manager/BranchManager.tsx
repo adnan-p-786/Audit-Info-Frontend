@@ -221,9 +221,9 @@ function BranchManager() {
               <Select
                 placeholder="Select a branch"
                 options={
-                  !branchloading && branchdata?.data.map((branch: { _id: string; }) => ({
+                  !branchloading && branchdata?.data.map((branch: { _id: string; name:string }) => ({
                     value: branch._id,
-                    label : branch._id
+                    label : branch.name
                   }))
                 }
               />

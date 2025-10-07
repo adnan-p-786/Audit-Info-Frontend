@@ -88,7 +88,7 @@ function Sro() {
 
   const { data, isLoading, refetch } = useQuery('sro', getSro)
   const { data: branchdata, isLoading: branchloading } = useQuery('branch', getBranch)
-  const { data: srcdata, isLoading: Srcloading } = useQuery('branch', getSrc)
+  const { data: srcdata, isLoading: Srcloading } = useQuery('src', getSrc)
   const [addModal, setAddModal] = useState(false)
   const [editModal, setEditModal] = useState(false)
   const [editingRecord, setEditingRecord] = useState<DataType | null>(null)
@@ -238,8 +238,8 @@ function Sro() {
               <Select
                 placeholder="Select a branch"
                 options={
-                  !branchloading && branchdata?.data.map((branch: { _id: string; }) => ({
-                    label: branch._id,
+                  !branchloading && branchdata?.data.map((branch: { _id: string; name:string }) => ({
+                    label: branch.name,
                     value: branch._id
                   }))
                 }
@@ -254,8 +254,8 @@ function Sro() {
               <Select
                 placeholder="Select a Src"
                 options={
-                  !Srcloading && srcdata?.data.map((Src: { _id: string; }) => ({
-                    label: Src._id,
+                  !Srcloading && srcdata?.data.map((Src: { _id: string; name:string }) => ({
+                    label: Src.name,
                     value: Src._id
                   }))
                 }
@@ -323,8 +323,9 @@ function Sro() {
               <Select
                 placeholder="Select a branch"
                 options={
-                  !branchloading && branchdata?.data.map((branch: { _id: string; }) => ({
-                    value: branch._id
+                  !branchloading && branchdata?.data.map((branch: { _id: string; name:string }) => ({
+                    value: branch._id,
+                    label:branch.name
                   }))
                 }
               />
@@ -338,8 +339,9 @@ function Sro() {
               <Select
                 placeholder="Select a Src"
                 options={
-                  !Srcloading && srcdata?.data.map((Src: { _id: string; }) => ({
-                    value: Src._id
+                  !Srcloading && srcdata?.data.map((Src: { _id: string; name:string }) => ({
+                    value: Src._id,
+                    label: Src.name
                   }))
                 }
               />

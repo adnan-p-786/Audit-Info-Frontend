@@ -46,7 +46,7 @@ function OfficeAdministration() {
     },
     {
       title: 'Branch Id',
-      dataIndex: ['branchId', '_id'],
+      dataIndex: ['branchId', 'name'],
     },
     {
       title: 'Address',
@@ -225,8 +225,8 @@ function OfficeAdministration() {
               <Select
                 placeholder="Select a branch"
                 options={
-                  !branchloading && branchdata?.data.map((branch: { _id: string; }) => ({
-                    label: branch._id,
+                  !branchloading && branchdata?.data.map((branch: { _id: string; name:string}) => ({
+                    label: branch.name,
                     value: branch._id
                   }))
                 }
@@ -290,8 +290,8 @@ function OfficeAdministration() {
               <Select
                 placeholder="Select a branch"
                 options={
-                  !branchloading && branchdata?.data.map((branch: { _id: string; }) => ({
-                    label: branch._id,
+                  !branchloading && branchdata?.data.map((branch: { _id: string; name:string }) => ({
+                    label: branch.name,
                     value: branch._id
                   }))
                 }
