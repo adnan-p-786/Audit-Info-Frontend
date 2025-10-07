@@ -6,7 +6,6 @@ import { useCreateAccount, useCreateBookingAmount } from '../../Api/Account/Acco
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { useCreateservice } from '../../Api/Registration Table/registerTableHooks';
 import { getParticular } from '../../Api/Particular/particularApi';
-import { data } from 'react-router-dom';
 
 
 
@@ -37,6 +36,7 @@ const Request = () => {
     const admissionFiltered = admissionData?.data.filter((item: any) => item.status === "foradmmission");
     const bookingFiltered = bookingData?.data.filter((item: any) => item.status === "forbooking");
     const bookingconfirmationFiltered = bookingconfirmationData?.data.filter((item: any) => item.status === "forbookingconfirmation");
+    const AcknowledmentFiltered = acknowledgmentData?.data.filter((item: any) => item.status === "foracknowledgment");
 
 
 
@@ -212,6 +212,10 @@ const Request = () => {
             dataIndex: 'total_fee',
         },
         {
+            title: 'Booking Amount',
+            dataIndex: 'booking_amount',
+        },
+        {
             title: 'Action',
             render: (_, record: any) => (
                 <div className="flex gap-2">
@@ -295,21 +299,21 @@ const Request = () => {
             title: 'Booking Amount',
             dataIndex: 'booking_amount',
         },
-        // {
-        //     title: 'Action',
-        //     render: (_, record: any) => (
-        //         <div className="flex gap-2">
-        //             <Button
-        //                 style={{ backgroundColor: '#F68B1F', color: 'white' }}
-        //                 onClick={() => {
-        //                     setbookingconfirmationModal(record);
-        //                 }}
-        //             >
-        //                 Confirm Booking
-        //             </Button>
-        //         </div>
-        //     ),
-        // },
+        {
+            title: 'Action',
+            render: (_, record: any) => (
+                <div className="flex gap-2">
+                    <Button
+                        style={{ backgroundColor: '#F68B1F', color: 'white' }}
+                        onClick={() => {
+                            (record);
+                        }}
+                    >
+                        Upload
+                    </Button>
+                </div>
+            ),
+        },
     ];
 
     return (
@@ -457,7 +461,7 @@ const Request = () => {
                 <div className="mt-4">
                     <Table
                         columns={aknwoledgmentColumns}
-                        dataSource={acknowledgmentData?.data}
+                        dataSource={AcknowledmentFiltered}
                         loading={acknowledgmentloading}
                         rowKey="_id"
                         bordered
@@ -621,8 +625,8 @@ const Request = () => {
                     <div>
                         <h1 className='text-[15px] text-center w-full my-4'>This action cannot be undo</h1>
                         <Form.Item>
-                            <Button htmlType='submit' type="primary" className='mx-2'>Yes, Confirmed</Button>
-                            <Button onClick={onCancelBooking} type="primary" className='mx-2'>cancel</Button>
+                            <Button htmlType='submit' type="primary"  className='mx-2'>Yes, Confirmed</Button>
+                            <Button onClick={onCancelBooking} type="primary" danger className='mx-2'>Cancel</Button>
                         </Form.Item>
                     </div>
 

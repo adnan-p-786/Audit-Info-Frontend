@@ -51,12 +51,12 @@ function Sro() {
       dataIndex: 'point_amount',
     },
     {
-      title: 'Branch Id',
-      dataIndex: ['branchId', '_id'],
+      title: 'Branch',
+      dataIndex: ['branchId', 'name'],
     },
     {
-      title: 'SRC Id',
-      dataIndex: 'srcId',
+      title: 'SRC',
+      dataIndex: ['srcId','name'],
     },
     {
       title: 'Address',
@@ -189,7 +189,7 @@ function Sro() {
         rowKey="_id"
       />
       <Modal
-        title="Add SRC"
+        title="Add SRO"
         open={addModal}
         onCancel={() => setAddModal(false)}
         footer={null}
@@ -274,7 +274,7 @@ function Sro() {
 
 
       <Modal
-        title="Edit SRC"
+        title="Edit SRO"
         open={editModal}
         onCancel={handleCancelEdit}
         footer={null}

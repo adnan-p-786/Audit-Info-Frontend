@@ -232,9 +232,9 @@ function StudentManagement() {
               <Select
                 placeholder="Select College"
                 options={
-                  !collegeloading && collegedata?.data.map(( College: { _id: string; name:string }) => ({
+                  !collegeloading && collegedata?.data.map(( College: { _id: string; college:string }) => ({
                     value: College._id,
-                    label: College.name
+                    label: College.college
                   }))
                 }
               />
