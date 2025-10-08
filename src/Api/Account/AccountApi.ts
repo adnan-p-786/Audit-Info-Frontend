@@ -9,6 +9,10 @@ export const postAccount =(data:{id:string, data:any})=>{
     return apiCLient.post(`/api/account/create/${data.id}`,data.data)
 }
 
+export const putConfirmBooking =(data:{id:string, data:any})=>{
+    return apiCLient.put(`/api/account/confirm/${data.id}`,data.data)
+}
+
 export const postBookingamount =(data:{id:string, data:any})=>{
     return apiCLient.post(`/api/account/booking/${data.id}`,data.data)
 }

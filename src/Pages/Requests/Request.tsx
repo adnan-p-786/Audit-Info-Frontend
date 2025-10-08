@@ -2,10 +2,16 @@ import { useState } from 'react';
 import { useQuery } from 'react-query';
 import { getRegister } from '../../Api/Registration Table/registerTableApi';
 import { Button, Form, Input, message, Modal, Select, Table, type TableColumnsType } from 'antd';
-import { useCreateAccount, useCreateBookingAmount } from '../../Api/Account/AccountHooks';
-import { ExclamationCircleOutlined } from '@ant-design/icons';
+import { useConfirmBooking, useCreateAccount, useCreateBookingAmount } from '../../Api/Account/AccountHooks';
+import { ExclamationCircleOutlined, InboxOutlined } from '@ant-design/icons';
 import { useCreateservice } from '../../Api/Registration Table/registerTableHooks';
 import { getParticular } from '../../Api/Particular/particularApi';
+import { Upload } from 'antd';
+import { useCreateAknwoledgment } from '../../Api/Aknwoledgment/aknwoledgmentHooks';
+import { MdCloudUpload } from 'react-icons/md';
+
+const { Dragger } = Upload;
+
 
 
 
@@ -24,13 +30,19 @@ const Request = () => {
     const [addAmountModal, setAddAmountModal] = useState<any>(false);
     const [bookingModal, setbookingModal] = useState<any>(false);
     const [bookingconfirmationModal, setbookingconfirmationModal] = useState<any>(false);
+    const [uploadModal, setuploadModal] = useState<any>(false);
+
     const { mutate: Collectpayment } = useCreateAccount();
     const { mutate: AddAmount } = useCreateservice();
     const { mutate: booking } = useCreateBookingAmount();
+    const { mutate: confirmbooking } = useConfirmBooking();
+    const { mutate: upload } = useCreateAknwoledgment();
+
     const [form] = Form.useForm();
     const [addamountform] = Form.useForm();
     const [bookingform] = Form.useForm();
     const [bookingconfirmationform] = Form.useForm();
+    const [Uploadform] = Form.useForm();
 
     const registeredFiltered = registerData?.data.filter((item: any) => item.status === "registered");
     const admissionFiltered = admissionData?.data.filter((item: any) => item.status === "foradmmission");
@@ -96,14 +108,71 @@ const Request = () => {
             });
     };
 
+    const onBookingConfirm = (value: any) => {
+        confirmbooking(
+            {
+                id: bookingconfirmationModal._id,
+                data: value
+            },
+            {
+                onSuccess() {
+                    message.success("Added successfully");
+                    setbookingconfirmationModal(false);
+                    bookingconfirmationform.resetFields();
+                },
+                onError() {
+                    message.error("Failed to add");
+                }
+            });
+    };
+
+    // const onuploadaknwoledgment = (value: any) => {
+    //     upload(
+    //         {
+    //             id: uploadModal._id,
+    //             data: value
+    //         },
+    //         {
+    //             onSuccess() {
+    //                 message.success("Added successfully");
+    //                 setuploadModal(false);
+    //                 uploadModal.resetFields();
+    //             },
+    //             onError() {
+    //                 message.error("Failed to add");
+    //             }
+    //         });
+    // };
+
+    const onuploadaknwoledgment = (value: any) => {
+        const formdata = new FormData();
+        console.log({ value });
+        if (value.image?.file) {
+            formdata.append("image", value.image.file.originFileObj);
+        }
+        upload(
+            {
+                id: uploadModal._id,
+                data: formdata
+            },
+            {
+                onSuccess() {
+                    message.success("aknwolegment successfully created");
+                    setuploadModal(false);
+                    Uploadform.resetFields();
+                },
+                onError() {
+                    message.error("Failed to add");
+                }
+            });
+    };
+
 
 
     const onCancelBooking = () => {
         setbookingconfirmationModal(false);
         bookingconfirmationform.resetFields();
     };
-
-
 
 
     const registeredColumns: TableColumnsType<any> = [
@@ -306,7 +375,7 @@ const Request = () => {
                     <Button
                         style={{ backgroundColor: '#F68B1F', color: 'white' }}
                         onClick={() => {
-                            (record);
+                            setuploadModal(record);
                         }}
                     >
                         Upload
@@ -621,15 +690,43 @@ const Request = () => {
                     </div>
                 }
             >
-                <Form layout='vertical' className='flex w-full justify-center items-center' onFinish={onBooking} form={bookingconfirmationform}>
+                <Form layout='vertical' className='flex w-full justify-center items-center' onFinish={onBookingConfirm} form={bookingconfirmationform}>
                     <div>
                         <h1 className='text-[15px] text-center w-full my-4'>This action cannot be undo</h1>
                         <Form.Item>
-                            <Button htmlType='submit' type="primary"  className='mx-2'>Yes, Confirmed</Button>
+                            <Button htmlType='submit' type="primary" className='mx-2'>Yes, Confirmed</Button>
                             <Button onClick={onCancelBooking} type="primary" danger className='mx-2'>Cancel</Button>
                         </Form.Item>
                     </div>
 
+                </Form>
+            </Modal>
+
+            <Modal
+                open={!!uploadModal}
+                onCancel={() => {
+                    setuploadModal(false);
+                    Uploadform.resetFields();
+                }}
+                footer={null}
+                width={450}
+            >
+                <Form layout='vertical' onFinish={onuploadaknwoledgment} form={Uploadform}>
+                    <div>
+                        <h1 className='font-semibold my-3'>Upload Aknwoledgment</h1>
+                        <Form.Item name={'image'}>
+
+                        <Dragger>
+                            <p className="ant-upload-drag-icon">
+                                <InboxOutlined />
+                            </p>
+                            <p className="ant-upload-text">Click or drag file to this area to upload</p>
+                        </Dragger>
+                        </Form.Item>
+                        <Form.Item>
+                            <Button htmlType='submit' type="primary" className='mt-6 w-full'>Submit</Button>
+                        </Form.Item>
+                    </div>
                 </Form>
             </Modal>
         </div>
@@ -637,3 +734,18 @@ const Request = () => {
 };
 
 export default Request;
+
+{/* <Form layout='vertical' onFinish={onuploadaknwoledgment} form={Uploadform}>
+    <Form.Item
+        name={'image'}
+        label="Upload Acknowledgment"
+        rules={[{ required: true, message: "Please upload Image" }]}
+    >
+        <Upload multiple={false}>
+            <Button><MdCloudUpload />Click to upload</Button>
+        </Upload>
+    </Form.Item>
+    <Form.Item>
+        <Button htmlType='submit' className='w-full'>Submit</Button>
+    </Form.Item>
+</Form> */}
