@@ -5,6 +5,10 @@ export const getAccount = ()=>{
     return apiCLient.get('/api/account/get')
 }
 
+export const postAddAmount =(data:{id:string,data:any})=>{
+    return apiCLient.post(`/api/account/addamount/${data.id}`,data.data)
+}
+
 export const postAccount =(data:{id:string, data:any})=>{
     return apiCLient.post(`/api/account/create/${data.id}`,data.data)
 }

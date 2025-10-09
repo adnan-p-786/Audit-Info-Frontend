@@ -8,8 +8,6 @@ import { useCreateservice } from '../../Api/Registration Table/registerTableHook
 import { getParticular } from '../../Api/Particular/particularApi';
 import { Upload } from 'antd';
 import { useCreateAknwoledgment } from '../../Api/Aknwoledgment/aknwoledgmentHooks';
-import { MdCloudUpload } from 'react-icons/md';
-
 const { Dragger } = Upload;
 
 
@@ -25,6 +23,7 @@ const Request = () => {
     const { data: bookingData, isLoading: bookingloading } = useQuery('booking', getRegister);
     const { data: bookingconfirmationData, isLoading: bookingconfirmationloading } = useQuery('bookingconfirmation', getRegister);
     const { data: acknowledgmentData, isLoading: acknowledgmentloading } = useQuery('acknwoledgment', getRegister);
+    const { data: amountcollectionData, isLoading: amountcollectionloading } = useQuery('amountcollection', getRegister);
     const { data: particularData, isLoading: particularloading } = useQuery('particular', getParticular);
     const [addModal, setAddModal] = useState<any>(false);
     const [addAmountModal, setAddAmountModal] = useState<any>(false);
@@ -49,6 +48,7 @@ const Request = () => {
     const bookingFiltered = bookingData?.data.filter((item: any) => item.status === "forbooking");
     const bookingconfirmationFiltered = bookingconfirmationData?.data.filter((item: any) => item.status === "forbookingconfirmation");
     const AcknowledmentFiltered = acknowledgmentData?.data.filter((item: any) => item.status === "foracknowledgment");
+    const AmountcollectionFiltered = amountcollectionData?.data.filter((item: any) => item.status === "foramountcollection");
 
 
 
@@ -125,24 +125,6 @@ const Request = () => {
                 }
             });
     };
-
-    // const onuploadaknwoledgment = (value: any) => {
-    //     upload(
-    //         {
-    //             id: uploadModal._id,
-    //             data: value
-    //         },
-    //         {
-    //             onSuccess() {
-    //                 message.success("Added successfully");
-    //                 setuploadModal(false);
-    //                 uploadModal.resetFields();
-    //             },
-    //             onError() {
-    //                 message.error("Failed to add");
-    //             }
-    //         });
-    // };
 
     const onuploadaknwoledgment = (value: any) => {
         const formdata = new FormData();
@@ -385,6 +367,44 @@ const Request = () => {
         },
     ];
 
+    const amountcollectionColumns: TableColumnsType<any> = [
+        {
+            title: 'SI.NO',
+            dataIndex: '_id',
+        },
+        {
+            title: 'Student Name',
+            dataIndex: 'name',
+        },
+        {
+            title: 'College Name',
+            dataIndex: ['collegeId', 'college'],
+        },
+        {
+            title: 'Course Name',
+            dataIndex: 'course',
+        },
+        {
+            title: 'Recieved Amount',
+            dataIndex: 'recived_amount',
+        },
+        {
+            title: 'Action',
+            render: (_, record: any) => (
+                <div className="flex gap-2">
+                    <Button
+                        style={{ backgroundColor: '#F68B1F', color: 'white' }}
+                        onClick={() => {
+                            (record);
+                        }}
+                    >
+                        Collect Payment
+                    </Button>
+                </div>
+            ),
+        },
+    ];
+
     return (
         <div className="w-full py-[10px] px-[5px]">
             <div className="w-full flex space-x-2 flex-wrap">
@@ -532,6 +552,20 @@ const Request = () => {
                         columns={aknwoledgmentColumns}
                         dataSource={AcknowledmentFiltered}
                         loading={acknowledgmentloading}
+                        rowKey="_id"
+                        bordered
+                        pagination={{ pageSize: 10 }}
+                        scroll={{ y: 330 }}
+                    />
+                </div>
+            )}
+
+            {table === "amount_collection" && (
+                <div className="mt-4">
+                    <Table
+                        columns={amountcollectionColumns}
+                        dataSource={AmountcollectionFiltered}
+                        loading={amountcollectionloading}
                         rowKey="_id"
                         bordered
                         pagination={{ pageSize: 10 }}

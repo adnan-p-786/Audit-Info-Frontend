@@ -9,6 +9,7 @@ import { getSchoolmanagement } from '../../Api/School Management/schoolManagemen
 import { getCollegeManagement } from '../../Api/College Management/collegeMgmtApi';
 import TextArea from 'antd/es/input/TextArea';
 import { useCreateRegister, useDeleteRegister, useUpdateRegister } from '../../Api/Registration Table/registerTableHooks';
+import { useCreateAddAmount } from '../../Api/Account/AccountHooks';
 
 interface DataType {
   key: React.Key;
@@ -49,7 +50,7 @@ function StudentManagement() {
     },
     {
       title: 'College',
-      dataIndex: ['collegeId','college'],
+      dataIndex: ['collegeId', 'college'],
     },
     {
       title: 'Balance',
@@ -59,12 +60,14 @@ function StudentManagement() {
       title: 'Action',
       render: (_, record: any) => (
         <div className="flex gap-2">
+          <Button type='primary' onClick={() => setCollectAmountModal(record)}>Add</Button>
           <Button onClick={() => handleEdit(record)}>
             <CiEdit />
           </Button>
           <Button danger onClick={() => handleDelete(record._id)}>
             <MdDeleteOutline />
           </Button>
+
         </div>
       )
     }
@@ -75,15 +78,19 @@ function StudentManagement() {
   const { data: schooldata, isLoading: schoolloading } = useQuery('school', getSchoolmanagement)
   const { data: collegedata, isLoading: collegeloading } = useQuery('college', getCollegeManagement)
   const [addModal, setAddModal] = useState(false)
+  const [collectAmountModal, setCollectAmountModal] = useState<any>(false)
   const [editModal, setEditModal] = useState(false)
   const [editingRecord, setEditingRecord] = useState<DataType | null>(null)
+
 
   const { mutate: Create } = useCreateRegister()
   const { mutate: Update } = useUpdateRegister()
   const { mutate: Delete } = useDeleteRegister()
+  const { mutate: collectamount } = useCreateAddAmount()
 
   const [form] = Form.useForm()
   const [editForm] = Form.useForm()
+  const [addamountForm] = Form.useForm()
 
   const onFinish = (value: any) => {
     Create(value, {
@@ -97,6 +104,25 @@ function StudentManagement() {
         message.error("Failed to add")
       }
     })
+  }
+
+  const onAddamount = (value: any) => {
+    collectamount(
+      {
+        id: collectAmountModal._id,
+        data: value
+      },
+      {
+        onSuccess() {
+          message.success("Added successfully")
+          refetch()
+          setCollectAmountModal(false)
+          form.resetFields()
+        },
+        onError() {
+          message.error("Failed to add")
+        }
+      })
   }
 
   const onUpdateFinish = (values: any) => {
@@ -127,14 +153,14 @@ function StudentManagement() {
 
     editForm.setFieldsValue({
       name: record.name,
-      phone_number:record.phone_number,
-      address:record.address,
-      course:record.course,
-      total_fee:record.total_fee,
-      recived_amount:record.recived_amount,
-      certificates:record.certificates,
-      comment:record.comment,
-      commission:record.commission,
+      phone_number: record.phone_number,
+      address: record.address,
+      course: record.course,
+      total_fee: record.total_fee,
+      recived_amount: record.recived_amount,
+      certificates: record.certificates,
+      comment: record.comment,
+      commission: record.commission,
     });
   };
 
@@ -155,10 +181,16 @@ function StudentManagement() {
     setEditingRecord(null);
     editForm.resetFields();
   };
+
+  const onCancelAmount = () => {
+    setCollectAmountModal(false);
+    addamountForm.resetFields();
+  };
+
   return (
     <div>
       <Divider>Student Management</Divider>
-      <div className="w-full flex justify-end">
+      <div className="w-full flex gap-2 py-2 justify-end">
         <Button type='primary' onClick={() => setAddModal(true)}>Register</Button>
       </div>
       <Table
@@ -192,7 +224,7 @@ function StudentManagement() {
               <Select
                 placeholder="Select Agent"
                 options={
-                  !agentloading && agentdata?.data.map((branch: { _id: string; name:string }) => ({
+                  !agentloading && agentdata?.data.map((branch: { _id: string; name: string }) => ({
                     value: branch._id,
                     label: branch.name
                   }))
@@ -208,7 +240,7 @@ function StudentManagement() {
               <Select
                 placeholder="Select School"
                 options={
-                  !schoolloading && schooldata?.data.map((school: { _id: string; name:string }) => ({
+                  !schoolloading && schooldata?.data.map((school: { _id: string; name: string }) => ({
                     value: school._id,
                     label: school.name
                   }))
@@ -232,7 +264,7 @@ function StudentManagement() {
               <Select
                 placeholder="Select College"
                 options={
-                  !collegeloading && collegedata?.data.map(( College: { _id: string; college:string }) => ({
+                  !collegeloading && collegedata?.data.map((College: { _id: string; college: string }) => ({
                     value: College._id,
                     label: College.college
                   }))
@@ -296,7 +328,7 @@ function StudentManagement() {
         width={800}
       >
         <Form layout='vertical' onFinish={onUpdateFinish} form={editForm}>
-           <div className="grid grid-flow-row grid-cols-3 gap-x-2">
+          <div className="grid grid-flow-row grid-cols-3 gap-x-2">
 
             <Form.Item name={'name'} label="Name" rules={[{ required: true, message: "Please enter name" }]}>
               <Input placeholder='Name' />
@@ -310,7 +342,7 @@ function StudentManagement() {
               <Select
                 placeholder="Select Agent"
                 options={
-                  !agentloading && agentdata?.data.map((branch: { _id: string; name:string }) => ({
+                  !agentloading && agentdata?.data.map((branch: { _id: string; name: string }) => ({
                     value: branch._id,
                     label: branch.name
                   }))
@@ -326,7 +358,7 @@ function StudentManagement() {
               <Select
                 placeholder="Select School"
                 options={
-                  !schoolloading && schooldata?.data.map((branch: { _id: string; name:string}) => ({
+                  !schoolloading && schooldata?.data.map((branch: { _id: string; name: string }) => ({
                     value: branch._id,
                     label: branch.name
                   }))
@@ -350,7 +382,7 @@ function StudentManagement() {
               <Select
                 placeholder="Select College"
                 options={
-                  !collegeloading && collegedata?.data.map((branch: { _id: string; college:string}) => ({
+                  !collegeloading && collegedata?.data.map((branch: { _id: string; college: string }) => ({
                     value: branch._id,
                     label: branch.college
                   }))
@@ -397,6 +429,37 @@ function StudentManagement() {
           </div>
           <Form.Item>
             <Button htmlType='submit' type="primary" className='w-full'>Update</Button>
+          </Form.Item>
+        </Form>
+      </Modal>
+
+      <Modal
+        title="Add Amount"
+        open={collectAmountModal}
+        onCancel={onCancelAmount}
+        footer={null}
+        width={380}
+      >
+        <Form layout='vertical' onFinish={onAddamount} form={addamountForm}>
+          <div>
+
+            <Form.Item name={'credit'} label="Amount" rules={[{ required: true, message: "Please enter Amount" }]}>
+              <Input placeholder='Amount' />
+            </Form.Item>
+
+            <Form.Item
+              name="amount_type"
+              label="Amount Type"
+              rules={[{ required: true, message: "Please select Amount type" }]}
+            >
+              <Select placeholder="Select Amount type">
+                <Select.Option value="cash">Cash</Select.Option>
+                <Select.Option value="online">Bank</Select.Option>
+              </Select>
+            </Form.Item>
+          </div>
+          <Form.Item>
+            <Button htmlType='submit' type="primary" className='w-full'>Submit</Button>
           </Form.Item>
         </Form>
       </Modal>

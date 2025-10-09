@@ -1,8 +1,12 @@
 import { useMutation } from "react-query"
-import { deleteAccount, postAccount, postBookingamount, putAccount, putConfirmBooking } from "./AccountApi"
+import { deleteAccount, postAccount, postAddAmount, postBookingamount, putAccount, putConfirmBooking } from "./AccountApi"
 
 export const useCreateAccount = () => {
     return useMutation((data:{id:string,data:any}) => postAccount(data))
+}
+
+export const useCreateAddAmount = () => {
+    return useMutation((data:{id:string,data:any}) => postAddAmount(data))
 }
 
 export const useConfirmBooking = () => {

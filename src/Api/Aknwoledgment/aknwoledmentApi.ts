@@ -9,18 +9,6 @@ export const postAknwoledgment = (data:{id: string, data: any}) => {
   })
 }
 
-
 export const getAknwoledgment = ()=>{
     return apiCLient.get('/api/aknowledgement/get')
 }
-
-
-// export const putAknwoledgment = (data: any) => {
-//   const { _id, ...rest } = data;
-//   return apiCLient.put(`/api/aknowledgement/update/${_id}`, rest);
-// }
-
-
-// export const deleteAknwoledgment = (id: string) => {
-//     return apiCLient.delete(`/api/aknowledgement/delete/${id}`)
-// }
