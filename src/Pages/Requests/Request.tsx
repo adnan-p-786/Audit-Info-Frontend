@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useQuery } from 'react-query';
 import { getRegister } from '../../Api/Registration Table/registerTableApi';
 import { Button, Form, Input, message, Modal, Select, Table, type TableColumnsType } from 'antd';
-import { useConfirmBooking, useCreateAccount, useCreateBookingAmount } from '../../Api/Account/AccountHooks';
+import { useConfirmBooking, useCreateAccount, useCreateBookingAmount, useCreateCollectPayment } from '../../Api/Account/AccountHooks';
 import { ExclamationCircleOutlined, InboxOutlined } from '@ant-design/icons';
 import { useCreateservice } from '../../Api/Registration Table/registerTableHooks';
 import { getParticular } from '../../Api/Particular/particularApi';
@@ -30,18 +30,21 @@ const Request = () => {
     const [bookingModal, setbookingModal] = useState<any>(false);
     const [bookingconfirmationModal, setbookingconfirmationModal] = useState<any>(false);
     const [uploadModal, setuploadModal] = useState<any>(false);
+    const [collectPaymentModal, setcollectPaymentModal] = useState<any>(false);
 
     const { mutate: Collectpayment } = useCreateAccount();
     const { mutate: AddAmount } = useCreateservice();
     const { mutate: booking } = useCreateBookingAmount();
     const { mutate: confirmbooking } = useConfirmBooking();
     const { mutate: upload } = useCreateAknwoledgment();
+    const { mutate: collectpymnt } = useCreateCollectPayment();
 
     const [form] = Form.useForm();
     const [addamountform] = Form.useForm();
     const [bookingform] = Form.useForm();
     const [bookingconfirmationform] = Form.useForm();
     const [Uploadform] = Form.useForm();
+    const [collectpymntform] = Form.useForm();
 
     const registeredFiltered = registerData?.data.filter((item: any) => item.status === "registered");
     const admissionFiltered = admissionData?.data.filter((item: any) => item.status === "foradmmission");
@@ -112,6 +115,24 @@ const Request = () => {
         confirmbooking(
             {
                 id: bookingconfirmationModal._id,
+                data: value
+            },
+            {
+                onSuccess() {
+                    message.success("Added successfully");
+                    setbookingconfirmationModal(false);
+                    bookingconfirmationform.resetFields();
+                },
+                onError() {
+                    message.error("Failed to add");
+                }
+            });
+    };
+
+    const oncollectpymnt = (value: any) => {
+        collectpymnt(
+            {
+                id: collectPaymentModal._id,
                 data: value
             },
             {
@@ -395,7 +416,7 @@ const Request = () => {
                     <Button
                         style={{ backgroundColor: '#F68B1F', color: 'white' }}
                         onClick={() => {
-                            (record);
+                           setcollectPaymentModal(record);
                         }}
                     >
                         Collect Payment
@@ -763,23 +784,33 @@ const Request = () => {
                     </div>
                 </Form>
             </Modal>
+
+            <Modal
+                open={!!collectPaymentModal}
+                onCancel={() => {
+                    setcollectPaymentModal(false);
+                    collectpymntform.resetFields();
+                }}
+                footer={null}
+                width={400}
+                title={
+                    <div className="text-center">
+                        <ExclamationCircleOutlined style={{ fontSize: '70px', color: '#F68B1F', marginTop: 25 }} />
+                        <div className="mt-5 text-2xl mb-8 font-semibold">Are you sure , want to collect payment</div>
+                    </div>
+                }
+            >
+                <Form layout='vertical' className='flex w-full justify-center items-center' onFinish={oncollectpymnt} form={bookingconfirmationform}>
+                    <div>
+                        <Form.Item>
+                            <Button htmlType='submit' type="primary">Yes, Collected</Button>
+                        </Form.Item>
+                    </div>
+
+                </Form>
+            </Modal>
         </div>
     );
 };
 
 export default Request;
-
-{/* <Form layout='vertical' onFinish={onuploadaknwoledgment} form={Uploadform}>
-    <Form.Item
-        name={'image'}
-        label="Upload Acknowledgment"
-        rules={[{ required: true, message: "Please upload Image" }]}
-    >
-        <Upload multiple={false}>
-            <Button><MdCloudUpload />Click to upload</Button>
-        </Upload>
-    </Form.Item>
-    <Form.Item>
-        <Button htmlType='submit' className='w-full'>Submit</Button>
-    </Form.Item>
-</Form> */}

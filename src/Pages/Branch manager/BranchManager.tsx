@@ -1,6 +1,6 @@
 import { Button, DatePicker, Divider, Form, Input, message, Modal, Select, Table, type TableColumnsType } from 'antd';
 import dayjs from 'dayjs';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { CiEdit } from 'react-icons/ci';
 import { MdDeleteOutline } from 'react-icons/md';
 import { useQuery } from 'react-query';
@@ -24,63 +24,13 @@ interface DataType {
 }
 
 function BranchManager() {
-  const columns: TableColumnsType<DataType> = [
-    {
-      title: 'Name',
-      dataIndex: 'name',
-    },
-    {
-      title: 'Email',
-      dataIndex: 'email',
-    },
-    {
-      title: 'Employee Code',
-      dataIndex: 'employee_code',
-    },
-    {
-      title: 'Phone Number',
-      dataIndex: 'phone_number',
-    },
-    {
-      title: 'Date of Joining',
-      dataIndex: 'date_of_joining',
-    },
-    {
-      title: 'Address',
-      dataIndex: 'address',
-    },
-   {
-      title: 'Branch ID',
-      dataIndex: ['branchId', 'name'],
-    },
-    {
-      title: 'Point Amount',
-      dataIndex: 'point_amount',
-    },
-    {
-      title: 'Salary',
-      dataIndex: 'salary',
-    },
-    {
-      title: 'Action',
-      render: (_, record: any) => (
-        <div className="flex gap-2">
-          <Button onClick={() => handleEdit(record)}>
-            <CiEdit />
-          </Button>
-          <Button danger onClick={() => handleDelete(record._id)}>
-            <MdDeleteOutline />
-          </Button>
-        </div>
-      )
-    }
-  ];
 
   const { data, isLoading, refetch } = useQuery('branchManager', getBranchManager)
   const { data: branchdata, isLoading: branchloading } = useQuery('branch', getBranch)
   const [addModal, setAddModal] = useState(false)
   const [editModal, setEditModal] = useState(false)
   const [editingRecord, setEditingRecord] = useState<DataType | null>(null)
+  const [selectedBranch, setSelectedBranch] = useState<string | null>(null);
 
   const { mutate: Create } = useCreateBranchManager()
   const { mutate: Update } = useUpdateBranchManager()
@@ -160,17 +110,97 @@ function BranchManager() {
     editForm.resetFields();
   };
 
+  const filteredData = useMemo(() => {
+    let filtered = data?.data;
+    if (selectedBranch) {
+      filtered = filtered?.filter((expense: any) => expense.branchId?._id === selectedBranch || expense.branchId === selectedBranch)
+    }
+    return filtered;
+  }, [selectedBranch])
+
+
+
+  const columns: TableColumnsType<DataType> = [
+    {
+      title: 'Name',
+      dataIndex: 'name',
+    },
+    {
+      title: 'Email',
+      dataIndex: 'email',
+    },
+    {
+      title: 'Employee Code',
+      dataIndex: 'employee_code',
+    },
+    {
+      title: 'Phone Number',
+      dataIndex: 'phone_number',
+    },
+    {
+      title: 'Date of Joining',
+      dataIndex: 'date_of_joining',
+    },
+    {
+      title: 'Address',
+      dataIndex: 'address',
+    },
+    {
+      title: 'Branch ID',
+      dataIndex: ['branchId', 'name'],
+    },
+    {
+      title: 'Point Amount',
+      dataIndex: 'point_amount',
+    },
+    {
+      title: 'Salary',
+      dataIndex: 'salary',
+    },
+    {
+      title: 'Action',
+      render: (_, record: any) => (
+        <div className="flex gap-2">
+          <Button onClick={() => handleEdit(record)}>
+            <CiEdit />
+          </Button>
+          <Button danger onClick={() => handleDelete(record._id)}>
+            <MdDeleteOutline />
+          </Button>
+        </div>
+      )
+    }
+  ];
+
+
   return (
     <div>
       <Divider>Branch Manager</Divider>
-      <div className="w-full flex justify-end">
+      <div className='justify-between flex mx-3 my-4'>
+        <Select
+          placeholder="Filter by Branch"
+          allowClear
+          style={{ width: 200 }}
+          value={selectedBranch || undefined}
+          onChange={(value) => setSelectedBranch(value)}
+          options={
+            branchdata?.data.map((branch: { _id: string; name: string }) => ({
+              value: branch._id,
+              label: branch.name,
+            }))
+          }
+          loading={branchloading}
+        />
+
         <Button type='primary' onClick={() => setAddModal(true)}>Add</Button>
+
       </div>
+
       <Table
         columns={columns}
         style={{ height: '350px', overflowY: 'auto' }}
         pagination={false}
-        dataSource={data?.data}
+        dataSource={filteredData}
         loading={isLoading}
         size="middle"
         rowKey="_id"
@@ -213,7 +243,7 @@ function BranchManager() {
               <Input placeholder='Address' />
             </Form.Item>
 
-             <Form.Item
+            <Form.Item
               name={'branchId'}
               label="Branch"
               rules={[{ required: true, message: "Please select a  branch" }]}
@@ -221,9 +251,9 @@ function BranchManager() {
               <Select
                 placeholder="Select a branch"
                 options={
-                  !branchloading && branchdata?.data.map((branch: { _id: string; name:string }) => ({
+                  !branchloading && branchdata?.data.map((branch: { _id: string; name: string }) => ({
                     value: branch._id,
-                    label : branch.name
+                    label: branch.name
                   }))
                 }
               />
@@ -283,7 +313,7 @@ function BranchManager() {
               <Input placeholder='Address' />
             </Form.Item>
 
-             <Form.Item
+            <Form.Item
               name={'branchId'}
               label="Branch"
               rules={[{ required: true, message: "Please select a  branch" }]}
@@ -291,7 +321,7 @@ function BranchManager() {
               <Select
                 placeholder="Select a branch"
                 options={
-                  !branchloading && branchdata?.data.map((branch: { _id:string, name: string; }) => ({
+                  !branchloading && branchdata?.data.map((branch: { _id: string, name: string; }) => ({
                     value: branch._id,
                     label: branch.name
                   }))

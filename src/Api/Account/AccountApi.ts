@@ -9,6 +9,10 @@ export const postAddAmount =(data:{id:string,data:any})=>{
     return apiCLient.post(`/api/account/addamount/${data.id}`,data.data)
 }
 
+export const postcollectpayment =(data:{id:string,data:any})=>{
+    return apiCLient.post(`/api/account/collect-Payment/${data.id}`,data.data)
+}
+
 export const postAccount =(data:{id:string, data:any})=>{
     return apiCLient.post(`/api/account/create/${data.id}`,data.data)
 }
