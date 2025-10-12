@@ -1,5 +1,5 @@
-import { Button, Divider, Form, Input, message, Modal, Select,Table, type TableColumnsType } from 'antd';
-import { lazy, useState } from 'react';
+import { Button, Divider, Form, Input, message, Modal, Select, Table, type TableColumnsType } from 'antd';
+import { useMemo, useState } from 'react';
 import { CiEdit } from 'react-icons/ci';
 import { MdDeleteOutline } from 'react-icons/md';
 import { useQuery } from 'react-query';
@@ -17,7 +17,7 @@ interface DataType {
 
 
 function Schoolmanagement() {
-    const columns: TableColumnsType<DataType> = [
+  const columns: TableColumnsType<DataType> = [
     {
       title: 'Name',
       dataIndex: 'name',
@@ -28,7 +28,7 @@ function Schoolmanagement() {
     },
     {
       title: 'Branch Name',
-      dataIndex: ['branchId','name'],
+      dataIndex: ['branchId', 'name'],
     },
     {
       title: 'Action',
@@ -50,6 +50,7 @@ function Schoolmanagement() {
   const [addModal, setAddModal] = useState(false)
   const [editModal, setEditModal] = useState(false)
   const [editingRecord, setEditingRecord] = useState<DataType | null>(null)
+  const [selectedSchool, setSelectedSchool] = useState<string | null>(null);
 
   const { mutate: Create } = useCreateSchoolmanagement()
   const { mutate: Update } = useUpdateSchoolmanagement()
@@ -102,7 +103,7 @@ function Schoolmanagement() {
       name: record.name,
       school_code: record.school_code,
       branchId: record.branchId,
-     
+
     });
   };
 
@@ -123,17 +124,43 @@ function Schoolmanagement() {
     setEditingRecord(null);
     editForm.resetFields();
   };
+
+  const filteredData = useMemo(() => {
+    let filtered = data?.data;
+    if (selectedSchool) {
+      filtered = filtered?.filter((sro: any) => sro?._id === selectedSchool || sro._id === selectedSchool)
+    }
+    return filtered;
+  }, [selectedSchool])
+
   return (
-     <div>
+    <div>
       <Divider>School Management</Divider>
-      <div className="w-full flex justify-end">
+      <div className='justify-between flex mx-3 my-4'>
+        <Select
+          placeholder="Filter by Name"
+          allowClear
+          style={{ width: 200 }}
+          value={selectedSchool}
+          onChange={(value) => setSelectedSchool(value)}
+          options={
+            data?.data.map((sro: { _id: string; name: string }) => ({
+              value: sro._id,
+              label: sro.name,
+            }))
+          }
+          loading={isLoading}
+        />
+
         <Button type='primary' onClick={() => setAddModal(true)}>Add</Button>
+
       </div>
+
       <Table
         columns={columns}
         style={{ height: '350px', overflowY: 'auto' }}
         pagination={false}
-        dataSource={data?.data}
+        dataSource={filteredData}
         loading={isLoading}
         size="middle"
         rowKey="_id"
@@ -166,7 +193,7 @@ function Schoolmanagement() {
               <Select
                 placeholder="Select a branch"
                 options={
-                  !branchloading && branchdata?.data.map((branch: { _id: string; name:string}) => ({
+                  !branchloading && branchdata?.data.map((branch: { _id: string; name: string }) => ({
                     value: branch._id,
                     label: branch.name
                   }))
@@ -190,7 +217,7 @@ function Schoolmanagement() {
         width={800}
       >
         <Form layout='vertical' onFinish={onUpdateFinish} form={editForm}>
-         <div className="grid grid-flow-row grid-cols-2 gap-x-2">
+          <div className="grid grid-flow-row grid-cols-2 gap-x-2">
 
             <Form.Item name={'name'} label="Name" rules={[{ required: true, message: "Please enter Name" }]}>
               <Input placeholder='Name' />
@@ -208,7 +235,7 @@ function Schoolmanagement() {
               <Select
                 placeholder="Select a branch"
                 options={
-                  !branchloading && branchdata?.data.map((branch: { _id: string; name:string}) => ({
+                  !branchloading && branchdata?.data.map((branch: { _id: string; name: string }) => ({
                     value: branch._id,
                     label: branch.name
                   }))

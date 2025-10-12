@@ -113,7 +113,7 @@ function BranchManager() {
   const filteredData = useMemo(() => {
     let filtered = data?.data;
     if (selectedBranch) {
-      filtered = filtered?.filter((expense: any) => expense.branchId?._id === selectedBranch || expense.branchId === selectedBranch)
+      filtered = filtered?.filter((branch: any) => branch?._id === selectedBranch || branch?._id === selectedBranch)
     }
     return filtered;
   }, [selectedBranch])
@@ -178,18 +178,18 @@ function BranchManager() {
       <Divider>Branch Manager</Divider>
       <div className='justify-between flex mx-3 my-4'>
         <Select
-          placeholder="Filter by Branch"
+          placeholder="Search by Name"
           allowClear
           style={{ width: 200 }}
           value={selectedBranch || undefined}
           onChange={(value) => setSelectedBranch(value)}
           options={
-            branchdata?.data.map((branch: { _id: string; name: string }) => ({
+            data?.data.map((branch: { _id: string; name: string }) => ({
               value: branch._id,
               label: branch.name,
             }))
           }
-          loading={branchloading}
+          loading={isLoading}
         />
 
         <Button type='primary' onClick={() => setAddModal(true)}>Add</Button>

@@ -50,7 +50,7 @@ function Accounts() {
   return (
     <div>
       <Divider>Accounts</Divider>
-      <div className='px-4'>
+      <div className='px-4 my-4'>
         <Select
           placeholder="Filter by Branch"
           allowClear

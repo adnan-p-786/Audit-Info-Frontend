@@ -1,6 +1,6 @@
 import { Button, DatePicker, Divider, Form, Input, message, Modal, Select, Switch, Table, type TableColumnsType } from 'antd';
 import dayjs from 'dayjs';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { CiEdit } from 'react-icons/ci';
 import { MdDeleteOutline } from 'react-icons/md';
 import { useQuery } from 'react-query';
@@ -85,6 +85,7 @@ function Src() {
   const [addModal, setAddModal] = useState(false)
   const [editModal, setEditModal] = useState(false)
   const [editingRecord, setEditingRecord] = useState<DataType | null>(null)
+  const [selectedSrc, setSelectedSrc] = useState<string | null>(null);
 
   const { mutate: Create } = useCreateSrc()
   const { mutate: Update } = useUpdateSrc()
@@ -165,17 +166,41 @@ function Src() {
     editForm.resetFields();
   };
 
+  const filteredData = useMemo(() => {
+    let filtered = data?.data;
+    if (selectedSrc) {
+      filtered = filtered?.filter((sro: any) => sro?._id === selectedSrc || sro._id === selectedSrc)
+    }
+    return filtered;
+  }, [selectedSrc])
+
   return (
     <div>
       <Divider>SRC</Divider>
-      <div className="w-full flex justify-end">
+      <div className='justify-between flex mx-3 my-4'>
+        <Select
+          placeholder="Filter by Name"
+          allowClear
+          style={{ width: 200 }}
+          value={selectedSrc}
+          onChange={(value) => setSelectedSrc(value)}
+          options={
+            data?.data.map((sro: { _id: string; name: string }) => ({
+              value: sro._id,
+              label: sro.name,
+            }))
+          }
+          loading={isLoading}
+        />
+
         <Button type='primary' onClick={() => setAddModal(true)}>Add</Button>
+
       </div>
       <Table
         columns={columns}
         style={{ height: '350px', overflowY: 'auto' }}
         pagination={false}
-        dataSource={data?.data}
+        dataSource={filteredData}
         loading={isLoading}
         size="middle"
         rowKey="_id"
@@ -230,9 +255,9 @@ function Src() {
               <Select
                 placeholder="Select a branch"
                 options={
-                  !branchloading && branchdata?.data.map((branch: { _id: string; name:string }) => ({
+                  !branchloading && branchdata?.data.map((branch: { _id: string; name: string }) => ({
                     value: branch._id,
-                    label : branch.name
+                    label: branch.name
                   }))
                 }
               />
@@ -299,7 +324,7 @@ function Src() {
               <Select
                 placeholder="Select a branch"
                 options={
-                  !branchloading && branchdata?.data.map((branch: { _id: string; name:string }) => ({
+                  !branchloading && branchdata?.data.map((branch: { _id: string; name: string }) => ({
                     value: branch._id,
                     label: branch.name
                   }))

@@ -1,9 +1,9 @@
-import { Button, DatePicker, Divider, Form, Input, message, Modal, Switch, Table, type TableColumnsType } from "antd";
+import { Button, DatePicker, Divider, Form, Input, message, Modal, Select, Switch, Table, type TableColumnsType } from "antd";
 import { CiEdit } from "react-icons/ci";
 import { MdDeleteOutline } from "react-icons/md";
 import { useQuery } from "react-query";
 import { getAccountant } from "../../Api/Accountant/AccountantApi";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useCreateAccountant, useDeleteAccountant, useUpdateAccountant } from "../../Api/Accountant/AccountantHooks";
 import dayjs from 'dayjs';
 
@@ -73,6 +73,7 @@ function Accountant() {
   const [addModal, setAddModal] = useState(false)
   const [editModal, setEditModal] = useState(false)
   const [editingRecord, setEditingRecord] = useState<DataType | null>(null)
+  const [selectedAccountant, setSelectedAccountant] = useState<string | null>(null);
 
   const { mutate: Create } = useCreateAccountant()
   const { mutate: Update } = useUpdateAccountant()
@@ -150,17 +151,41 @@ function Accountant() {
     editForm.resetFields();
   };
 
+  const filteredData = useMemo(() => {
+    let filtered = data?.data;
+    if (selectedAccountant) {
+      filtered = filtered?.filter((sro: any) => sro?._id === selectedAccountant || sro._id === selectedAccountant)
+    }
+    return filtered;
+  }, [selectedAccountant])
+
   return (
     <div>
       <Divider>Accountant</Divider>
-      <div className="w-full flex justify-end">
+      <div className='justify-between flex mx-3 my-4'>
+        <Select
+          placeholder="Filter by Name"
+          allowClear
+          style={{ width: 200 }}
+          value={selectedAccountant}
+          onChange={(value) => setSelectedAccountant(value)}
+          options={
+            data?.data.map((Accountant: { _id: string; name: string }) => ({
+              value: Accountant._id,
+              label: Accountant.name,
+            }))
+          }
+          loading={isLoading}
+        />
+
         <Button type='primary' onClick={() => setAddModal(true)}>Add</Button>
+
       </div>
       <Table
         columns={columns}
         style={{ height: '350px', overflowY: 'auto' }}
         pagination={false}
-        dataSource={data?.data}
+        dataSource={filteredData}
         loading={isLoading}
         size="middle"
         rowKey="_id"

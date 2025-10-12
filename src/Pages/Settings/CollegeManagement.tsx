@@ -1,5 +1,5 @@
 import { Button, Divider, Form, Input, message, Modal, Select, Switch, Table, type TableColumnsType } from 'antd';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { CiEdit } from 'react-icons/ci';
 import { MdDeleteOutline } from 'react-icons/md';
 import { useQuery } from 'react-query';
@@ -85,6 +85,7 @@ function CollegeManagement() {
   const [addModal, setAddModal] = useState(false)
   const [editModal, setEditModal] = useState(false)
   const [editingRecord, setEditingRecord] = useState<DataType | null>(null)
+  const [selectedCollege, setSelectedCollege] = useState<string | null>(null);
 
   const { mutate: Create } = useCreateCollegeManagement()
   const { mutate: Update } = useUpdateCollegeManagement()
@@ -163,17 +164,42 @@ function CollegeManagement() {
     setEditingRecord(null);
     editForm.resetFields();
   };
+
+  const filteredData = useMemo(() => {
+    let filtered = data?.data;
+    if (selectedCollege) {
+      filtered = filtered?.filter((college: any) => college?._id === selectedCollege || college._id === selectedCollege)
+    }
+    return filtered;
+  }, [selectedCollege])
+
+
   return (
     <div>
       <Divider>College Management</Divider>
-      <div className="w-full flex justify-end">
+      <div className='justify-between flex mx-3 my-4'>
+        <Select
+          placeholder="Filter by Name"
+          allowClear
+          style={{ width: 200 }}
+          value={selectedCollege}
+          onChange={(value) => setSelectedCollege(value)}
+          options={
+            data?.data.map((sro: { _id: string; college: string }) => ({
+              value: sro._id,
+              label: sro.college,
+            }))
+          }
+          loading={isLoading}
+        />
         <Button type='primary' onClick={() => setAddModal(true)}>Add</Button>
       </div>
+
       <Table
         columns={columns}
         style={{ height: '350px', overflowY: 'auto' }}
         pagination={false}
-        dataSource={data?.data}
+        dataSource={filteredData}
         loading={isLoading}
         size="middle"
         rowKey="_id"

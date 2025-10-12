@@ -91,9 +91,7 @@ function Expense() {
     <div>
       <Divider>Expense</Divider>
 
-      <div className="w-full flex justify-end p-4">
-
-        <div className='px-4'>
+        <div className='px-4 flex justify-between my-4'>
           <Select
             placeholder="Filter by Branch"
             allowClear
@@ -101,18 +99,16 @@ function Expense() {
             value={selectedBranch || undefined}
             onChange={(value) => setSelectedBranch(value)}
             options={
-              branchdata?.data.map((branch: { _id: string; name: string  }) => ({
+              branchdata?.data.map((branch: { _id: string; name: string }) => ({
                 value: branch._id,
                 label: branch.name,
               }))
             }
             loading={branchloading}
           />
+          <Button type='primary' onClick={() => setAddModal(true)}>Add</Button>
 
         </div>
-        <Button type='primary' onClick={() => setAddModal(true)}>Add</Button>
-      </div>
-
 
       <Table
         columns={columns}
@@ -150,7 +146,7 @@ function Expense() {
               <Select
                 placeholder="Select a Particular"
                 options={
-                  !particularloading && particulardata?.data.map((particular: { _id: string; name:string}) => ({
+                  !particularloading && particulardata?.data.map((particular: { _id: string; name: string }) => ({
                     value: particular._id,
                     label: particular.name
                   }))
@@ -166,7 +162,7 @@ function Expense() {
               <Select
                 placeholder="Select a branch"
                 options={
-                  !branchloading && branchdata?.data.map((branch: { _id: string; name:string}) => ({
+                  !branchloading && branchdata?.data.map((branch: { _id: string; name: string }) => ({
                     value: branch._id,
                     label: branch.name
                   }))

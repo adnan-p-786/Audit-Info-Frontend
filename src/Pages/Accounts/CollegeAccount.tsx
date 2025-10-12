@@ -46,7 +46,7 @@ function CollegeAccount() {
   return (
     <div>
       <Divider>College Account</Divider>
-      <div className='px-4'>
+      <div className='px-4 my-4'>
         <Select
           placeholder="Filter by College"
           allowClear

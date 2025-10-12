@@ -2,7 +2,7 @@ import { Button, DatePicker, Divider, Form, Input, message, Modal, Select, Switc
 import { CiEdit } from "react-icons/ci";
 import { MdDeleteOutline } from "react-icons/md";
 import { getSro } from "../../Api/SRO/SroApi";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useCreateSro, useDeleteSro, useUpdateSro } from "../../Api/SRO/SroHooks";
 import dayjs from 'dayjs';
 import { useQuery } from "react-query";
@@ -92,6 +92,7 @@ function Sro() {
   const [addModal, setAddModal] = useState(false)
   const [editModal, setEditModal] = useState(false)
   const [editingRecord, setEditingRecord] = useState<DataType | null>(null)
+  const [selectedSro, setSelectedSro] = useState<string | null>(null);
 
   const { mutate: Create } = useCreateSro()
   const { mutate: Update } = useUpdateSro()
@@ -173,17 +174,43 @@ function Sro() {
     editForm.resetFields();
   };
 
+  
+  const filteredData = useMemo(() => {
+    let filtered = data?.data;
+    if (selectedSro) {
+      filtered = filtered?.filter((sro: any) => sro?._id === selectedSro || sro._id === selectedSro)
+    }
+    return filtered;
+  }, [selectedSro])
+
   return (
     <div>
       <Divider>SRO</Divider>
-      <div className="w-full flex justify-end">
+      <div className='justify-between flex mx-3 my-4'>
+        <Select
+          placeholder="Filter by Name"
+          allowClear
+          style={{ width: 200 }}
+          value={selectedSro}
+          onChange={(value) => setSelectedSro(value)}
+          options={
+            data?.data.map((sro: { _id: string; name: string }) => ({
+              value: sro._id,
+              label: sro.name,
+            }))
+          }
+          loading={isLoading}
+        />
+
         <Button type='primary' onClick={() => setAddModal(true)}>Add</Button>
+
       </div>
+      
       <Table
         columns={columns}
         style={{ height: '350px', overflowY: 'auto' }}
         pagination={false}
-        dataSource={data?.data}
+        dataSource={filteredData}
         loading={isLoading}
         size="middle"
         rowKey="_id"

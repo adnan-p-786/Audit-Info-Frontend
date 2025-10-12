@@ -163,7 +163,7 @@ function OfficeAdministration() {
   return (
     <div>
       <Divider>Office Administration</Divider>
-      <div className="w-full flex justify-end">
+      <div className="w-full flex justify-end my-4">
         <Button type='primary' onClick={() => setAddModal(true)}>Add</Button>
       </div>
       <Table

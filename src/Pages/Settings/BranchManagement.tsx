@@ -1,5 +1,5 @@
 import { Button, Divider, Form, Input, message, Modal, Select, Switch, Table, type TableColumnsType } from 'antd';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { CiEdit } from 'react-icons/ci';
 import { MdDeleteOutline } from 'react-icons/md';
 import { useQuery } from 'react-query';
@@ -52,6 +52,7 @@ function BranchManagement() {
   const [addModal, setAddModal] = useState(false)
   const [editModal, setEditModal] = useState(false)
   const [editingRecord, setEditingRecord] = useState<DataType | null>(null)
+  const [selectedBranch, setSelectedBranch] = useState<string | null>(null);
 
   const { mutate: Create } = useCreateBranch()
   const { mutate: Update } = useUpdateBranch()
@@ -124,18 +125,41 @@ function BranchManagement() {
     setEditingRecord(null);
     editForm.resetFields();
   };
+  const filteredData = useMemo(() => {
+    let filtered = data?.data;
+    if (selectedBranch) {
+      filtered = filtered?.filter((sro: any) => sro?._id === selectedBranch || sro._id === selectedBranch)
+    }
+    return filtered;
+  }, [selectedBranch])
 
   return (
     <div>
       <Divider>Branch Management</Divider>
-      <div className="w-full flex justify-end">
+      <div className='justify-between flex mx-3 my-4'>
+        <Select
+          placeholder="Filter by Name"
+          allowClear
+          style={{ width: 200 }}
+          value={selectedBranch}
+          onChange={(value) => setSelectedBranch(value)}
+          options={
+            data?.data.map((sro: { _id: string; name: string }) => ({
+              value: sro._id,
+              label: sro.name,
+            }))
+          }
+          loading={isLoading}
+        />
+
         <Button type='primary' onClick={() => setAddModal(true)}>Add</Button>
+
       </div>
       <Table
         columns={columns}
         style={{ height: '350px', overflowY: 'auto' }}
         pagination={false}
-        dataSource={data?.data}
+        dataSource={filteredData}
         loading={isLoading}
         size="middle"
         rowKey="_id"
