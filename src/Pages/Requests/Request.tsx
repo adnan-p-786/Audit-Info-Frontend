@@ -129,23 +129,20 @@ const Request = () => {
             });
     };
 
-    const oncollectpymnt = (value: any) => {
-        collectpymnt(
-            {
+    const oncollectpymnt = async (value: any) => {
+        try {
+            await collectpymnt({
                 id: collectPaymentModal._id,
                 data: value
-            },
-            {
-                onSuccess() {
-                    message.success("Added successfully");
-                    setbookingconfirmationModal(false);
-                    bookingconfirmationform.resetFields();
-                },
-                onError() {
-                    message.error("Failed to add");
-                }
             });
+            message.success("Added successfully");
+            setcollectPaymentModal(false);
+            collectpymntform.resetFields();
+        } catch (error) {
+            message.error("Failed to add");
+        }
     };
+
 
     const onuploadaknwoledgment = (value: any) => {
         const formdata = new FormData();
@@ -416,7 +413,7 @@ const Request = () => {
                     <Button
                         style={{ backgroundColor: '#F68B1F', color: 'white' }}
                         onClick={() => {
-                           setcollectPaymentModal(record);
+                            setcollectPaymentModal(record);
                         }}
                     >
                         Collect Payment
@@ -771,12 +768,12 @@ const Request = () => {
                         <h1 className='font-semibold my-3'>Upload Aknwoledgment</h1>
                         <Form.Item name={'image'}>
 
-                        <Dragger>
-                            <p className="ant-upload-drag-icon">
-                                <InboxOutlined />
-                            </p>
-                            <p className="ant-upload-text">Click or drag file to this area to upload</p>
-                        </Dragger>
+                            <Dragger>
+                                <p className="ant-upload-drag-icon">
+                                    <InboxOutlined />
+                                </p>
+                                <p className="ant-upload-text">Click or drag file to this area to upload</p>
+                            </Dragger>
                         </Form.Item>
                         <Form.Item>
                             <Button htmlType='submit' type="primary" className='mt-6 w-full'>Submit</Button>
@@ -800,7 +797,7 @@ const Request = () => {
                     </div>
                 }
             >
-                <Form layout='vertical' className='flex w-full justify-center items-center' onFinish={oncollectpymnt} form={bookingconfirmationform}>
+                <Form layout='vertical' className='flex w-full justify-center items-center' onFinish={oncollectpymnt} form={collectpymntform}>
                     <div>
                         <Form.Item>
                             <Button htmlType='submit' type="primary">Yes, Collected</Button>

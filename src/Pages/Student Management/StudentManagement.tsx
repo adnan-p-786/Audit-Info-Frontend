@@ -10,6 +10,10 @@ import { getCollegeManagement } from '../../Api/College Management/collegeMgmtAp
 import TextArea from 'antd/es/input/TextArea';
 import { useCreateRegister, useDeleteRegister, useUpdateRegister } from '../../Api/Registration Table/registerTableHooks';
 import { useCreateAddAmount } from '../../Api/Account/AccountHooks';
+import { Link } from 'react-router-dom';
+import { GrView } from 'react-icons/gr';
+import { useDispatch } from 'react-redux';
+import { setStudentHistory } from '../../Redux/leadSlice';
 
 interface DataType {
   key: React.Key;
@@ -31,6 +35,10 @@ interface DataType {
 }
 
 function StudentManagement() {
+
+  const dispatch = useDispatch()
+
+
   const columns: TableColumnsType<DataType> = [
     {
       title: 'Date',
@@ -60,14 +68,16 @@ function StudentManagement() {
       title: 'Action',
       render: (_, record: any) => (
         <div className="flex gap-2">
-          <Button type='primary' onClick={() => setCollectAmountModal(record)}>Add</Button>
+          <Link to='/studenthistory'><Button onClick={() => {
+            dispatch(setStudentHistory(record))
+          }}><GrView /></Button></Link>
           <Button onClick={() => handleEdit(record)}>
             <CiEdit />
           </Button>
           <Button danger onClick={() => handleDelete(record._id)}>
             <MdDeleteOutline />
           </Button>
-
+          <Button type='primary' onClick={() => setCollectAmountModal(record)}>Add</Button>
         </div>
       )
     }

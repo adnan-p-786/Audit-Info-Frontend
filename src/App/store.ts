@@ -1,10 +1,11 @@
 import { configureStore } from "@reduxjs/toolkit";
-import leadHistoryReducer from '../Redux/leadSlice'
+import { leadHistoryReducer, studentHistoryReducer } from "../Redux/leadSlice";
 
 const store = configureStore({
-    reducer: {
-        leadHistory:leadHistoryReducer
-    },
+  reducer: {
+    leadHistory: leadHistoryReducer,
+    studentHistory: studentHistoryReducer,
+  },
 });
 
-export default store
+export default store;

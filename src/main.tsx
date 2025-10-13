@@ -32,6 +32,7 @@ import LeadCallManagement from './Pages/Lead Management/LeadCallManagement.tsx'
 import Request from './Pages/Requests/Request.tsx'
 import Expense from './Pages/Expense/Expense.tsx'
 import Payment from './Pages/Payment/Payment.tsx'
+import StudentHistory from './Pages/Student Management/StudentHistory.tsx'
 
 
 
@@ -147,6 +148,10 @@ const router = createBrowserRouter([
       {
         path: '/expense',
         element: <Expense />
+      },
+      {
+        path: '/studenthistory',
+        element: <StudentHistory />
       },
     ]
   }
