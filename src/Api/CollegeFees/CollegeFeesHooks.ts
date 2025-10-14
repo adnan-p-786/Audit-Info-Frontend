@@ -2,7 +2,7 @@ import { useMutation } from "react-query"
 import { deleteCollegeFees, postCollegeFees, putCollegeFees } from "./collegeFeesApi"
 
 export const useCreateCollegeFees = () => {
-    return useMutation((data: any) => postCollegeFees(data))
+    return useMutation((data:{id:string,data:any}) => postCollegeFees(data))
 }
 
 export const useUpdateCollegeFees = () => {

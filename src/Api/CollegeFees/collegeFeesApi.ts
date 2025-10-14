@@ -4,8 +4,12 @@ export const getCollegeFees = ()=>{
     return apiCLient.get('/api/collegefees/get')
 }
 
-export const postCollegeFees =(data:any)=>{
-    return apiCLient.post('/api/collegefees/create',data)
+export const getunpaidCollegeFees = ()=>{
+    return apiCLient.get('/api/collegefees/get-unpaid')
+}
+
+export const postCollegeFees =(data:{id:string,data:any})=>{
+    return apiCLient.post(`/api/collegefees/create/${data.id}`,data.data)
 }
 
 export const putCollegeFees = (data: any) => {

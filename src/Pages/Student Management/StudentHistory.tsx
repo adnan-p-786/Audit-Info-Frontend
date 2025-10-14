@@ -1,4 +1,4 @@
-import { Button, Form, Input, message, Modal, Select, Switch, Table, type TableColumnsType } from "antd"
+import { Button, Form, Input, message, Modal, Select, Switch, Table, Tag, type TableColumnsType } from "antd"
 import { useSelector } from "react-redux"
 import { getCollegeFees } from "../../Api/CollegeFees/collegeFeesApi"
 import { useQuery } from "react-query"
@@ -10,25 +10,31 @@ import { getParticular } from "../../Api/Particular/particularApi"
 
 function StudentHistory() {
   const studentdata = useSelector((state: any) => state?.studentHistory?.studentHistory)
+  // console.log({studentdata});
+
   const { data, isLoading, refetch } = useQuery('student', getCollegeFees)
   const { data: particulardata, isLoading: particularloading } = useQuery('particular', getParticular)
 
-  const [addcollegefees, setAddCollegeFees] = useState(false)
+  const [addcollegefees, setAddCollegeFees] = useState<any>(false)
   const [addFeeform] = Form.useForm()
   const { mutate: addfees } = useCreateCollegeFees()
 
   const onFinish = (value: any) => {
-    addfees(value, {
-      onSuccess() {
-        message.success("Added successfully")
-        refetch()
-        setAddCollegeFees(false)
-        addFeeform.resetFields()
-      },
-      onError() {
-        message.error("Failed to add")
-      }
-    })
+    addfees({
+      id: studentdata._id,
+      data: value
+    },
+      {
+        onSuccess() {
+          message.success("Added successfully")
+          refetch()
+          setAddCollegeFees(false)
+          addFeeform.resetFields()
+        },
+        onError() {
+          message.error("Failed to add")
+        }
+      })
   }
 
   const columns: TableColumnsType<any> = [
@@ -46,7 +52,26 @@ function StudentHistory() {
     },
     {
       title: 'Paid',
-      dataIndex: '',
+      dataIndex: 'directPay',
+      render: (directPay) => {
+        if (directPay === true) return <Tag color="green">Paid</Tag>;
+        if (directPay === false) return <Tag color="red">Unpaid</Tag>;
+      },
+    },
+    {
+      title: 'Action',
+      render: () => <a></a>,
+    }
+  ];
+
+  const servicecolumns: TableColumnsType<any> = [
+    {
+      title: 'Date',
+      dataIndex: 'createdAt',
+    },
+    {
+      title: 'Amount',
+      dataIndex: 'amount',
     },
     {
       title: 'Action',
@@ -79,13 +104,22 @@ function StudentHistory() {
         <h1 className="font-bold">Fee balance:</h1>
       </div>
 
-      <div>
-        <Button type="primary" className="mb-4" onClick={() => setAddCollegeFees(true)} >Add Fees</Button>
+      <Button type="primary" className="mb-4" onClick={() => setAddCollegeFees(true)} >Add Fees</Button>
+      <div className="flex gap-5">
         <Table
           columns={columns}
           style={{ height: '200px', overflowY: 'auto', width: '60%' }}
           pagination={false}
           dataSource={data?.data}
+          loading={isLoading}
+          size="small"
+          rowKey="_id"
+        />
+        <Table
+          columns={servicecolumns}
+          style={{ height: '200px', overflowY: 'auto', width: '60%' }}
+          pagination={false}
+          // dataSource={}
           loading={isLoading}
           size="small"
           rowKey="_id"
@@ -132,9 +166,10 @@ function StudentHistory() {
               </Select>
             </Form.Item>
 
-            <Form.Item name={'directPay'} label="Direct Pay" valuePropName="checked">
+            <Form.Item name="directPay" label="Direct Pay" valuePropName="checked" initialValue={false}>
               <Switch />
             </Form.Item>
+
 
           </div>
           <Form.Item>

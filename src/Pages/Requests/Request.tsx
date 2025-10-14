@@ -8,6 +8,7 @@ import { useCreateservice } from '../../Api/Registration Table/registerTableHook
 import { getParticular } from '../../Api/Particular/particularApi';
 import { Upload } from 'antd';
 import { useCreateAknwoledgment } from '../../Api/Aknwoledgment/aknwoledgmentHooks';
+import { getunpaidCollegeFees } from '../../Api/CollegeFees/collegeFeesApi';
 const { Dragger } = Upload;
 
 
@@ -25,6 +26,7 @@ const Request = () => {
     const { data: acknowledgmentData, isLoading: acknowledgmentloading } = useQuery('acknwoledgment', getRegister);
     const { data: amountcollectionData, isLoading: amountcollectionloading } = useQuery('amountcollection', getRegister);
     const { data: particularData, isLoading: particularloading } = useQuery('particular', getParticular);
+    const { data: unpaidCollegeFeeData, isLoading: unpaidCollegeFeeloading } = useQuery('collegefee', getunpaidCollegeFees);
     const [addModal, setAddModal] = useState<any>(false);
     const [addAmountModal, setAddAmountModal] = useState<any>(false);
     const [bookingModal, setbookingModal] = useState<any>(false);
@@ -423,6 +425,44 @@ const Request = () => {
         },
     ];
 
+    const collegefessColumns: TableColumnsType<any> = [
+        {
+            title: 'SI.NO',
+            dataIndex: '_id',
+        },
+        {
+            title: 'Student Name',
+            dataIndex: 'name',
+        },
+        {
+            title: 'College Name',
+            dataIndex: ['collegeId', 'college'],
+        },
+        {
+            title: 'Course Name',
+            dataIndex: 'course',
+        },
+        {
+            title: 'College Fees',
+            dataIndex: 'recived_amount',
+        },
+        {
+            title: 'Action',
+            render: (_, record: any) => (
+                <div className="flex gap-2">
+                    <Button
+                        style={{ backgroundColor: '#F68B1F', color: 'white' }}
+                        onClick={() => {
+                            (record);
+                        }}
+                    >
+                        Pay
+                    </Button>
+                </div>
+            ),
+        },
+    ];
+
     return (
         <div className="w-full py-[10px] px-[5px]">
             <div className="w-full flex space-x-2 flex-wrap">
@@ -570,6 +610,20 @@ const Request = () => {
                         columns={aknwoledgmentColumns}
                         dataSource={AcknowledmentFiltered}
                         loading={acknowledgmentloading}
+                        rowKey="_id"
+                        bordered
+                        pagination={{ pageSize: 10 }}
+                        scroll={{ y: 330 }}
+                    />
+                </div>
+            )}
+
+            {table === "CollegeFees" && (
+                <div className="mt-4">
+                    <Table
+                        columns={collegefessColumns}
+                        dataSource={unpaidCollegeFeeData?.data}
+                        loading={unpaidCollegeFeeloading}
                         rowKey="_id"
                         bordered
                         pagination={{ pageSize: 10 }}
