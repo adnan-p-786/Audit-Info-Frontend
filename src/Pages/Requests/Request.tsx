@@ -432,7 +432,7 @@ const Request = () => {
         },
         {
             title: 'Student Name',
-            dataIndex: 'name',
+            dataIndex: ["registrationId", "name"],
         },
         {
             title: 'College Name',
@@ -440,11 +440,11 @@ const Request = () => {
         },
         {
             title: 'Course Name',
-            dataIndex: 'course',
+            dataIndex: ["registrationId", "course"],
         },
         {
             title: 'College Fees',
-            dataIndex: 'recived_amount',
+            dataIndex: ["registrationId", "total_fee"],
         },
         {
             title: 'Action',
