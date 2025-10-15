@@ -5,24 +5,33 @@ import { useQuery } from "react-query"
 import { useState } from "react"
 import { useCreateCollegeFees } from "../../Api/CollegeFees/CollegeFeesHooks"
 import { getParticular } from "../../Api/Particular/particularApi"
+import { useCreateServiceCharge } from "../../Api/Account/AccountHooks"
+import { getServiceCharge } from "../../Api/Account/AccountApi"
 
 
 
 function StudentHistory() {
   const studentdata = useSelector((state: any) => state?.studentHistory?.studentHistory)
-  // console.log({studentdata});
+  console.log({ studentdata });
 
-  const { data, isLoading, refetch } = useQuery('student', getCollegeFees)
+  const { data, isLoading, refetch } = useQuery('student', () => getCollegeFees(studentdata._id))
   const { data: particulardata, isLoading: particularloading } = useQuery('particular', getParticular)
+  const { data: servicechargedata, isLoading: servicechargeloading } = useQuery('servicecharge', ()=> getServiceCharge(studentdata._id))
 
   const [addcollegefees, setAddCollegeFees] = useState<any>(false)
+  const [addserviceCharge, setAddserviceCharge] = useState<any>(false)
   const [addFeeform] = Form.useForm()
+  const [addServiceChargeform] = Form.useForm()
   const { mutate: addfees } = useCreateCollegeFees()
+  const { mutate: serviceCharge } = useCreateServiceCharge()
 
   const onFinish = (value: any) => {
     addfees({
       id: studentdata._id,
-      data: value
+      data: {
+        ...value,
+        collegeId: studentdata.collegeId,
+      },
     },
       {
         onSuccess() {
@@ -36,6 +45,27 @@ function StudentHistory() {
         }
       })
   }
+
+  const onFinishServiceCharge = (value: any) => {
+    serviceCharge(
+      {
+        id: studentdata._id,
+        data: value
+      },
+      {
+        onSuccess() {
+          message.success("Added successfully")
+          refetch()
+          setAddserviceCharge(false)
+          addServiceChargeform.resetFields()
+        },
+        onError() {
+          message.error("Failed to add")
+        }
+      }
+    )
+  }
+
 
   const columns: TableColumnsType<any> = [
     {
@@ -71,7 +101,7 @@ function StudentHistory() {
     },
     {
       title: 'Amount',
-      dataIndex: 'amount',
+      dataIndex: 'credit',
     },
     {
       title: 'Action',
@@ -98,13 +128,22 @@ function StudentHistory() {
           <h1 className="font-semibold text-md">Comment: <span className="font-normal text-sm">{studentdata?.comment}</span></h1>
         </div>
       </div>
-      <div className="text-center my-4">
-        <h1 className="underline font-bold">College Fee</h1>
-        <h1 className="font-bold">Total Fee: </h1>
-        <h1 className="font-bold">Fee balance:</h1>
+      <div className="flex my-4 justify-between">
+        <div>
+          <h1 className="underline font-bold mx-8">College Fee</h1>
+          <h1 className="font-bold">Total Fee: </h1>
+          <h1 className="font-bold">Fee Balance:</h1>
+        </div>
+        <div className="mx-15">
+          <h1 className="underline font-bold mx-8">Service</h1>
+          <h1 className="font-bold">Total Service Charge: </h1>
+          <h1 className="font-bold">Service Balance:</h1>
+        </div>
       </div>
-
-      <Button type="primary" className="mb-4" onClick={() => setAddCollegeFees(true)} >Add Fees</Button>
+      <div className="flex justify-between">
+        <Button type="primary" className="mb-4" onClick={() => setAddCollegeFees(true)} >Add Fees</Button>
+        <Button type="primary" className="mb-4" onClick={() => setAddserviceCharge(true)} >Add Service Amount</Button>
+      </div>
       <div className="flex gap-5">
         <Table
           columns={columns}
@@ -115,12 +154,13 @@ function StudentHistory() {
           size="small"
           rowKey="_id"
         />
+
         <Table
           columns={servicecolumns}
           style={{ height: '200px', overflowY: 'auto', width: '60%' }}
           pagination={false}
-          // dataSource={}
-          loading={isLoading}
+          dataSource={servicechargedata?.data}
+          loading={servicechargeloading}
           size="small"
           rowKey="_id"
         />
@@ -170,6 +210,38 @@ function StudentHistory() {
               <Switch />
             </Form.Item>
 
+
+          </div>
+          <Form.Item>
+            <Button htmlType='submit' type="primary" className='w-full'>Submit</Button>
+          </Form.Item>
+        </Form>
+      </Modal>
+
+      <Modal
+        title="Add Service Charge"
+        open={addserviceCharge}
+        onCancel={() => setAddserviceCharge(false)}
+        footer={null}
+        width={400}
+      >
+        <Form layout='vertical' onFinish={onFinishServiceCharge} form={addServiceChargeform}>
+          <div>
+
+            <Form.Item name={'credit'} label="Amount" rules={[{ required: true, message: "Please enter amount" }]}>
+              <Input placeholder='Amount' />
+            </Form.Item>
+
+            <Form.Item
+              name="amount_type"
+              label="Amount Type"
+              rules={[{ required: true, message: "Please select amount type" }]}
+            >
+              <Select placeholder="Select payment type">
+                <Select.Option value="cash">Cash</Select.Option>
+                <Select.Option value="online">Bank</Select.Option>
+              </Select>
+            </Form.Item>
 
           </div>
           <Form.Item>

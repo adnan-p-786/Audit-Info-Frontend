@@ -857,7 +857,6 @@ const Request = () => {
                             <Button htmlType='submit' type="primary">Yes, Collected</Button>
                         </Form.Item>
                     </div>
-
                 </Form>
             </Modal>
         </div>

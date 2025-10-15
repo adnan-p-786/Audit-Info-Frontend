@@ -1,8 +1,9 @@
 import { apiCLient } from "../Api"
 
-export const getCollegeFees = ()=>{
-    return apiCLient.get('/api/collegefees/get')
-}
+export const getCollegeFees = (id: string) => {
+  return apiCLient.get(`/api/collegefees/get/${id}`);
+};
+
 
 export const getunpaidCollegeFees = ()=>{
     return apiCLient.get('/api/collegefees/get-unpaid')
