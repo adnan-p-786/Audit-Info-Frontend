@@ -53,7 +53,7 @@ const Request = () => {
     const bookingFiltered = bookingData?.data.filter((item: any) => item.status === "forbooking");
     const bookingconfirmationFiltered = bookingconfirmationData?.data.filter((item: any) => item.status === "forbookingconfirmation");
     const AcknowledmentFiltered = acknowledgmentData?.data.filter((item: any) => item.status === "foracknowledgment");
-    const AmountcollectionFiltered = amountcollectionData?.data.filter((item: any) => item.status === "foramountcollection");
+    const AmountcollectionFiltered = amountcollectionData?.data.filter((item: any) => item.status === "foramountcollection" || item.status === "forServicecollection");
 
 
 
