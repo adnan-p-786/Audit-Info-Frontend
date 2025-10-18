@@ -3,10 +3,11 @@ import { useSelector } from "react-redux"
 import { getCollegeFees } from "../../Api/CollegeFees/collegeFeesApi"
 import { useQuery } from "react-query"
 import { useState } from "react"
-import { useCreateCollegeFees } from "../../Api/CollegeFees/CollegeFeesHooks"
+import { useCreateCollegeFees, useDeleteCollegeFees } from "../../Api/CollegeFees/CollegeFeesHooks"
 import { getParticular } from "../../Api/Particular/particularApi"
-import { useCreateServiceCharge } from "../../Api/Account/AccountHooks"
+import { useCreateServiceCharge, useDeleteAccount } from "../../Api/Account/AccountHooks"
 import { getServiceCharge } from "../../Api/Account/AccountApi"
+import { MdDeleteOutline } from "react-icons/md"
 
 
 
@@ -16,7 +17,7 @@ function StudentHistory() {
 
   const { data, isLoading, refetch } = useQuery('student', () => getCollegeFees(studentdata._id))
   const { data: particulardata, isLoading: particularloading } = useQuery('particular', getParticular)
-  const { data: servicechargedata, isLoading: servicechargeloading } = useQuery('servicecharge', ()=> getServiceCharge(studentdata._id))
+  const { data: servicechargedata, isLoading: servicechargeloading, isRefetching:reload} = useQuery('servicecharge', () => getServiceCharge(studentdata._id))
 
   const [addcollegefees, setAddCollegeFees] = useState<any>(false)
   const [addserviceCharge, setAddserviceCharge] = useState<any>(false)
@@ -24,6 +25,8 @@ function StudentHistory() {
   const [addServiceChargeform] = Form.useForm()
   const { mutate: addfees } = useCreateCollegeFees()
   const { mutate: serviceCharge } = useCreateServiceCharge()
+  const { mutate: Delete } = useDeleteCollegeFees()
+  const { mutate: DeleteServiceCharge } = useDeleteAccount()
 
   const onFinish = (value: any) => {
     addfees({
@@ -55,7 +58,7 @@ function StudentHistory() {
       {
         onSuccess() {
           message.success("Added successfully")
-          refetch()
+          reload
           setAddserviceCharge(false)
           addServiceChargeform.resetFields()
         },
@@ -65,6 +68,31 @@ function StudentHistory() {
       }
     )
   }
+
+
+  const handleDelete = (_id: string) => {
+    Delete(_id, {
+      onSuccess: () => {
+        message.success('Deleted successfully');
+        refetch();
+      },
+      onError: () => {
+        message.error('Failed to delete');
+      }
+    });
+  };
+
+  const handleDeleteServiceCharge = (_id: string) => {
+    DeleteServiceCharge(_id, {
+      onSuccess: () => {
+        message.success('Deleted successfully');
+        refetch();
+      },
+      onError: () => {
+        message.error('Failed to delete');
+      }
+    });
+  };
 
 
   const columns: TableColumnsType<any> = [
@@ -90,7 +118,13 @@ function StudentHistory() {
     },
     {
       title: 'Action',
-      render: () => <a></a>,
+      render: (_, record: any) => (
+        <div>
+          <Button danger onClick={() => handleDelete(record._id)}>
+            <MdDeleteOutline />
+          </Button>
+        </div>
+      )
     }
   ];
 
@@ -105,7 +139,13 @@ function StudentHistory() {
     },
     {
       title: 'Action',
-      render: () => <a></a>,
+      render: (_, record: any) => (
+        <div>
+          <Button danger onClick={() => handleDeleteServiceCharge(record._id)}>
+            <MdDeleteOutline />
+          </Button>
+        </div>
+      )
     }
   ];
 

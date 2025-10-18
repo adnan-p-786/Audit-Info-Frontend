@@ -19,6 +19,7 @@ import { RiAddBoxLine, RiSave3Line } from 'react-icons/ri';
 import { useCreateRegister } from '../../Api/Registration Table/registerTableHooks';
 import TextArea from 'antd/es/input/TextArea';
 import { getCollegeManagement } from '../../Api/College Management/collegeMgmtApi';
+import { getAgent } from '../../Api/Agent/agentApi';
 
 interface DataType {
   key: React.Key;
@@ -104,6 +105,7 @@ function LeadManagement() {
   const { data: srodata, isLoading: sroloading } = useQuery('sro', getSro)
   const { data: collegedata, isLoading: collegeloading } = useQuery('college', getCollegeManagement)
   const { data: schooldata, isLoading: schoolloading } = useQuery('school', getSchoolmanagement)
+  const { data: agentdata, isLoading: agentloading } = useQuery('agent', getAgent)
   const [addModal, setAddModal] = useState(false)
   const [uploadModal, setUploadModal] = useState(false)
   const [editModal, setEditModal] = useState(false)
@@ -537,7 +539,7 @@ function LeadManagement() {
               <Select
                 placeholder="Select School"
                 options={
-                  !schoolloading && schooldata?.data.map((school: { _id: string; name?: string }) => ({
+                  !schoolloading && schooldata?.data.map((school: { _id: string; name: string }) => ({
                     value: school._id,
                     label: school.name || school._id
                   }))
@@ -561,9 +563,9 @@ function LeadManagement() {
               <Select
                 placeholder="Select College"
                 options={
-                  !collegeloading && collegedata?.data.map((college: { _id: string; name?: string }) => ({
+                  !collegeloading && collegedata?.data.map((college: { _id: string; college: string }) => ({
                     value: college._id,
-                    label: college.name || college._id
+                    label: college.college
                   }))
                 }
               />
@@ -577,8 +579,28 @@ function LeadManagement() {
               <Input placeholder='Total Fee Amount' />
             </Form.Item>
 
+            <Form.Item name={'booking_amount'} label="Booking Amount" rules={[{ required: true, message: "Please enter Booking Amount" }]}>
+              <Input placeholder='Booking Amount' />
+            </Form.Item>
+
             <Form.Item name={'recived_amount'} label="Received Amount" rules={[{ required: true, message: "Please enter Received Amount" }]}>
               <Input placeholder='Received Amount' />
+            </Form.Item>
+
+            <Form.Item
+              name={'agentId'}
+              label="Agent"
+              rules={[{ required: true, message: "Please select a  Agent" }]}
+            >
+              <Select
+                placeholder="Select a Agent"
+                options={
+                  !agentloading && agentdata?.data.map((agent: { _id: string; name:string}) => ({
+                    value: agent._id,
+                    label: agent.name
+                  }))
+                }
+              />
             </Form.Item>
 
             <Form.Item

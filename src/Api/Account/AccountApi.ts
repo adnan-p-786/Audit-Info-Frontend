@@ -6,7 +6,7 @@ export const getAccount = ()=>{
 }
 
 export const getServiceCharge = (id:string)=>{
-    return apiCLient.get(`/api/account/get-servicecharge/${id}`)
+    return apiCLient.get(`/api/account/get-servicecharge/${id}`);
 }
 
 export const postAddAmount =(data:{id:string,data:any})=>{
