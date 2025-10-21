@@ -6,7 +6,7 @@ import { useState } from "react"
 import { useCreateCollegeFees, useDeleteCollegeFees } from "../../Api/CollegeFees/CollegeFeesHooks"
 import { getParticular } from "../../Api/Particular/particularApi"
 import { useCreateServiceCharge, useDeleteAccount } from "../../Api/Account/AccountHooks"
-import { getServiceCharge } from "../../Api/Account/AccountApi"
+import { getServiceCharge, getTransaction } from "../../Api/Account/AccountApi"
 import { MdDeleteOutline } from "react-icons/md"
 
 
@@ -17,6 +17,7 @@ function StudentHistory() {
 
   const { data, isLoading, refetch } = useQuery('student', () => getCollegeFees(studentdata._id))
   const { data: particulardata, isLoading: particularloading } = useQuery('particular', getParticular)
+  const { data: transactiondata, isLoading: transactionloading } = useQuery('transaction', ()=> getTransaction(studentdata._id))
   const { data: servicechargedata, isLoading: servicechargeloading, isRefetching:reload} = useQuery('servicecharge', () => getServiceCharge(studentdata._id))
 
   const [addcollegefees, setAddCollegeFees] = useState<any>(false)
@@ -149,6 +150,18 @@ function StudentHistory() {
     }
   ];
 
+
+  const Transactioncolumns: TableColumnsType<any> = [
+    {
+      title: 'Date',
+      dataIndex: 'createdAt',
+    },
+    {
+      title: 'Amount',
+      dataIndex: 'credit',
+    }
+  ];
+
   return (
     <div>
       <div className="flex">
@@ -171,7 +184,7 @@ function StudentHistory() {
       <div className="flex my-4 justify-between">
         <div>
           <h1 className="underline font-bold mx-8">College Fee</h1>
-          <h1 className="font-bold">Total Fee: </h1>
+          <h1 className="font-bold">Total Fee: {studentdata?.total_fee}</h1>
           <h1 className="font-bold">Fee Balance:</h1>
         </div>
         <div className="mx-15">
@@ -187,7 +200,7 @@ function StudentHistory() {
       <div className="flex gap-5">
         <Table
           columns={columns}
-          style={{ height: '200px', overflowY: 'auto', width: '60%' }}
+          style={{ height: '100px', overflowY: 'auto', width: '50%' }}
           pagination={false}
           dataSource={data?.data}
           loading={isLoading}
@@ -197,10 +210,25 @@ function StudentHistory() {
 
         <Table
           columns={servicecolumns}
-          style={{ height: '200px', overflowY: 'auto', width: '60%' }}
+          style={{ height: '100px', overflowY: 'auto', width: '50%' }}
           pagination={false}
           dataSource={servicechargedata?.data}
           loading={servicechargeloading}
+          size="small"
+          rowKey="_id"
+        />
+      </div>
+      <div>
+        <div className="flex gap-90 py-3">
+          <h1 className="font-bold">Student Transactions</h1>
+          <h1 className="font-bold">Balance :</h1>
+        </div>
+        <Table
+          columns={Transactioncolumns}
+          style={{ height: '120px', overflowY: 'auto', width: '60%' }}
+          pagination={false}
+          dataSource={transactiondata?.data}
+          loading={transactionloading}
           size="small"
           rowKey="_id"
         />

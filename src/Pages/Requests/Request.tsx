@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useQuery } from 'react-query';
 import { getRegister } from '../../Api/Registration Table/registerTableApi';
 import { Button, Form, Input, message, Modal, Select, Table, type TableColumnsType } from 'antd';
-import { useConfirmBooking, useCreateAccount, useCreateBookingAmount, useCreateCollectPayment } from '../../Api/Account/AccountHooks';
+import { useConfirmBooking, useConfirmcollegefee, useCreateAccount, useCreateBookingAmount, useCreateCollectPayment } from '../../Api/Account/AccountHooks';
 import { ExclamationCircleOutlined, InboxOutlined } from '@ant-design/icons';
 import { useCreateservice } from '../../Api/Registration Table/registerTableHooks';
 import { getParticular } from '../../Api/Particular/particularApi';
@@ -33,6 +33,7 @@ const Request = () => {
     const [bookingconfirmationModal, setbookingconfirmationModal] = useState<any>(false);
     const [uploadModal, setuploadModal] = useState<any>(false);
     const [collectPaymentModal, setcollectPaymentModal] = useState<any>(false);
+    const [collegefeesModal, setcollegefeesModal] = useState<any>(false);
 
     const { mutate: Collectpayment } = useCreateAccount();
     const { mutate: AddAmount } = useCreateservice();
@@ -40,6 +41,7 @@ const Request = () => {
     const { mutate: confirmbooking } = useConfirmBooking();
     const { mutate: upload } = useCreateAknwoledgment();
     const { mutate: collectpymnt } = useCreateCollectPayment();
+    const { mutate: confirmfee } = useConfirmcollegefee();
 
     const [form] = Form.useForm();
     const [addamountform] = Form.useForm();
@@ -47,6 +49,7 @@ const Request = () => {
     const [bookingconfirmationform] = Form.useForm();
     const [Uploadform] = Form.useForm();
     const [collectpymntform] = Form.useForm();
+    const [collegefeesform] = Form.useForm();
 
     const registeredFiltered = registerData?.data.filter((item: any) => item.status === "registered");
     const admissionFiltered = admissionData?.data.filter((item: any) => item.status === "foradmmission");
@@ -162,6 +165,24 @@ const Request = () => {
                     message.success("aknwolegment successfully created");
                     setuploadModal(false);
                     Uploadform.resetFields();
+                },
+                onError() {
+                    message.error("Failed to add");
+                }
+            });
+    };
+
+    const onCollegefeeConfirm = (value: any) => {
+        confirmfee(
+            {
+                id: collegefeesModal._id,
+                data: value
+            },
+            {
+                onSuccess() {
+                    message.success("Added successfully");
+                    setcollegefeesModal(false);
+                    collegefeesform.resetFields();
                 },
                 onError() {
                     message.error("Failed to add");
@@ -453,7 +474,7 @@ const Request = () => {
                     <Button
                         style={{ backgroundColor: '#F68B1F', color: 'white' }}
                         onClick={() => {
-                            (record);
+                            setcollegefeesModal(record);
                         }}
                     >
                         Pay
@@ -709,10 +730,9 @@ const Request = () => {
                         <Form.Item
                             name="recieved_amount"
                             label="Received Amount"
-                            rules={[{ required: true, message: "Please enter received amount" }]}
                             className="w-1/2"
                         >
-                            <Input placeholder="Received amount" />
+                            <Input readOnly />
                         </Form.Item>
                         <Form.Item
                             name="amount_type"
@@ -858,6 +878,52 @@ const Request = () => {
                         </Form.Item>
                     </div>
                 </Form>
+            </Modal>
+
+            <Modal
+                open={!!collegefeesModal}
+                onCancel={() => {
+                    setcollegefeesModal(false);
+                    collegefeesform.resetFields();
+                }}
+                footer={null}
+                width={400}
+                title={
+                    <div className="text-center">
+                        <ExclamationCircleOutlined style={{ fontSize: '70px', color: '#F68B1F', marginTop: 25 }} />
+                        <div className="mt-5 text-2xl mb-8 font-semibold">Are you sure , want to collect payment</div>
+                    </div>
+                }
+            >
+                <Form
+                    layout='vertical'
+                    className='flex'
+                    onFinish={confirmfee}
+                    form={collegefeesform}
+                >
+                    <Form.Item name="Particular" label="Particular :">
+                        <Input
+                            readOnly
+                            bordered={false}
+                            value={unpaidCollegeFeeData?.data?.particularId?.name}
+                        />
+                    </Form.Item>
+                    
+                    <Form.Item name="Particular" label="Particular :">
+                        <Input
+                            readOnly
+                            bordered={false}
+                            value={unpaidCollegeFeeData?.data?.particularId?.name}
+                        />
+                    </Form.Item>
+
+                    <Form.Item>
+                        <Button htmlType='submit' type="primary">
+                            Yes, Collected
+                        </Button>
+                    </Form.Item>
+                </Form>
+
             </Modal>
         </div>
     );

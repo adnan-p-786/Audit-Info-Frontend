@@ -153,21 +153,21 @@ function App() {
           </Menu>
         </Sider>
         <Layout>
-          <Header style={{ padding: 0, background: colorBgContainer }}>
+          <Header style={{ padding: 0, height:50, background: colorBgContainer }}>
             <Button
               type="text"
               icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
               onClick={() => setCollapsed(!collapsed)}
               style={{
-                fontSize: '16px',
-                width: 64,
-                height: 64,
+                fontSize: '14px',
+                width: 60,
+                height: 60,
               }}
             />
           </Header>
           <Content
             style={{
-              margin: '24px 16px',
+              margin: '13px 10px',
               padding: 24,
               minHeight: 280,
               background: colorBgContainer,

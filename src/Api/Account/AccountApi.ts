@@ -9,8 +9,16 @@ export const getServiceCharge = (id:string)=>{
     return apiCLient.get(`/api/account/get-servicecharge/${id}`);
 }
 
+export const getTransaction = (id:string)=>{
+    return apiCLient.get(`/api/account/get-transaction/${id}`);
+}
+
 export const postAddAmount =(data:{id:string,data:any})=>{
     return apiCLient.post(`/api/account/addamount/${data.id}`,data.data)
+}
+
+export const postconfirmCollegeFee =(data:{id:string,data:any})=>{
+    return apiCLient.post(`/api/account/confirmcollegefee/${data.id}`,data.data)
 }
 
 export const postServiceCharge =(data:{id:string,data:any})=>{
