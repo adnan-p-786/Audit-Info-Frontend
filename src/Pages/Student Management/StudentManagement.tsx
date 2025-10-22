@@ -1,19 +1,19 @@
 import { Button, Checkbox, Divider, Form, Input, message, Modal, Select, Table, type TableColumnsType } from 'antd';
 import { useState } from 'react';
 import { CiEdit } from 'react-icons/ci';
-import { MdDeleteOutline } from 'react-icons/md';
 import { useQuery } from 'react-query';
 import { getRegister } from '../../Api/Registration Table/registerTableApi';
 import { getAgent } from '../../Api/Agent/agentApi';
 import { getSchoolmanagement } from '../../Api/School Management/schoolManagementApi';
 import { getCollegeManagement } from '../../Api/College Management/collegeMgmtApi';
 import TextArea from 'antd/es/input/TextArea';
-import { useCreateRegister, useDeleteRegister, useUpdateRegister } from '../../Api/Registration Table/registerTableHooks';
+import { useCreateRefund, useCreateRegister, useDeleteRegister, useUpdateRegister } from '../../Api/Registration Table/registerTableHooks';
 import { useCreateAddAmount } from '../../Api/Account/AccountHooks';
 import { Link } from 'react-router-dom';
 import { GrView } from 'react-icons/gr';
 import { useDispatch } from 'react-redux';
 import { setStudentHistory } from '../../Redux/leadSlice';
+import { CloseOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 
 interface DataType {
   key: React.Key;
@@ -74,10 +74,10 @@ function StudentManagement() {
           <Button onClick={() => handleEdit(record)}>
             <CiEdit />
           </Button>
-          <Button danger onClick={() => handleDelete(record._id)}>
-            <MdDeleteOutline />
+          <Button danger onClick={() => setdeleteModal(record._id)}>
+            <CloseOutlined />
           </Button>
-          <Button type='primary' onClick={() => setCollectAmountModal(record)}>Add</Button>
+          <Button type='primary' onClick={() => setCollectAmountModal(record)}>Add Amount</Button>
         </div>
       )
     }
@@ -90,17 +90,21 @@ function StudentManagement() {
   const [addModal, setAddModal] = useState(false)
   const [collectAmountModal, setCollectAmountModal] = useState<any>(false)
   const [editModal, setEditModal] = useState(false)
-  const [editingRecord, setEditingRecord] = useState<DataType | null>(null)
+  const [deleteModal, setdeleteModal] = useState<string | any>(null)
+  const [editingRecord, setEditingRecord] = useState<DataType | any>(null)
+  const [refundModal, setrefundModal] = useState<DataType | any>(null)
 
 
   const { mutate: Create } = useCreateRegister()
   const { mutate: Update } = useUpdateRegister()
   const { mutate: Delete } = useDeleteRegister()
   const { mutate: collectamount } = useCreateAddAmount()
+  const { mutate: refund } = useCreateRefund()
 
   const [form] = Form.useForm()
   const [editForm] = Form.useForm()
   const [addamountForm] = Form.useForm()
+  const [refundForm] = Form.useForm()
 
   const onFinish = (value: any) => {
     Create(value, {
@@ -179,6 +183,7 @@ function StudentManagement() {
       onSuccess: () => {
         message.success('Deleted successfully');
         refetch();
+        setdeleteModal(null);
       },
       onError: () => {
         message.error('Failed to delete');
@@ -195,6 +200,28 @@ function StudentManagement() {
   const onCancelAmount = () => {
     setCollectAmountModal(false);
     addamountForm.resetFields();
+  };
+
+  const onCancelDelete = () => {
+    setdeleteModal(null);
+  };
+
+  const onConfirmRefund = (value: any) => {
+    refund(
+      {
+        id: refundModal._id,
+        data: value
+      },
+      {
+        onSuccess() {
+          message.success("Added successfully");
+          setrefundModal(false);
+          refundForm.resetFields();
+        },
+        onError() {
+          message.error("Failed to add");
+        }
+      });
   };
 
   return (
@@ -468,6 +495,60 @@ function StudentManagement() {
               </Select>
             </Form.Item>
           </div>
+          <Form.Item>
+            <Button htmlType='submit' type="primary" className='w-full'>Submit</Button>
+          </Form.Item>
+        </Form>
+      </Modal>
+
+      <Modal
+        open={!!deleteModal}
+        onCancel={() => {
+          setdeleteModal(null);
+          form.resetFields();
+        }}
+        footer={null}
+        width={390}
+        title={
+          <div className="text-center">
+            <ExclamationCircleOutlined style={{ fontSize: '70px', color: '#F68B1F' }} />
+            <div className="mt-3 text-3xl font-bold my-5">Are you sure ?</div>
+            <h1 className='my-7'>you want to delete ?</h1>
+          </div>
+        }
+      >
+        <Form>
+          <Form.Item>
+            <div className='flex gap-2'>
+              <Button onClick={() => { setrefundModal(true); setdeleteModal(false) }} type='primary' className='w-50'>Refund it</Button>
+              <Button onClick={() => deleteModal && handleDelete(deleteModal)} className='w-50' type='primary'>Yes, delete it!</Button>
+              <Button onClick={onCancelDelete} danger type="primary" className='mx-2'>Cancel</Button>
+            </div>
+          </Form.Item>
+        </Form>
+      </Modal>
+
+      <Modal
+        open={!!refundModal}
+        onCancel={() => {
+          setrefundModal(false);
+          refundForm.resetFields();
+
+        }}
+        width={250}
+        title={
+          <h1 className='text-center text-xl font-bold my-4'>Refund Amount</h1>
+
+        }
+        footer={null}
+      >
+
+        <Form layout='vertical' onFinish={onConfirmRefund} form={refundForm}>
+
+          <Form.Item name={'refundamount'} rules={[{ required: true, message: "Please enter Booking Amount" }]}>
+            <Input placeholder='Enter Amount' />
+          </Form.Item>
+
           <Form.Item>
             <Button htmlType='submit' type="primary" className='w-full'>Submit</Button>
           </Form.Item>

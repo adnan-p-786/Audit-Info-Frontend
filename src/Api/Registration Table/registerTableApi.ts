@@ -9,6 +9,10 @@ export const postService = (data:{id: string, data: any}) => {
   return apiCLient.post(`/api/registrationtable/create-service/${data.id}`, data.data)
 }
 
+export const postRefund = (data:{id: string, data: any}) => {
+  return apiCLient.post(`/api/registrationtable/refund/${data.id}`, data.data)
+}
+
 export const postRegister =(data:any)=>{
     return apiCLient.post('/api/registrationtable/create',data)    
 }

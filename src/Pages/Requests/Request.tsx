@@ -197,6 +197,18 @@ const Request = () => {
         bookingconfirmationform.resetFields();
     };
 
+    const handleOpenCollegeFeeModal = (record: any) => {
+        setcollegefeesModal(record);
+        collegefeesform.setFieldsValue({
+            Particular: record?.particularId?.name || "",
+            debit: record?.amount || "",
+            amount_type: record?.amount_type
+                ? record.amount_type.charAt(0).toUpperCase() + record.amount_type.slice(1)
+                : undefined,
+        });
+    };
+
+
 
     const registeredColumns: TableColumnsType<any> = [
         {
@@ -465,7 +477,7 @@ const Request = () => {
         },
         {
             title: 'College Fees',
-            dataIndex: ["registrationId", "total_fee"],
+            dataIndex: 'amount',
         },
         {
             title: 'Action',
@@ -474,7 +486,7 @@ const Request = () => {
                     <Button
                         style={{ backgroundColor: '#F68B1F', color: 'white' }}
                         onClick={() => {
-                            setcollegefeesModal(record);
+                            handleOpenCollegeFeeModal(record);
                         }}
                     >
                         Pay
@@ -891,40 +903,48 @@ const Request = () => {
                 title={
                     <div className="text-center">
                         <ExclamationCircleOutlined style={{ fontSize: '70px', color: '#F68B1F', marginTop: 25 }} />
-                        <div className="mt-5 text-2xl mb-8 font-semibold">Are you sure , want to collect payment</div>
+                        <div className="mt-5 text-2xl mb-8 font-semibold">
+                            Are you sure you want to collect payment?
+                        </div>
                     </div>
                 }
             >
                 <Form
-                    layout='vertical'
-                    className='flex'
-                    onFinish={confirmfee}
+                    layout="vertical"
+                    onFinish={onCollegefeeConfirm}
                     form={collegefeesform}
                 >
-                    <Form.Item name="Particular" label="Particular :">
-                        <Input
-                            readOnly
-                            bordered={false}
-                            value={unpaidCollegeFeeData?.data?.particularId?.name}
-                        />
-                    </Form.Item>
-                    
-                    <Form.Item name="Particular" label="Particular :">
-                        <Input
-                            readOnly
-                            bordered={false}
-                            value={unpaidCollegeFeeData?.data?.particularId?.name}
-                        />
-                    </Form.Item>
+                    <div className="flex gap-5">
+                        <Form.Item name="Particular" label="Particular" className="w-1/3">
+                            <Input readOnly bordered={false} />
+                        </Form.Item>
+
+                        <Form.Item name="debit" label="Collect" className="w-1/3">
+                            <Input readOnly bordered={false} />
+                        </Form.Item>
+
+                        <Form.Item
+                            name="amount_type"
+                            label="Amount Type"
+                            className="w-1/3"
+                            rules={[{ required: true, message: "Please select amount type" }]}
+                        >
+                            <Select placeholder="Select amount type">
+                                <Select.Option value="Cash">Cash</Select.Option>
+                                <Select.Option value="Bank">Bank</Select.Option>
+                            </Select>
+                        </Form.Item>
+                    </div>
 
                     <Form.Item>
-                        <Button htmlType='submit' type="primary">
+                        <Button htmlType="submit" type="primary" className="w-full">
                             Yes, Collected
                         </Button>
                     </Form.Item>
                 </Form>
-
             </Modal>
+
+
         </div>
     );
 };
