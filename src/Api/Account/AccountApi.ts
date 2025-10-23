@@ -21,6 +21,10 @@ export const postconfirmCollegeFee =(data:{id:string,data:any})=>{
     return apiCLient.post(`/api/account/confirmcollegefee/${data.id}`,data.data)
 }
 
+export const postconfirmrefund =(data:{id:string,data:any})=>{
+    return apiCLient.post(`/api/account/confirmrefund/${data.id}`,data.data)
+}
+
 export const postServiceCharge =(data:{id:string,data:any})=>{
     return apiCLient.post(`/api/account/servicecharge/${data.id}`,data.data)
 }

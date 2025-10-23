@@ -92,7 +92,7 @@ function StudentManagement() {
   const [editModal, setEditModal] = useState(false)
   const [deleteModal, setdeleteModal] = useState<string | any>(null)
   const [editingRecord, setEditingRecord] = useState<DataType | any>(null)
-  const [refundModal, setrefundModal] = useState<DataType | any>(null)
+  const [refundModal, setrefundModal] = useState<string | any>(null)
 
 
   const { mutate: Create } = useCreateRegister()
@@ -209,13 +209,13 @@ function StudentManagement() {
   const onConfirmRefund = (value: any) => {
     refund(
       {
-        id: refundModal._id,
-        data: value
+        id: refundModal,
+        data: { refundamount: value.refundamount }
       },
       {
         onSuccess() {
           message.success("Added successfully");
-          setrefundModal(false);
+          setrefundModal(null);
           refundForm.resetFields();
         },
         onError() {
@@ -224,6 +224,7 @@ function StudentManagement() {
       });
   };
 
+  
   return (
     <div>
       <Divider>Student Management</Divider>
@@ -520,7 +521,7 @@ function StudentManagement() {
         <Form>
           <Form.Item>
             <div className='flex gap-2'>
-              <Button onClick={() => { setrefundModal(true); setdeleteModal(false) }} type='primary' className='w-50'>Refund it</Button>
+              <Button onClick={() => { setrefundModal(deleteModal); setdeleteModal(false) }} type='primary' className='w-50'>Refund it</Button>
               <Button onClick={() => deleteModal && handleDelete(deleteModal)} className='w-50' type='primary'>Yes, delete it!</Button>
               <Button onClick={onCancelDelete} danger type="primary" className='mx-2'>Cancel</Button>
             </div>

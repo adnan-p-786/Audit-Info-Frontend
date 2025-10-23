@@ -5,6 +5,10 @@ export const getRegister = ()=>{
     return apiCLient.get('/api/registrationtable/get')
 }
 
+export const getRefund = ()=>{
+    return apiCLient.get('/api/registrationtable/get-refund')
+}
+
 export const postService = (data:{id: string, data: any}) => {
   return apiCLient.post(`/api/registrationtable/create-service/${data.id}`, data.data)
 }

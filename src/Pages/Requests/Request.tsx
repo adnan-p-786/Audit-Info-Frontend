@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { useQuery } from 'react-query';
-import { getRegister } from '../../Api/Registration Table/registerTableApi';
+import { getRefund, getRegister } from '../../Api/Registration Table/registerTableApi';
 import { Button, Form, Input, message, Modal, Select, Table, type TableColumnsType } from 'antd';
-import { useConfirmBooking, useConfirmcollegefee, useCreateAccount, useCreateBookingAmount, useCreateCollectPayment } from '../../Api/Account/AccountHooks';
+import { useConfirmBooking, useConfirmcollegefee, useConfirmRefund, useCreateAccount, useCreateBookingAmount, useCreateCollectPayment } from '../../Api/Account/AccountHooks';
 import { ExclamationCircleOutlined, InboxOutlined } from '@ant-design/icons';
 import { useCreateservice } from '../../Api/Registration Table/registerTableHooks';
 import { getParticular } from '../../Api/Particular/particularApi';
@@ -27,6 +27,7 @@ const Request = () => {
     const { data: amountcollectionData, isLoading: amountcollectionloading } = useQuery('amountcollection', getRegister);
     const { data: particularData, isLoading: particularloading } = useQuery('particular', getParticular);
     const { data: unpaidCollegeFeeData, isLoading: unpaidCollegeFeeloading } = useQuery('collegefee', getunpaidCollegeFees);
+    const { data: refundData, isLoading: refundloading } = useQuery('Refund', getRegister);
     const [addModal, setAddModal] = useState<any>(false);
     const [addAmountModal, setAddAmountModal] = useState<any>(false);
     const [bookingModal, setbookingModal] = useState<any>(false);
@@ -34,6 +35,7 @@ const Request = () => {
     const [uploadModal, setuploadModal] = useState<any>(false);
     const [collectPaymentModal, setcollectPaymentModal] = useState<any>(false);
     const [collegefeesModal, setcollegefeesModal] = useState<any>(false);
+    const [refundModal, setrefundModal] = useState<any>(false);
 
     const { mutate: Collectpayment } = useCreateAccount();
     const { mutate: AddAmount } = useCreateservice();
@@ -42,6 +44,7 @@ const Request = () => {
     const { mutate: upload } = useCreateAknwoledgment();
     const { mutate: collectpymnt } = useCreateCollectPayment();
     const { mutate: confirmfee } = useConfirmcollegefee();
+    const { mutate: confirmRefund } = useConfirmRefund();
 
     const [form] = Form.useForm();
     const [addamountform] = Form.useForm();
@@ -49,6 +52,7 @@ const Request = () => {
     const [bookingconfirmationform] = Form.useForm();
     const [Uploadform] = Form.useForm();
     const [collectpymntform] = Form.useForm();
+    const [refundform] = Form.useForm();
     const [collegefeesform] = Form.useForm();
 
     const registeredFiltered = registerData?.data.filter((item: any) => item.status === "registered");
@@ -57,6 +61,7 @@ const Request = () => {
     const bookingconfirmationFiltered = bookingconfirmationData?.data.filter((item: any) => item.status === "forbookingconfirmation");
     const AcknowledmentFiltered = acknowledgmentData?.data.filter((item: any) => item.status === "foracknowledgment");
     const AmountcollectionFiltered = amountcollectionData?.data.filter((item: any) => item.status === "foramountcollection" || item.status === "forServicecollection");
+    const RefundFiltered = refundData?.data.filter((item: any) => item.status === "ForRefund");
 
 
 
@@ -191,6 +196,25 @@ const Request = () => {
     };
 
 
+    const onConfirmRefund = (value: any) => {
+        confirmRefund(
+            {
+                id: refundModal._id,
+                data: value
+            },
+            {
+                onSuccess() {
+                    message.success("Refund Added");
+                    setrefundModal(false);
+                    refundform.resetFields();
+                },
+                onError() {
+                    message.error("Failed to add");
+                }
+            });
+    };
+
+
 
     const onCancelBooking = () => {
         setbookingconfirmationModal(false);
@@ -202,9 +226,15 @@ const Request = () => {
         collegefeesform.setFieldsValue({
             Particular: record?.particularId?.name || "",
             debit: record?.amount || "",
-            amount_type: record?.amount_type
-                ? record.amount_type.charAt(0).toUpperCase() + record.amount_type.slice(1)
-                : undefined,
+        });
+    };
+
+
+    const handleOpenrefundModal = (record: any) => {
+        setrefundModal(record);
+        refundform.setFieldsValue({
+            Particular: record?.particularId?.name || "",
+            credit: record?.refundamount || "",
         });
     };
 
@@ -496,6 +526,44 @@ const Request = () => {
         },
     ];
 
+    const RefundColumns: TableColumnsType<any> = [
+        {
+            title: 'SI.NO',
+            dataIndex: '_id',
+        },
+        {
+            title: 'Student Name',
+            dataIndex:  "name",
+        },
+        {
+            title: 'College Name',
+            dataIndex: ['collegeId', 'college'],
+        },
+        {
+            title: 'Course Name',
+            dataIndex: "course"
+        },
+        {
+            title: 'Refund Amount',
+            dataIndex: 'refundamount',
+        },
+        {
+            title: 'Action',
+            render: (_, record: any) => (
+                <div className="flex gap-2">
+                    <Button
+                        style={{ backgroundColor: '#F68B1F', color: 'white' }}
+                        onClick={() => {
+                            handleOpenrefundModal(record);
+                        }}
+                    >
+                        Pay
+                    </Button>
+                </div>
+            ),
+        },
+    ];
+
     return (
         <div className="w-full py-[10px] px-[5px]">
             <div className="w-full flex space-x-2 flex-wrap">
@@ -671,6 +739,20 @@ const Request = () => {
                         columns={amountcollectionColumns}
                         dataSource={AmountcollectionFiltered}
                         loading={amountcollectionloading}
+                        rowKey="_id"
+                        bordered
+                        pagination={{ pageSize: 10 }}
+                        scroll={{ y: 330 }}
+                    />
+                </div>
+            )}
+
+            {table === "Refund" && (
+                <div className="mt-4">
+                    <Table
+                        columns={RefundColumns}
+                        dataSource={RefundFiltered}
+                        loading={refundloading}
                         rowKey="_id"
                         bordered
                         pagination={{ pageSize: 10 }}
@@ -939,6 +1021,59 @@ const Request = () => {
                     <Form.Item>
                         <Button htmlType="submit" type="primary" className="w-full">
                             Yes, Collected
+                        </Button>
+                    </Form.Item>
+                </Form>
+            </Modal>
+
+
+            <Modal
+                open={!!refundModal}
+                onCancel={() => {
+                    setrefundModal(false);
+                    refundform.resetFields();
+                }}
+                footer={null}
+                width={350}
+                title={
+                    <div className="text-center">
+                        <div className="mt-5 text-2xl mb-8 font-bold">
+                            Send Refund Amount
+                        </div>
+                    </div>
+                }
+            >
+                <Form
+                    layout="vertical"
+                    onFinish={onConfirmRefund}
+                    form={refundform}
+                >
+                    <div className="text-center items-center flex">
+
+                        <Form.Item name="Particular" label="Particular" className="w-1/3">
+                            <Input readOnly bordered={false} />
+                        </Form.Item>
+
+                        <Form.Item name="credit" label="Amount" className="w-1/3">
+                            <Input readOnly bordered={false} />
+                        </Form.Item>
+
+                        <Form.Item
+                            name="amount_type"
+                            label="Amount Type"
+                            className="w-1/3"
+                            rules={[{ required: true, message: "Please select amount type" }]}
+                        >
+                            <Select placeholder="Select amount type">
+                                <Select.Option value="Cash">Cash</Select.Option>
+                                <Select.Option value="Bank">Bank</Select.Option>
+                            </Select>
+                        </Form.Item>
+                    </div>
+
+                    <Form.Item>
+                        <Button htmlType="submit" type="primary" className="w-full">
+                            Submit
                         </Button>
                     </Form.Item>
                 </Form>
