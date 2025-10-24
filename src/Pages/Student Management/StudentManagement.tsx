@@ -7,7 +7,7 @@ import { getAgent } from '../../Api/Agent/agentApi';
 import { getSchoolmanagement } from '../../Api/School Management/schoolManagementApi';
 import { getCollegeManagement } from '../../Api/College Management/collegeMgmtApi';
 import TextArea from 'antd/es/input/TextArea';
-import { useCreateRefund, useCreateRegister, useDeleteRegister, useUpdateRegister } from '../../Api/Registration Table/registerTableHooks';
+import { useCreateRefund, useCreateRegister, useDeleteRegister, useUpdate, useUpdateRegister } from '../../Api/Registration Table/registerTableHooks';
 import { useCreateAddAmount } from '../../Api/Account/AccountHooks';
 import { Link } from 'react-router-dom';
 import { GrView } from 'react-icons/gr';
@@ -32,6 +32,7 @@ interface DataType {
   course: string;
   collegeId: string;
   _id: string;
+  cancel?: boolean;
 }
 
 function StudentManagement() {
@@ -66,20 +67,26 @@ function StudentManagement() {
     },
     {
       title: 'Action',
-      render: (_, record: any) => (
-        <div className="flex gap-2">
-          <Link to='/studenthistory'><Button onClick={() => {
-            dispatch(setStudentHistory(record))
-          }}><GrView /></Button></Link>
-          <Button onClick={() => handleEdit(record)}>
-            <CiEdit />
-          </Button>
-          <Button danger onClick={() => setdeleteModal(record._id)}>
-            <CloseOutlined />
-          </Button>
-          <Button type='primary' onClick={() => setCollectAmountModal(record)}>Add Amount</Button>
-        </div>
-      )
+      render: (_, record: any) => {
+        const isCanceled = record.cancel;
+
+        return (
+          <div className="flex gap-2">
+            <Link to='/studenthistory'>
+              <Button onClick={() => { dispatch(setStudentHistory(record)) }}><GrView /></Button>
+            </Link>
+            <Button disabled={isCanceled} onClick={() => handleEdit(record)}>
+              <CiEdit />
+            </Button>
+            <Button disabled={isCanceled} danger onClick={() => setdeleteModal(record._id)}>
+              <CloseOutlined />
+            </Button>
+            <Button disabled={isCanceled} type='primary' onClick={() => setCollectAmountModal(record)}>
+              Add Amount
+            </Button>
+          </div>
+        );
+      }
     }
   ];
 
@@ -93,6 +100,8 @@ function StudentManagement() {
   const [deleteModal, setdeleteModal] = useState<string | any>(null)
   const [editingRecord, setEditingRecord] = useState<DataType | any>(null)
   const [refundModal, setrefundModal] = useState<string | any>(null)
+  const [canceledRows, setCanceledRows] = useState<string[]>([]);
+
 
 
   const { mutate: Create } = useCreateRegister()
@@ -100,6 +109,7 @@ function StudentManagement() {
   const { mutate: Delete } = useDeleteRegister()
   const { mutate: collectamount } = useCreateAddAmount()
   const { mutate: refund } = useCreateRefund()
+  const { mutate: updateregister } = useUpdate()
 
   const [form] = Form.useForm()
   const [editForm] = Form.useForm()
@@ -202,10 +212,6 @@ function StudentManagement() {
     addamountForm.resetFields();
   };
 
-  const onCancelDelete = () => {
-    setdeleteModal(null);
-  };
-
   const onConfirmRefund = (value: any) => {
     refund(
       {
@@ -224,14 +230,39 @@ function StudentManagement() {
       });
   };
 
+
+
+  const onCancelDelete = () => {
+    if (deleteModal) {
+      updateregister(
+        { _id: deleteModal, cancel: true },
+        {
+          onSuccess: () => {
+            message.success('Student cancelled successfully');
+            setCanceledRows(prev => [...prev, deleteModal]);
+            setdeleteModal(null);
+            refetch();
+          },
+          onError: () => {
+            message.error('Failed to cancel student');
+          }
+        }
+      );
+    }
+  };
+
+
   
+
+
   return (
     <div>
       <Divider>Student Management</Divider>
       <div className="w-full flex gap-2 py-2 justify-end">
         <Button type='primary' onClick={() => setAddModal(true)}>Register</Button>
       </div>
-      <Table
+
+       <Table
         columns={columns}
         style={{ height: '350px', overflowY: 'auto' }}
         pagination={false}
@@ -239,7 +270,11 @@ function StudentManagement() {
         loading={isLoading}
         size="middle"
         rowKey="_id"
+        rowClassName={(record) => record.cancel ? 'bg-red-300' : ''}
       />
+
+
+
       <Modal
         title="Register"
         open={addModal}
@@ -523,7 +558,7 @@ function StudentManagement() {
             <div className='flex gap-2'>
               <Button onClick={() => { setrefundModal(deleteModal); setdeleteModal(false) }} type='primary' className='w-50'>Refund it</Button>
               <Button onClick={() => deleteModal && handleDelete(deleteModal)} className='w-50' type='primary'>Yes, delete it!</Button>
-              <Button onClick={onCancelDelete} danger type="primary" className='mx-2'>Cancel</Button>
+              <Button onClick={() => onCancelDelete()} danger type="primary" className='mx-2'>Cancel</Button>
             </div>
           </Form.Item>
         </Form>

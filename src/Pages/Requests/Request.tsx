@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useQuery } from 'react-query';
-import { getRefund, getRegister } from '../../Api/Registration Table/registerTableApi';
+import { getRegister } from '../../Api/Registration Table/registerTableApi';
 import { Button, Form, Input, message, Modal, Select, Table, type TableColumnsType } from 'antd';
 import { useConfirmBooking, useConfirmcollegefee, useConfirmRefund, useCreateAccount, useCreateBookingAmount, useCreateCollectPayment } from '../../Api/Account/AccountHooks';
 import { ExclamationCircleOutlined, InboxOutlined } from '@ant-design/icons';
@@ -564,6 +564,44 @@ const Request = () => {
         },
     ];
 
+    const AgentPymntColumns: TableColumnsType<any> = [
+        {
+            title: 'SI.NO',
+            dataIndex: '_id',
+        },
+        {
+            title: 'Student Name',
+            dataIndex:  "name",
+        },
+        {
+            title: 'College Name',
+            dataIndex: ['collegeId', 'college'],
+        },
+        {
+            title: 'Course Name',
+            dataIndex: "course"
+        },
+        {
+            title: 'Refund Amount',
+            dataIndex: 'refundamount',
+        },
+        {
+            title: 'Action',
+            render: (_, record: any) => (
+                <div className="flex gap-2">
+                    <Button
+                        style={{ backgroundColor: '#F68B1F', color: 'white' }}
+                        onClick={() => {
+                            handleOpenrefundModal(record);
+                        }}
+                    >
+                        Pay
+                    </Button>
+                </div>
+            ),
+        },
+    ];
+
     return (
         <div className="w-full py-[10px] px-[5px]">
             <div className="w-full flex space-x-2 flex-wrap">
@@ -752,6 +790,20 @@ const Request = () => {
                     <Table
                         columns={RefundColumns}
                         dataSource={RefundFiltered}
+                        loading={refundloading}
+                        rowKey="_id"
+                        bordered
+                        pagination={{ pageSize: 10 }}
+                        scroll={{ y: 330 }}
+                    />
+                </div>
+            )}
+
+            {table === "Agent" && (
+                <div className="mt-4">
+                    <Table
+                        columns={AgentPymntColumns}
+                        // dataSource={RefundFiltered}
                         loading={refundloading}
                         rowKey="_id"
                         bordered
@@ -1051,7 +1103,7 @@ const Request = () => {
                     <div className="text-center items-center flex">
 
                         <Form.Item name="Particular" label="Particular" className="w-1/3">
-                            <Input readOnly bordered={false} />
+                            <h1 className='text-left pl-2'>Refund</h1>
                         </Form.Item>
 
                         <Form.Item name="credit" label="Amount" className="w-1/3">

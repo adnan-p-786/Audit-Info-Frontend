@@ -26,6 +26,11 @@ export const putRegister = (data: any) => {
   return apiCLient.put(`/api/registrationtable/update/${_id}`, rest);
 }
 
+export const updateRegister = (data: any) => {
+  const { _id, ...rest } = data;
+  return apiCLient.put(`/api/registrationtable/updateregister/${_id}`, rest);
+}
+
 
 export const deleteRegister = (id: string) => {
     return apiCLient.delete(`/api/registrationtable/delete/${id}`)

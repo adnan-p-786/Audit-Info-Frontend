@@ -3,3 +3,7 @@
 .sidebarHidden::-webkit-scrollbar{
     display: none;
 }
+
+.canceled-row {
+  background-color: #d81c1c;
+}
