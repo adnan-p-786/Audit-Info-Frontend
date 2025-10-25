@@ -1,9 +1,12 @@
-import { Button, Divider, Form, Input, Modal, Select, Table, type TableColumnsType } from "antd";
+import { Button, Divider, Form, Input, message, Modal, Select, Table, type TableColumnsType } from "antd";
 import { useState } from "react";
 import { useQuery } from "react-query";
 import { getAgentAccount } from "../../Api/Agent Accounts/agentAccountApi";
 import { getAgent } from "../../Api/Agent/agentApi";
 import { getRegister } from "../../Api/Registration Table/registerTableApi";
+import { useCreateAgentAccount } from "../../Api/Agent Accounts/agentAccountHooks";
+
+
 
 function AgentAccount() {
 
@@ -13,39 +16,60 @@ function AgentAccount() {
 
   const [addModal, setAddModal] = useState<any>(false);
 
+  const { mutate: Create } = useCreateAgentAccount()
+
   const [form] = Form.useForm()
+
+
+  const onFinish = (value: any) => {
+    Create(value, {
+      onSuccess() {
+        message.success("Added successfully")
+        refetch()
+        setAddModal(false)
+        form.resetFields()
+      },
+      onError() {
+        message.error("Failed to add")
+      }
+    })
+  }
 
   const columns: TableColumnsType<any> = [
     {
       title: 'SI.NO',
-      dataIndex: '_id',
+      render: (_text, _record, index) => index + 1,
+    },
+    {
+      title: 'Date',
+      dataIndex: 'createdAt',
     },
     {
       title: 'Student Name',
-      dataIndex: 'name',
+      dataIndex: ['registrationId', 'name'],
     },
     {
-      title: 'College Name',
-      dataIndex: ['collegeId', 'college'],
+      title: 'Agent',
+      dataIndex: ['agentId', 'name'],
     },
     {
-      title: 'Course Name',
-      dataIndex: 'course',
+      title: 'Type',
+      dataIndex: 'type',
+      render: (type: string) => (
+        <span
+          style={{
+            color: type === 'Credit' ? 'green' : 'red',
+            fontWeight: 500,
+          }}
+        >
+          {type}
+        </span>
+      ),
     },
     {
-      title: 'Refund Amount',
-      dataIndex: 'refund_amount',
-    },
-    // {
-    //   title: 'Action',
-    //   render: (_, record: any) => (
-    //     <div>
-    //       <Button danger onClick={() => handleDelete(record._id)}>
-    //         <MdDeleteOutline />
-    //       </Button>
-    //     </div>
-    //   )
-    // }
+      title: 'Amount',
+      dataIndex: 'amount',
+    }
   ];
 
   return (
@@ -74,10 +98,22 @@ function AgentAccount() {
         footer={null}
         width={380}
       >
-        <Form layout='vertical' form={form}>
+        <Form layout='vertical' onFinish={onFinish} form={form}>
           <div className="">
-            <Form.Item name={'debit'} label="Amount" rules={[{ required: true, message: "Please enter amount" }]}>
+            <Form.Item name={'amount'} label="Amount" rules={[{ required: true, message: "Please enter amount" }]}>
               <Input placeholder='amount' />
+            </Form.Item>
+
+            <Form.Item
+              name="type"
+              label="Type"
+              rules={[{ required: true, message: "Please select amount type" }]}
+            >
+              <Select placeholder="select amount type">
+                <Select.Option value="Debit">Debit</Select.Option>
+                <Select.Option value="Credit">Credit</Select.Option>
+              </Select>
+
             </Form.Item>
 
             <Form.Item
@@ -109,7 +145,7 @@ function AgentAccount() {
             </Form.Item>
 
             <Form.Item
-              name={'registerId'}
+              name={'registrationId'}
               label="Student Name"
               rules={[{ required: true, message: "Please select a  Student" }]}
             >
@@ -130,7 +166,7 @@ function AgentAccount() {
               rules={[{ required: true, message: "Please select a particular" }]}
               initialValue="68fb1eec65bb26d8daf5a015"
             >
-            <h1>Agent Amount</h1>
+              <h1>Agent Amount</h1>
             </Form.Item>
 
 

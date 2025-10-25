@@ -9,6 +9,7 @@ import { getParticular } from '../../Api/Particular/particularApi';
 import { Upload } from 'antd';
 import { useCreateAknwoledgment } from '../../Api/Aknwoledgment/aknwoledgmentHooks';
 import { getunpaidCollegeFees } from '../../Api/CollegeFees/collegeFeesApi';
+import { getAgentAccount } from '../../Api/Agent Accounts/agentAccountApi';
 const { Dragger } = Upload;
 
 
@@ -28,6 +29,7 @@ const Request = () => {
     const { data: particularData, isLoading: particularloading } = useQuery('particular', getParticular);
     const { data: unpaidCollegeFeeData, isLoading: unpaidCollegeFeeloading } = useQuery('collegefee', getunpaidCollegeFees);
     const { data: refundData, isLoading: refundloading } = useQuery('Refund', getRegister);
+    const { data: agentpymntData, isLoading: agentpymntloading } = useQuery('Agentpymnt', getAgentAccount);
     const [addModal, setAddModal] = useState<any>(false);
     const [addAmountModal, setAddAmountModal] = useState<any>(false);
     const [bookingModal, setbookingModal] = useState<any>(false);
@@ -62,6 +64,7 @@ const Request = () => {
     const AcknowledmentFiltered = acknowledgmentData?.data.filter((item: any) => item.status === "foracknowledgment");
     const AmountcollectionFiltered = amountcollectionData?.data.filter((item: any) => item.status === "foramountcollection" || item.status === "forServicecollection");
     const RefundFiltered = refundData?.data.filter((item: any) => item.status === "ForRefund");
+    const AgentpymntFiltered = agentpymntData?.data.filter((item: any) => item.status === "foragentpayments");
 
 
 
@@ -533,7 +536,7 @@ const Request = () => {
         },
         {
             title: 'Student Name',
-            dataIndex:  "name",
+            dataIndex: "name",
         },
         {
             title: 'College Name',
@@ -564,26 +567,24 @@ const Request = () => {
         },
     ];
 
-    const AgentPymntColumns: TableColumnsType<any> = [
+
+
+    const agentpymntcolumns: TableColumnsType<any> = [
         {
             title: 'SI.NO',
-            dataIndex: '_id',
+            dataIndex: "_id"
         },
         {
             title: 'Student Name',
-            dataIndex:  "name",
+            dataIndex: ['registrationId', 'name'],
         },
         {
-            title: 'College Name',
-            dataIndex: ['collegeId', 'college'],
+            title: 'Agent',
+            dataIndex: ['agentId', 'name'],
         },
         {
-            title: 'Course Name',
-            dataIndex: "course"
-        },
-        {
-            title: 'Refund Amount',
-            dataIndex: 'refundamount',
+            title: 'Amount',
+            dataIndex: 'amount',
         },
         {
             title: 'Action',
@@ -592,7 +593,7 @@ const Request = () => {
                     <Button
                         style={{ backgroundColor: '#F68B1F', color: 'white' }}
                         onClick={() => {
-                            handleOpenrefundModal(record);
+                            (record);
                         }}
                     >
                         Pay
@@ -802,9 +803,9 @@ const Request = () => {
             {table === "Agent" && (
                 <div className="mt-4">
                     <Table
-                        columns={AgentPymntColumns}
-                        // dataSource={RefundFiltered}
-                        loading={refundloading}
+                        columns={agentpymntcolumns}
+                        dataSource={AgentpymntFiltered}
+                        loading={agentpymntloading}
                         rowKey="_id"
                         bordered
                         pagination={{ pageSize: 10 }}
@@ -812,6 +813,7 @@ const Request = () => {
                     />
                 </div>
             )}
+
 
             <Modal
                 open={!!addAmountModal}
