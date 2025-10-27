@@ -33,10 +33,15 @@ import Request from './Pages/Requests/Request.tsx'
 import Expense from './Pages/Expense/Expense.tsx'
 import Payment from './Pages/Payment/Payment.tsx'
 import StudentHistory from './Pages/Student Management/StudentHistory.tsx'
+import Login from './Pages/Login/Login.tsx'
 
 
 
 const router = createBrowserRouter([
+  {
+    path:'/Login',
+    element:<Login/>
+  },
   {
     path: '/',
     element: <App />,
