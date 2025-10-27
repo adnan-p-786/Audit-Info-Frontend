@@ -10,6 +10,7 @@ import { Upload } from 'antd';
 import { useCreateAknwoledgment } from '../../Api/Aknwoledgment/aknwoledgmentHooks';
 import { getunpaidCollegeFees } from '../../Api/CollegeFees/collegeFeesApi';
 import { getAgentAccount } from '../../Api/Agent Accounts/agentAccountApi';
+import { useConfirmAgentpymt } from '../../Api/Agent Accounts/agentAccountHooks';
 const { Dragger } = Upload;
 
 
@@ -38,6 +39,7 @@ const Request = () => {
     const [collectPaymentModal, setcollectPaymentModal] = useState<any>(false);
     const [collegefeesModal, setcollegefeesModal] = useState<any>(false);
     const [refundModal, setrefundModal] = useState<any>(false);
+    const [agentpymntModal, setagentpymntModal] = useState<any>(false);
 
     const { mutate: Collectpayment } = useCreateAccount();
     const { mutate: AddAmount } = useCreateservice();
@@ -47,6 +49,7 @@ const Request = () => {
     const { mutate: collectpymnt } = useCreateCollectPayment();
     const { mutate: confirmfee } = useConfirmcollegefee();
     const { mutate: confirmRefund } = useConfirmRefund();
+    const { mutate: confirmagentpymnt } = useConfirmAgentpymt();
 
     const [form] = Form.useForm();
     const [addamountform] = Form.useForm();
@@ -56,6 +59,7 @@ const Request = () => {
     const [collectpymntform] = Form.useForm();
     const [refundform] = Form.useForm();
     const [collegefeesform] = Form.useForm();
+    const [agentpymntform] = Form.useForm();
 
     const registeredFiltered = registerData?.data.filter((item: any) => item.status === "registered");
     const admissionFiltered = admissionData?.data.filter((item: any) => item.status === "foradmmission");
@@ -218,6 +222,24 @@ const Request = () => {
     };
 
 
+    const onConfirmAgentpymnt = (value: any) => {
+        confirmagentpymnt(
+            {
+                id: agentpymntModal._id,
+                data: value
+            },
+            {
+                onSuccess() {
+                    message.success("peymnt Successfull");
+                    setagentpymntModal(false);
+                    agentpymntform.resetFields();
+                },
+                onError() {
+                    message.error("Failed to add");
+                }
+            });
+    };
+
 
     const onCancelBooking = () => {
         setbookingconfirmationModal(false);
@@ -238,6 +260,13 @@ const Request = () => {
         refundform.setFieldsValue({
             Particular: record?.particularId?.name || "",
             credit: record?.refundamount || "",
+        });
+    };
+
+    const handleOpenreAgentpymntModal = (record: any) => {
+        setagentpymntModal(record);
+        agentpymntform.setFieldsValue({
+            credit: record?.amount || "",
         });
     };
 
@@ -593,7 +622,7 @@ const Request = () => {
                     <Button
                         style={{ backgroundColor: '#F68B1F', color: 'white' }}
                         onClick={() => {
-                            (record);
+                            handleOpenreAgentpymntModal(record);
                         }}
                     >
                         Pay
@@ -1133,6 +1162,59 @@ const Request = () => {
                 </Form>
             </Modal>
 
+
+            <Modal
+                open={!!agentpymntModal}
+                onCancel={() => {
+                    setagentpymntModal(false);
+                    agentpymntform.resetFields();
+                }}
+                footer={null}
+                width={350}
+                title={
+                    <div className="text-center">
+                        <ExclamationCircleOutlined style={{ fontSize: '70px', color: '#F68B1F', marginTop: 25 }} />
+                        <div className="mt-5 text-2xl mb-8 font-semibold">
+                            Are you sure you want to Pay amount?
+                        </div>
+                    </div>
+                }
+            >
+                <Form
+                    layout="vertical"
+                    onFinish={onConfirmAgentpymnt}
+                    form={agentpymntform}
+                >
+                    <div className="text-center items-center flex">
+
+                        <Form.Item name="Particular" label="Particular" className="w-1/3">
+                            <h1 className='text-left'>Commission</h1>
+                        </Form.Item>
+
+                        <Form.Item name="credit" label="Amount" className="w-1/3">
+                            <Input readOnly bordered={false} />
+                        </Form.Item>
+
+                        <Form.Item
+                            name="amount_type"
+                            label="Amount Type"
+                            className="w-1/3"
+                            rules={[{ required: true, message: "Please select amount type" }]}
+                        >
+                            <Select placeholder="Select amount type">
+                                <Select.Option value="Cash">Cash</Select.Option>
+                                <Select.Option value="Bank">Bank</Select.Option>
+                            </Select>
+                        </Form.Item>
+                    </div>
+
+                    <Form.Item>
+                        <Button htmlType="submit" type="primary" className="w-full">
+                            Submit
+                        </Button>
+                    </Form.Item>
+                </Form>
+            </Modal>
 
         </div>
     );

@@ -9,6 +9,10 @@ export const postAgentAccount =(data:any)=>{
     return apiCLient.post('/api/agentaccount/create',data)
 }
 
+export const postconfirmagentpymnt =(data:{id:string,data:any})=>{
+    return apiCLient.post(`/api/agentaccount/confirmagentpymnt/${data.id}`,data.data)
+}
+
 export const putAgentAccount = (data: any) => {
   const { _id, ...rest } = data;
   return apiCLient.put(`/api/agentaccount/update/${_id}`, rest);
