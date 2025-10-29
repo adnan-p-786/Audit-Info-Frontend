@@ -3,7 +3,7 @@ import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.tsx'
 import Dashboard from './Pages/Dashboard/Dashboard.tsx'
-import { createBrowserRouter, RouterProvider } from 'react-router-dom'
+import { createBrowserRouter, Navigate, RouterProvider } from 'react-router-dom'
 import Accountant from './Pages/Accountant/Accountant.tsx'
 import Src from './Pages/SRC/Src.tsx'
 import Sro from './Pages/SRO/Sro.tsx'
@@ -20,7 +20,6 @@ import BranchManager from './Pages/Branch manager/BranchManager.tsx'
 import LeadHistory from './Pages/Lead Management/LeadHistory.tsx'
 import { Provider } from 'react-redux'
 import store from './App/store.ts'
-import AgentCollege from './Pages/Reports/AgentCollege.tsx'
 import CancelledStudents from './Pages/Reports/CancelledStudents.tsx'
 import EmployeeSales from './Pages/Reports/EmployeeSales.tsx'
 import SeatBokkings from './Pages/Reports/SeatBokkings.tsx'
@@ -34,133 +33,134 @@ import Expense from './Pages/Expense/Expense.tsx'
 import Payment from './Pages/Payment/Payment.tsx'
 import StudentHistory from './Pages/Student Management/StudentHistory.tsx'
 import Login from './Pages/Login/Login.tsx'
+import AgentCollegeReport from './Pages/Reports/AgentCollegeReport.tsx'
 
 
 
 const router = createBrowserRouter([
   {
-    path:'/Login',
-    element:<Login/>
+    path: "/login",
+    element: <Login />,
   },
   {
-    path: '/',
+    path: "/",
     element: <App />,
     children: [
       {
-        path: '/dashboard',
-        element: <Dashboard />
+        path: "/",
+        element: <Navigate to="/login" replace />,
       },
       {
-        path: '/accountant',
-        element: <Accountant />
+        path: "/dashboard",
+        element: <Dashboard />,
       },
       {
-        path: '/src',
-        element: <Src />
+        path: "/accountant",
+        element: <Accountant />,
       },
       {
-        path: '/sro',
-        element: <Sro />
+        path: "/src",
+        element: <Src />,
       },
       {
-        path: '/sro',
-        element: <Sro />
+        path: "/sro",
+        element: <Sro />,
       },
       {
-        path: '/officeadministration',
-        element: <OfficeAdministration />
+        path: "/officeadministration",
+        element: <OfficeAdministration />,
       },
       {
-        path: '/agent',
-        element: <Agent />
+        path: "/agent",
+        element: <Agent />,
       },
       {
-        path: '/leadmanagement',
-        element: <LeadManagement />
+        path: "/leadmanagement",
+        element: <LeadManagement />,
       },
       {
-        path: '/studentmanagement',
-        element: <StudentManagement />
+        path: "/studentmanagement",
+        element: <StudentManagement />,
       },
       {
-        path: '/branchmanagement',
-        element: <BranchManagement />
+        path: "/branchmanagement",
+        element: <BranchManagement />,
       },
       {
-        path: '/collegemanagement',
-        element: <CollegeManagement />
+        path: "/collegemanagement",
+        element: <CollegeManagement />,
       },
       {
-        path: '/schoolmanagement',
-        element: <Schoolmanagement />
+        path: "/schoolmanagement",
+        element: <Schoolmanagement />,
       },
       {
-        path: '/particularmanagement',
-        element: <ParticularManagement />
+        path: "/particularmanagement",
+        element: <ParticularManagement />,
       },
       {
-        path: '/branchmanager',
-        element: <BranchManager />
+        path: "/branchmanager",
+        element: <BranchManager />,
       },
       {
-        path: '/leadhistory',
-        element: <LeadHistory />
+        path: "/leadhistory",
+        element: <LeadHistory />,
       },
       {
-        path: '/agentcollege',
-        element: <AgentCollege />
+        path: "/agentcollegereport",
+        element: <AgentCollegeReport />,
       },
       {
-        path: '/cancelledstudent',
-        element: <CancelledStudents />
+        path: "/cancelledstudent",
+        element: <CancelledStudents />,
       },
       {
-        path: '/employeesales',
-        element: <EmployeeSales />
+        path: "/employeesales",
+        element: <EmployeeSales />,
       },
       {
-        path: '/seatbooking',
-        element: <SeatBokkings />
+        path: "/seatbooking",
+        element: <SeatBokkings />,
       },
       {
-        path: '/accounts',
-        element: <Accounts />
+        path: "/accounts",
+        element: <Accounts />,
       },
       {
-        path: '/agentaccounts',
-        element: <AgentAccount />
+        path: "/agentaccounts",
+        element: <AgentAccount />,
       },
       {
-        path: '/collegeaccounts',
-        element: <CollegeAccount />
+        path: "/collegeaccounts",
+        element: <CollegeAccount />,
       },
       {
-        path: '/employeeaccounts',
-        element: <EmployeeAccount />
+        path: "/employeeaccounts",
+        element: <EmployeeAccount />,
       },
       {
-        path: '/leadcallmanagement',
-        element: <LeadCallManagement />
+        path: "/leadcallmanagement",
+        element: <LeadCallManagement />,
       },
       {
-        path: '/request',
-        element: <Request />
+        path: "/request",
+        element: <Request />,
       },
       {
-        path: '/payment',
-        element: <Payment />
+        path: "/payment",
+        element: <Payment />,
       },
       {
-        path: '/expense',
-        element: <Expense />
+        path: "/expense",
+        element: <Expense />,
       },
       {
-        path: '/studenthistory',
-        element: <StudentHistory />
+        path: "/studenthistory",
+        element: <StudentHistory />,
       },
-    ]
-  }
-])
+    ],
+  },
+]);
 
 
 const queryClient = new QueryClient()

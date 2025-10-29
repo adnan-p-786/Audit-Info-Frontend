@@ -116,7 +116,7 @@ function App() {
                 <Link to='/employeesales'>Employee Sales</Link>
               </Menu.Item>
               <Menu.Item icon={<FaArrowRight />}>
-                <Link to='/agentcollege'>Agent College</Link>
+                <Link to='/agentcollegereport'>Agent College Report</Link>
               </Menu.Item>
               <Menu.Item icon={<FaArrowRight />}>
                 <Link to='/cancelledstudent'>Cancelled Students</Link>
