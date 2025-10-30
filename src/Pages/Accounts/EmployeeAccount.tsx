@@ -43,7 +43,7 @@ function EmployeeAccount() {
 
   return (
    <div>
-      <Divider>Employee Accounts</Divider>
+      <Divider>Employees Accounts</Divider>
       
       <Table
         columns={columns}

@@ -22,7 +22,6 @@ import { Provider } from 'react-redux'
 import store from './App/store.ts'
 import CancelledStudents from './Pages/Reports/CancelledStudents.tsx'
 import EmployeeSales from './Pages/Reports/EmployeeSales.tsx'
-import SeatBokkings from './Pages/Reports/SeatBokkings.tsx'
 import Accounts from './Pages/Accounts/Accounts.tsx'
 import AgentAccount from './Pages/Accounts/AgentAccount.tsx'
 import CollegeAccount from './Pages/Accounts/CollegeAccount.tsx'
@@ -34,6 +33,7 @@ import Payment from './Pages/Payment/Payment.tsx'
 import StudentHistory from './Pages/Student Management/StudentHistory.tsx'
 import Login from './Pages/Login/Login.tsx'
 import AgentCollegeReport from './Pages/Reports/AgentCollegeReport.tsx'
+import SeatBookings from './Pages/Reports/SeatBookings.tsx'
 
 
 
@@ -120,7 +120,7 @@ const router = createBrowserRouter([
       },
       {
         path: "/seatbooking",
-        element: <SeatBokkings />,
+        element: <SeatBookings />,
       },
       {
         path: "/accounts",
