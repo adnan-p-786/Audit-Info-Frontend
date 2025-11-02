@@ -10,27 +10,31 @@ function SeatBookings() {
 
 
   const columns: TableColumnsType<any> = [
-      {
-        title: 'Date',
-        dataIndex: 'createdAt',
-      },
-      {
-        title: 'Student Name',
-        dataIndex: "name",
-      },
-      {
-        title: 'College Name',
-        dataIndex: ['collegeId', 'college'],
-      },
-      {
-        title: 'Course',
-        dataIndex: "course",
-      },
-      {
-        title: 'Booking Amount',
-        dataIndex: "booking_amount",
-      },
-    ];
+    {
+      title: 'Date',
+      dataIndex: 'createdAt',
+    },
+    {
+      title: 'Student Name',
+      dataIndex: "name",
+    },
+    {
+      title: 'College Name',
+      dataIndex: ['collegeId', 'college'],
+    },
+    {
+      title: 'Course',
+      dataIndex: "course",
+    },
+    {
+      title: 'Booking Amount',
+      dataIndex: "booking_amount",
+    },
+    // {
+    //   title: 'Booking Amount',
+    //   dataIndex: "booking_amount",
+    // },
+  ];
 
   return (
     <div>
