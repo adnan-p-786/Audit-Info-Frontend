@@ -29,11 +29,7 @@ function SeatBookings() {
     {
       title: 'Booking Amount',
       dataIndex: "booking_amount",
-    },
-    // {
-    //   title: 'Booking Amount',
-    //   dataIndex: "booking_amount",
-    // },
+    }
   ];
 
   return (

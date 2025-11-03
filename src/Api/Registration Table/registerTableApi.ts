@@ -21,6 +21,10 @@ export const postRegister =(data:any)=>{
     return apiCLient.post('/api/registrationtable/create',data)    
 }
 
+export const postRegisterfromlead =(data:any)=>{
+    return apiCLient.post('/api/registrationtable/register',data)    
+}
+
 export const putRegister = (data: any) => {
   const { _id, ...rest } = data;
   return apiCLient.put(`/api/registrationtable/update/${_id}`, rest);

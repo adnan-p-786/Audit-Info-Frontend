@@ -1,9 +1,13 @@
 import { useMutation } from "react-query"
-import { deleteRegister, postRefund, postRegister, postService, putRegister, updateRegister } from "./registerTableApi"
+import { deleteRegister, postRefund, postRegister, postRegisterfromlead, postService, putRegister, updateRegister } from "./registerTableApi"
 
 
 export const useCreateRegister = () => {
     return useMutation((data: any) => postRegister(data))
+}
+
+export const useCreateRegisterfromlead = () => {
+    return useMutation((data: any) => postRegisterfromlead(data))
 }
 
 export const useCreateservice = () => {

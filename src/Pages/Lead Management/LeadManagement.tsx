@@ -16,7 +16,7 @@ import { useDispatch } from 'react-redux';
 import { setLeadHistory } from '../../Redux/leadSlice';
 import { AiFillPhone } from 'react-icons/ai';
 import { RiAddBoxLine, RiSave3Line } from 'react-icons/ri';
-import { useCreateRegister } from '../../Api/Registration Table/registerTableHooks';
+import { useCreateRegisterfromlead } from '../../Api/Registration Table/registerTableHooks';
 import TextArea from 'antd/es/input/TextArea';
 import { getCollegeManagement } from '../../Api/College Management/collegeMgmtApi';
 import { getAgent } from '../../Api/Agent/agentApi';
@@ -87,7 +87,7 @@ function LeadManagement() {
           <Button danger onClick={() => handleDelete(record._id)}>
             <MdDeleteOutline />
           </Button>
-          <Button onClick={() => handleRegister(record)}>
+          <Button onClick={() => handleOpenregisterModal(record)}>
             <RiSave3Line />
           </Button>
           <Link to='/leadcallmanagement'><Button onClick={() => {
@@ -114,7 +114,7 @@ function LeadManagement() {
   const [registeringRecord, setRegisteringRecord] = useState<DataType | null>(null)
 
   const { mutate: Create } = useCreateLead()
-  const { mutate: Register } = useCreateRegister()
+  const { mutate: Register } = useCreateRegisterfromlead()
   const { mutate: Update } = useUpdateLead()
   const { mutate: Delete } = useDeleteLead()
   const { mutate: Upload } = useUploadLead()
@@ -138,11 +138,6 @@ function LeadManagement() {
       }
     })
   }
-
-  const handleRegister = (record: DataType) => {
-    setRegisteringRecord(record);
-    setRegisterModal(true);
-  };
 
   const onFinish = (value: any) => {
     Create(value, {
@@ -249,6 +244,18 @@ function LeadManagement() {
     setRegisteringRecord(null);
     registerForm.resetFields();
   };
+
+   const handleOpenregisterModal = (record: any) => {
+        setRegisterModal(record);
+        registerForm.setFieldsValue({
+            name: record?.name || "",
+            shoolId: record?.shoolId?.name || "",
+            address: record?.address || "",
+            phone_number: record?.phone_number|| "",
+            College: record?.collegeId?.college|| "",
+            course: record?.course|| "",
+        });
+    };
 
   return (
     <div>
