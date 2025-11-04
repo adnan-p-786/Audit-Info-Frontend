@@ -31,7 +31,7 @@ function LeadCallManagement() {
         }
     ];
 
-    const { data, isLoading, refetch } = useQuery('leadHistory', getLeadHistory)
+    const { data, isLoading,refetch } = useQuery(['leadhistory', leaddata?._id],() => getLeadHistory(leaddata._id),{ enabled: !!leaddata?._id });
     const { mutate: Create } = useCreateLeadHistory()
     const [form] = Form.useForm()
 

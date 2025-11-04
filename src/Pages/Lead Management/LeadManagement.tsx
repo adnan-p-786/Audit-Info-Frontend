@@ -1,5 +1,4 @@
-import { Button, Checkbox, DatePicker, Divider, Form, Input, message, Modal, Select, Switch, Table, type TableColumnsType } from 'antd';
-import dayjs from 'dayjs';
+import { Button, Checkbox, Divider, Form, Input, message, Modal, Select, Table, type TableColumnsType } from 'antd';
 import { useState } from 'react';
 import { CiEdit } from 'react-icons/ci';
 import { MdDeleteOutline } from 'react-icons/md';
@@ -36,6 +35,7 @@ interface DataType {
   sRCId: string;
   sROId: string;
   schoolId: string;
+  comment: string;
   _id: string;
 }
 
@@ -46,7 +46,7 @@ function LeadManagement() {
   const columns: TableColumnsType<DataType> = [
     {
       title: 'Date',
-      dataIndex: 'date_of_joining',
+      dataIndex: 'createdAt',
     },
     {
       title: 'Name',
@@ -61,17 +61,21 @@ function LeadManagement() {
       dataIndex: ['sRCId', 'name'],
     },
     {
+      title: 'SRO',
+      dataIndex: ['sROId', 'name'],
+    },
+    {
       title: 'Phone Number',
       dataIndex: 'phone_number',
     },
     {
       title: 'Status',
       dataIndex: 'status',
-      render: (status: boolean) => (
-        <span style={{ color: status ? 'green' : 'red', fontWeight: 500 }}>
-          {status ? 'Registered' : 'Not Registered'}
+      render: (status: string) => (
+        <span style={{ color: status === 'Registered' ? 'green' : 'inherit' }}>
+          {status}
         </span>
-      )
+      ),
     },
     {
       title: 'Action',
@@ -108,10 +112,9 @@ function LeadManagement() {
   const { data: agentdata, isLoading: agentloading } = useQuery('agent', getAgent)
   const [addModal, setAddModal] = useState(false)
   const [uploadModal, setUploadModal] = useState(false)
-  const [editModal, setEditModal] = useState(false)
-  const [registerModal, setRegisterModal] = useState(false)
+  const [editModal, setEditModal] = useState<any>(false)
+  const [registerModal, setRegisterModal] = useState<any>(false)
   const [editingRecord, setEditingRecord] = useState<DataType | null>(null)
-  const [registeringRecord, setRegisteringRecord] = useState<DataType | null>(null)
 
   const { mutate: Create } = useCreateLead()
   const { mutate: Register } = useCreateRegisterfromlead()
@@ -124,20 +127,24 @@ function LeadManagement() {
   const [registerForm] = Form.useForm()
   const [uploadForm] = Form.useForm()
 
+
   const onRegister = (value: any) => {
-    Register(value, {
-      onSuccess() {
-        message.success("Registered successfully")
-        refetch()
-        setRegisterModal(false)
-        setRegisteringRecord(null)
-        registerForm.resetFields()
+    Register(
+      {
+        id: registerModal._id,
+        data: value
       },
-      onError() {
-        message.error("Failed to register")
-      }
-    })
-  }
+      {
+        onSuccess() {
+          message.success("Added successfully");
+          setRegisterModal(false);
+          registerForm.resetFields();
+        },
+        onError() {
+          message.error("Failed to add");
+        }
+      });
+  };
 
   const onFinish = (value: any) => {
     Create(value, {
@@ -169,7 +176,7 @@ function LeadManagement() {
         message.success("Uploaded successfully");
         refetch();
         setUploadModal(false);
-        uploadForm.resetFields(); // Use uploadForm instead of form
+        uploadForm.resetFields();
       },
       onError() {
         message.error("Failed to upload");
@@ -207,7 +214,6 @@ function LeadManagement() {
     editForm.setFieldsValue({
       name: record.name,
       phone_number: record.phone_number,
-      date_of_joining: record.date_of_joining ? dayjs(record.date_of_joining) : null,
       status: record.status,
       delete: record.delete,
       sROId: record.sROId,
@@ -218,6 +224,7 @@ function LeadManagement() {
       address: record.address,
       branchId: record.branchId,
       mark: record.mark,
+      comment: record.comment,
     });
   };
 
@@ -241,21 +248,22 @@ function LeadManagement() {
 
   const handleCancelRegister = () => {
     setRegisterModal(false);
-    setRegisteringRecord(null);
+    // setRegisteringRecord(null);
     registerForm.resetFields();
   };
 
-   const handleOpenregisterModal = (record: any) => {
-        setRegisterModal(record);
-        registerForm.setFieldsValue({
-            name: record?.name || "",
-            shoolId: record?.shoolId?.name || "",
-            address: record?.address || "",
-            phone_number: record?.phone_number|| "",
-            College: record?.collegeId?.college|| "",
-            course: record?.course|| "",
-        });
-    };
+  const handleOpenregisterModal = (record: any) => {
+    setRegisterModal(record);
+    registerForm.setFieldsValue({
+      name: record?.name || "",
+      schoolId: record?.schoolId?.name || "",
+      address: record?.address || "",
+      phone_number: record?.phone_number || "",
+      collegeId: record?.collegeId?.college || "",
+      course: record?.course || "",
+      comment: record?.comment || "",
+    });
+  };
 
   return (
     <div>
@@ -308,14 +316,15 @@ function LeadManagement() {
       </Modal>
 
       <Modal
-        title="Add Lead"
+        title="Add New Lead"
         open={addModal}
         onCancel={() => setAddModal(false)}
         footer={null}
-        width={900}
+        width={500}
       >
         <Form layout='vertical' onFinish={onFinish} form={form}>
-          <div className="grid grid-flow-row grid-cols-3 gap-x-2">
+
+          <div className="grid grid-flow-row grid-cols-2 gap-x-2">
             <Form.Item name={'name'} label="Name" rules={[{ required: true, message: "Please enter name" }]}>
               <Input placeholder='Name' />
             </Form.Item>
@@ -324,55 +333,51 @@ function LeadManagement() {
               <Input placeholder='Phone Number' />
             </Form.Item>
 
-            <Form.Item name={'date_of_joining'} label="Date of Joining" rules={[{ required: true, message: "Please enter Date of Joining" }]}>
-              <DatePicker format="DD-MM-YYYY" className="w-full" />
-            </Form.Item>
-
-            <Form.Item name={'status'} label="Status" valuePropName="checked">
-              <Switch />
-            </Form.Item>
-
-            <Form.Item name={'address'} label="Address" rules={[{ required: true, message: "Please enter address" }]}>
-              <Input placeholder='Address' />
-            </Form.Item>
-
-            <Form.Item name={'mark'} label="Mark" rules={[{ required: true, message: "Please enter Mark" }]}>
-              <Input placeholder='Mark' />
+            <Form.Item
+              name={'schoolId'}
+              label="School Name"
+              rules={[{ required: true, message: "Please select a  School" }]}
+            >
+              <Select
+                placeholder="Select a school"
+                options={
+                  !schoolloading && schooldata?.data.map((school: { _id: string; name: string }) => ({
+                    value: school._id,
+                    label: school.name
+                  }))
+                }
+              />
             </Form.Item>
 
             <Form.Item name={'subject_name'} label="Subject Name" rules={[{ required: true, message: "Please enter Subject Name" }]}>
               <Input placeholder='Subject Name' />
             </Form.Item>
 
-            <Form.Item name={'course'} label="Course" rules={[{ required: true, message: "Please enter Course" }]}>
-              <Input placeholder='Course' />
-            </Form.Item>
-
             <Form.Item
-              name={'sROId'}
-              label="SRO"
+              name={'sRCId'}
+              label="Select SRC"
             >
               <Select
-                placeholder="Select a Sro"
+                placeholder="Select a Src"
                 options={
-                  !sroloading && srodata?.data.map((sro: { _id: string; name:string}) => ({
-                    value: sro._id,
-                    label: sro.name
+                  !srcloading && srcdata?.data.map((src: { _id: string; name: string }) => ({
+                    value: src._id,
+                    label: src.name
                   }))
                 }
               />
             </Form.Item>
 
             <Form.Item
-              name={'sRCId'}
-              label="SRC"
+              name={'sROId'}
+              label="Select SRO"
             >
               <Select
-                placeholder="Select a Src"
+                placeholder="Select a Sro"
                 options={
-                  !srcloading && srcdata?.data.map((src: { _id: string; name:string}) => ({
-                    value: src._id,
-                    label: src.name
+                  !sroloading && srodata?.data.map((sro: { _id: string; name: string }) => ({
+                    value: sro._id,
+                    label: sro.name
                   }))
                 }
               />
@@ -386,7 +391,7 @@ function LeadManagement() {
               <Select
                 placeholder="Select a branch"
                 options={
-                  !branchloading && branchdata?.data.map((branch: { _id: string; name:string }) => ({
+                  !branchloading && branchdata?.data.map((branch: { _id: string; name: string }) => ({
                     value: branch._id,
                     label: branch.name
                   }))
@@ -394,22 +399,24 @@ function LeadManagement() {
               />
             </Form.Item>
 
-            <Form.Item
-              name={'schoolId'}
-              label="School"
-              rules={[{ required: true, message: "Please select a  School" }]}
-            >
-              <Select
-                placeholder="Select a school"
-                options={
-                  !schoolloading && schooldata?.data.map((school: { _id: string; name:string}) => ({
-                    value: school._id,
-                    label: school.name
-                  }))
-                }
-              />
+            <Form.Item name={'address'} label="Address" rules={[{ required: true, message: "Please enter address" }]}>
+              <Input placeholder='Address' />
             </Form.Item>
+
+            <Form.Item name={'mark'} label="Mark Percentage" rules={[{ required: true, message: "Please enter Mark" }]}>
+              <Input placeholder='Mark' />
+            </Form.Item>
+
+
+            <Form.Item name={'course'} label="Course Name" rules={[{ required: true, message: "Please enter Course" }]}>
+              <Input placeholder='Course' />
+            </Form.Item>
+
           </div>
+          <Form.Item name={'comment'} label="Comment" rules={[{ required: true, message: "Please enter Course" }]}>
+            <TextArea rows={2} placeholder="comment" />
+          </Form.Item>
+
           <Form.Item>
             <Button htmlType='submit' type="primary" className='w-full'>Create</Button>
           </Form.Item>
@@ -421,10 +428,10 @@ function LeadManagement() {
         open={editModal}
         onCancel={handleCancelEdit}
         footer={null}
-        width={900}
+        width={500}
       >
         <Form layout='vertical' onFinish={onUpdateFinish} form={editForm}>
-          <div className="grid grid-flow-row grid-cols-3 gap-x-2">
+          <div className="grid grid-flow-row grid-cols-2 gap-x-2">
             <Form.Item name={'name'} label="Name" rules={[{ required: true, message: "Please enter name" }]}>
               <Input placeholder='Name' />
             </Form.Item>
@@ -433,55 +440,51 @@ function LeadManagement() {
               <Input placeholder='Phone Number' />
             </Form.Item>
 
-            <Form.Item name={'date_of_joining'} label="Date of Joining" rules={[{ required: true, message: "Please enter Date of Joining" }]}>
-              <DatePicker format="DD-MM-YYYY" className="w-full" />
-            </Form.Item>
-
-            <Form.Item name={'status'} label="Status" valuePropName="checked">
-              <Switch />
-            </Form.Item>
-
-            <Form.Item name={'address'} label="Address" rules={[{ required: true, message: "Please enter address" }]}>
-              <Input placeholder='Address' />
-            </Form.Item>
-
-            <Form.Item name={'mark'} label="Mark" rules={[{ required: true, message: "Please enter Mark" }]}>
-              <Input placeholder='Mark' />
+            <Form.Item
+              name={'schoolId'}
+              label="School Name"
+              rules={[{ required: true, message: "Please select a  School" }]}
+            >
+              <Select
+                placeholder="Select a school"
+                options={
+                  !schoolloading && schooldata?.data.map((school: { _id: string; name: string }) => ({
+                    value: school._id,
+                    label: school.name
+                  }))
+                }
+              />
             </Form.Item>
 
             <Form.Item name={'subject_name'} label="Subject Name" rules={[{ required: true, message: "Please enter Subject Name" }]}>
               <Input placeholder='Subject Name' />
             </Form.Item>
 
-            <Form.Item name={'course'} label="Course" rules={[{ required: true, message: "Please enter Course" }]}>
-              <Input placeholder='Course' />
-            </Form.Item>
-
             <Form.Item
-              name={'sROId'}
-              label="SRO"
+              name={'sRCId'}
+              label="Select SRC"
             >
               <Select
-                placeholder="Select a Sro"
+                placeholder="Select a Src"
                 options={
-                  !sroloading && srodata?.data.map((sro: { _id: string; name:string}) => ({
-                    value: sro._id,
-                    label: sro.name
+                  !srcloading && srcdata?.data.map((src: { _id: string; name: string }) => ({
+                    value: src._id,
+                    label: src.name
                   }))
                 }
               />
             </Form.Item>
 
             <Form.Item
-              name={'sRCId'}
-              label="SRC"
+              name={'sROId'}
+              label="Select SRO"
             >
               <Select
-                placeholder="Select a Src"
+                placeholder="Select a Sro"
                 options={
-                  !srcloading && srcdata?.data.map((src: { _id: string; name:string}) => ({
-                    value: src._id,
-                    label: src.name
+                  !sroloading && srodata?.data.map((sro: { _id: string; name: string }) => ({
+                    value: sro._id,
+                    label: sro.name
                   }))
                 }
               />
@@ -495,7 +498,7 @@ function LeadManagement() {
               <Select
                 placeholder="Select a branch"
                 options={
-                  !branchloading && branchdata?.data.map((branch: { _id: string; name:string}) => ({
+                  !branchloading && branchdata?.data.map((branch: { _id: string; name: string }) => ({
                     value: branch._id,
                     label: branch.name
                   }))
@@ -503,27 +506,32 @@ function LeadManagement() {
               />
             </Form.Item>
 
-            <Form.Item
-              name={'schoolId'}
-              label="School"
-              rules={[{ required: true, message: "Please select a  School" }]}
-            >
-              <Select
-                placeholder="Select a school"
-                options={
-                  !schoolloading && schooldata?.data.map((school: { _id: string; name:string}) => ({
-                    value: school._id,
-                    label: school.name
-                  }))
-                }
-              />
+            <Form.Item name={'address'} label="Address" rules={[{ required: true, message: "Please enter address" }]}>
+              <Input placeholder='Address' />
             </Form.Item>
+
+            <Form.Item name={'mark'} label="Mark Percentage" rules={[{ required: true, message: "Please enter Mark" }]}>
+              <Input placeholder='Mark' />
+            </Form.Item>
+
+
+            <Form.Item name={'course'} label="Course Name" rules={[{ required: true, message: "Please enter Course" }]}>
+              <Input placeholder='Course' />
+            </Form.Item>
+
           </div>
+          <Form.Item name={'comment'} label="Comment" rules={[{ required: true, message: "Please enter Course" }]}>
+            <TextArea rows={2} placeholder="comment" />
+          </Form.Item>
           <Form.Item>
             <Button htmlType='submit' type="primary" className='w-full'>Update</Button>
           </Form.Item>
         </Form>
       </Modal>
+
+
+
+      {/* register modal */}
 
       <Modal
         title="Register"
@@ -548,7 +556,7 @@ function LeadManagement() {
                 options={
                   !schoolloading && schooldata?.data.map((school: { _id: string; name: string }) => ({
                     value: school._id,
-                    label: school.name || school._id
+                    label: school.name
                   }))
                 }
               />
@@ -602,7 +610,7 @@ function LeadManagement() {
               <Select
                 placeholder="Select a Agent"
                 options={
-                  !agentloading && agentdata?.data.map((agent: { _id: string; name:string}) => ({
+                  !agentloading && agentdata?.data.map((agent: { _id: string; name: string }) => ({
                     value: agent._id,
                     label: agent.name
                   }))

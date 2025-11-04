@@ -7,7 +7,7 @@ export const useCreateRegister = () => {
 }
 
 export const useCreateRegisterfromlead = () => {
-    return useMutation((data: any) => postRegisterfromlead(data))
+    return useMutation((data: {id:string,data:any}) => postRegisterfromlead(data))
 }
 
 export const useCreateservice = () => {

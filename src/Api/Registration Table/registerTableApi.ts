@@ -17,13 +17,14 @@ export const postRefund = (data:{id: string, data: any}) => {
   return apiCLient.post(`/api/registrationtable/refund/${data.id}`, data.data)
 }
 
+export const postRegisterfromlead = (data:{id: string, data: any}) => {
+  return apiCLient.post(`/api/registrationtable/register/${data.id}`, data.data)
+}
+
 export const postRegister =(data:any)=>{
     return apiCLient.post('/api/registrationtable/create',data)    
 }
 
-export const postRegisterfromlead =(data:any)=>{
-    return apiCLient.post('/api/registrationtable/register',data)    
-}
 
 export const putRegister = (data: any) => {
   const { _id, ...rest } = data;

@@ -12,7 +12,8 @@ interface DataType {
 }
 
 function LeadHistory() {
-    const leaddata = useSelector((state:any)=>state?.leadHistory?.leadHistory)
+    const leaddata = useSelector((state: any) => state?.leadHistory?.leadHistory)
+    console.log("leaddata", leaddata);
     const columns: TableColumnsType<DataType> = [
         {
             title: 'Date',
@@ -28,26 +29,26 @@ function LeadHistory() {
         }
     ];
 
-    const { data, isLoading } = useQuery('leadHistory', getLeadHistory)
+    const { data, isLoading } = useQuery(['leadhistory', leaddata?._id], () => getLeadHistory(leaddata._id), { enabled: !!leaddata?._id });
 
     return (
         <div>
             <Divider>Lead History</Divider>
             <div>
                 <h1 className='font-semibold'>
-                    Student Name: { leaddata?.name }
+                    Student Name: {leaddata?.name}
                 </h1>
                 <h1 className='font-semibold'>
-                     SRC Name: { leaddata?.sRC }
+                    SRC Name: {leaddata?.sRC}
                 </h1>
                 <h1 className='font-semibold'>
-                    Phone Number: { leaddata?.phone_number}
+                    Phone Number: {leaddata?.phone_number}
                 </h1>
                 <h1 className='font-semibold'>
-                    School Name: { leaddata?.w}
+                    School Name: {leaddata?.w}
                 </h1>
                 <h1 className='font-semibold'>
-                     Address : { leaddata?.address}
+                    Address : {leaddata?.address}
                 </h1>
             </div>
             <Table
