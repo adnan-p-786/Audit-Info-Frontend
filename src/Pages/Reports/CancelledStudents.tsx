@@ -94,7 +94,6 @@ function CancelledStudents() {
         }
         footer={null}
       >
-
         <Form layout='vertical' onFinish={onConfirmRefund} form={refundForm}>
 
           <Form.Item name={'refundamount'} rules={[{ required: true, message: "Please enter Booking Amount" }]}>

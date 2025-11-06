@@ -79,28 +79,46 @@ function LeadManagement() {
     },
     {
       title: 'Action',
-      render: (_, record: any) => (
-        <div className="flex gap-2">
-          <Link to='/leadhistory'><Button onClick={() => {
-            dispatch(setLeadHistory(record))
-            navigate('/leadhistory')
-          }}><GrView /></Button></Link>
-          <Button onClick={() => handleEdit(record)}>
-            <CiEdit />
-          </Button>
-          <Button danger onClick={() => handleDelete(record._id)}>
-            <MdDeleteOutline />
-          </Button>
-          <Button onClick={() => handleOpenregisterModal(record)}>
-            <RiSave3Line />
-          </Button>
-          <Link to='/leadcallmanagement'><Button onClick={() => {
-            dispatch(setLeadHistory(record))
-            navigate('/leadcallmanagement')
-          }}><AiFillPhone /></Button></Link>
-        </div>
-      )
+      render: (_, record: any) => {
+        const isRegistered = record.status === "Registered";
+
+        return (
+          <div className="flex gap-2">
+    
+            <Link to='/leadhistory'>
+              <Button onClick={() => {
+                dispatch(setLeadHistory(record))
+                navigate('/leadhistory')
+              }}>
+                <GrView />
+              </Button>
+            </Link>
+
+            <Button disabled={isRegistered} onClick={() => handleEdit(record)}>
+              <CiEdit />
+            </Button>
+
+            <Button danger disabled={isRegistered} onClick={() => handleDelete(record._id)}>
+              <MdDeleteOutline />
+            </Button>
+      
+            <Button disabled={isRegistered} onClick={() => handleOpenregisterModal(record)}>
+              <RiSave3Line />
+            </Button>
+        
+            <Link to='/leadcallmanagement'>
+              <Button disabled={isRegistered} onClick={() => {
+                dispatch(setLeadHistory(record))
+                navigate('/leadcallmanagement')
+              }}>
+                <AiFillPhone />
+              </Button>
+            </Link>
+          </div>
+        );
+      }
     }
+
   ];
 
   const { data, isLoading, refetch } = useQuery('lead', getLead)

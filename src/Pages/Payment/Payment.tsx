@@ -33,33 +33,20 @@ function Payment() {
   const [loadingUsers, setLoadingUsers] = useState(false);
 
   const handleUserTypeChange = async (value: string) => {
-    setUserType(value);
-    form.setFieldsValue({ userId: undefined });
-    setFilteredUsers([]);
+  form.setFieldsValue({ userId: undefined });
+  setFilteredUsers([]);
 
-    if (value === "SRO") {
-      try {
-        setLoadingUsers(true);
-        const res = await getUser();
-        if (res?.data?.success) {
-          setFilteredUsers(res.data.data || []);
-        } else {
-          setFilteredUsers([]);
-        }
-      } catch (error) {
-        console.error("Error fetching SRO users:", error);
-        setFilteredUsers([]);
-      } finally {
-        setLoadingUsers(false);
-      }
-    } else {
-      const filtered =
-        userdata?.data?.filter(
-          (user: { position: string }) => user.position === value
-        ) || [];
-      setFilteredUsers(filtered);
-    }
-  };
+  const selectedType = value.toLowerCase();
+
+  const filtered =
+    userdata?.data?.filter(
+      (user: { position: string }) =>
+        user.position?.toLowerCase() === selectedType
+    ) || [];
+
+  setFilteredUsers(filtered);
+};
+
 
   const onFinish = (value: any) => {
     Create(value, {
