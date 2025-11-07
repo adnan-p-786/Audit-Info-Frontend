@@ -42,7 +42,7 @@ function OfficeAdministration() {
     },
     {
       title: 'Date of Joining',
-      dataIndex: 'date_of_joining',
+      dataIndex: 'createdAt',
     },
     {
       title: 'Branch Id',

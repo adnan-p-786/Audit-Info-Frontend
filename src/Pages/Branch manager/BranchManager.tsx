@@ -1,5 +1,4 @@
-import { Button, DatePicker, Divider, Form, Input, message, Modal, Select, Table, type TableColumnsType } from 'antd';
-import dayjs from 'dayjs';
+import { Button, Divider, Form, Input, message, Modal, Select, Table, type TableColumnsType } from 'antd';
 import { useMemo, useState } from 'react';
 import { CiEdit } from 'react-icons/ci';
 import { MdDeleteOutline } from 'react-icons/md';
@@ -15,7 +14,6 @@ interface DataType {
   branchId: string;
   employee_code: string;
   phone_number: string;
-  date_of_joining: string;
   point_amount: number;
   salary: number;
   address: string;
@@ -88,7 +86,6 @@ function BranchManager() {
       point_amount: record.point_amount,
       salary: record.salary,
       branchId: record.branchId,
-      date_of_joining: record.date_of_joining ? dayjs(record.date_of_joining) : null,
     });
   };
 
@@ -139,7 +136,7 @@ function BranchManager() {
     },
     {
       title: 'Date of Joining',
-      dataIndex: 'date_of_joining',
+      dataIndex: 'createdAt',
     },
     {
       title: 'Address',
@@ -235,10 +232,6 @@ function BranchManager() {
               <Input placeholder='Phone Number' />
             </Form.Item>
 
-            <Form.Item name={'date_of_joining'} label="Date of Joining" rules={[{ required: true, message: "Please enter Date of Joining" }]}>
-              <DatePicker format="DD-MM-YYYY" className="w-full" />
-            </Form.Item>
-
             <Form.Item name={'address'} label="Address" rules={[{ required: true, message: "Please enter address" }]}>
               <Input placeholder='Address' />
             </Form.Item>
@@ -263,7 +256,7 @@ function BranchManager() {
               <Input placeholder='Point Amount' />
             </Form.Item>
 
-            <Form.Item name={'salary'} label="salary" rules={[{ required: true, message: "Please enter Salary" }]}>
+            <Form.Item name={'salary'} label="Salary" rules={[{ required: true, message: "Please enter Salary" }]}>
               <Input placeholder='Salary' />
             </Form.Item>
 
@@ -305,10 +298,6 @@ function BranchManager() {
               <Input placeholder='Phone Number' />
             </Form.Item>
 
-            <Form.Item name={'date_of_joining'} label="Date of Joining" rules={[{ required: true, message: "Please enter Date of Joining" }]}>
-              <DatePicker format="DD-MM-YYYY" className="w-full" />
-            </Form.Item>
-
             <Form.Item name={'address'} label="Address" rules={[{ required: true, message: "Please enter address" }]}>
               <Input placeholder='Address' />
             </Form.Item>
@@ -333,7 +322,7 @@ function BranchManager() {
               <Input placeholder='Point Amount' />
             </Form.Item>
 
-            <Form.Item name={'salary'} label="salary" rules={[{ required: true, message: "Please enter Salary" }]}>
+            <Form.Item name={'salary'} label="Salary" rules={[{ required: true, message: "Please enter Salary" }]}>
               <Input placeholder='Salary' />
             </Form.Item>
 

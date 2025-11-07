@@ -66,6 +66,7 @@ function CancelledStudents() {
       )
     }
   ];
+  
   return (
     <div>
       <Divider>Cancelled Students Reports</Divider>
