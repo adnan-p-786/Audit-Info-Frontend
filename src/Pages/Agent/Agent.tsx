@@ -5,6 +5,8 @@ import { MdDeleteOutline } from 'react-icons/md';
 import { useQuery } from 'react-query';
 import { getAgent } from '../../Api/Agent/agentApi';
 import { useCreateAgent, useDeleteAgent, useUpdateAgent } from '../../Api/Agent/agentHooks';
+import { SearchOutlined } from "@ant-design/icons";
+
 
 interface DataType {
   key: React.Key;
@@ -52,7 +54,7 @@ function Agent() {
   const [addModal, setAddModal] = useState(false)
   const [editModal, setEditModal] = useState(false)
   const [editingRecord, setEditingRecord] = useState<DataType | null>(null)
-  const [selectedAgent, setSelectedAgent] = useState<string | null>(null);
+  const [searchText, setSearchText] = useState("");
 
   const { mutate: Create } = useCreateAgent()
   const { mutate: Update } = useUpdateAgent()
@@ -129,32 +131,23 @@ function Agent() {
 
 
   const filteredData = useMemo(() => {
-    let filtered = data?.data;
-    if (selectedAgent) {
-      filtered = filtered?.filter((agent: any) => agent?._id === selectedAgent || agent?._id === selectedAgent)
-    }
-    return filtered;
-  }, [selectedAgent]);
+    return data?.data?.filter((agent: any) =>
+      agent.name.toLowerCase().includes(searchText.toLowerCase())
+    );
+  }, [searchText, data]);
+
 
   return (
     <div>
       <Divider>Agent</Divider>
       <div className='justify-between flex mx-3 my-4'>
-        <Select
-          placeholder="search by name"
-          allowClear
-          style={{ width: 200 }}
-          value={selectedAgent || undefined}
-          onChange={(value) => setSelectedAgent(value)}
-          options={
-            data?.data.map((agent: { _id: string; name: string }) => ({
-              value: agent._id,
-              label: agent.name,
-            }))
-          }
-          loading={isLoading}
+        <Input
+          placeholder="Search Agent"
+          style={{ width: 180 }}
+          value={searchText}
+          onChange={(e) => setSearchText(e.target.value)}
+          suffix={<SearchOutlined style={{ cursor: "pointer", color: "#888" }} />}
         />
-
         <Button type='primary' onClick={() => setAddModal(true)}>Add</Button>
 
       </div>

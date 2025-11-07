@@ -6,6 +6,7 @@ import { useQuery } from 'react-query';
 import { useCreateBranchManager, useDeleteBranchManager, useUpdateBranchManager } from '../../Api/Branch Manager/branchManagerHooks';
 import { getBranchManager } from '../../Api/Branch Manager/branchManagerApi';
 import { getBranch } from '../../Api/Branch/branchApi';
+import { SearchOutlined } from '@ant-design/icons';
 
 interface DataType {
   key: React.Key;
@@ -28,7 +29,7 @@ function BranchManager() {
   const [addModal, setAddModal] = useState(false)
   const [editModal, setEditModal] = useState(false)
   const [editingRecord, setEditingRecord] = useState<DataType | null>(null)
-  const [selectedBranch, setSelectedBranch] = useState<string | null>(null);
+  const [searchText, setSearchText] = useState("");
 
   const { mutate: Create } = useCreateBranchManager()
   const { mutate: Update } = useUpdateBranchManager()
@@ -108,12 +109,11 @@ function BranchManager() {
   };
 
   const filteredData = useMemo(() => {
-    let filtered = data?.data;
-    if (selectedBranch) {
-      filtered = filtered?.filter((branch: any) => branch?._id === selectedBranch || branch?._id === selectedBranch)
-    }
-    return filtered;
-  }, [selectedBranch])
+    return data?.data?.filter((agent: any) =>
+      agent.name.toLowerCase().includes(searchText.toLowerCase())
+    );
+  }, [searchText, data]);
+
 
 
 
@@ -174,19 +174,12 @@ function BranchManager() {
     <div>
       <Divider>Branch Manager</Divider>
       <div className='justify-between flex mx-3 my-4'>
-        <Select
-          placeholder="Search by Name"
-          allowClear
-          style={{ width: 200 }}
-          value={selectedBranch || undefined}
-          onChange={(value) => setSelectedBranch(value)}
-          options={
-            data?.data.map((branch: { _id: string; name: string }) => ({
-              value: branch._id,
-              label: branch.name,
-            }))
-          }
-          loading={isLoading}
+        <Input
+          placeholder="Search Manager"
+          style={{ width: 180 }}
+          value={searchText}
+          onChange={(e) => setSearchText(e.target.value)}
+          suffix={<SearchOutlined style={{ cursor: "pointer", color: "#888" }} />}
         />
 
         <Button type='primary' onClick={() => setAddModal(true)}>Add</Button>

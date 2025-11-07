@@ -14,6 +14,9 @@ import { GrView } from 'react-icons/gr';
 import { useDispatch } from 'react-redux';
 import { setStudentHistory } from '../../Redux/leadSlice';
 import { CloseOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
+import { DatePicker } from 'antd';
+const { RangePicker } = DatePicker;
+
 
 interface DataType {
   key: React.Key;
@@ -100,7 +103,28 @@ function StudentManagement() {
   const [deleteModal, setdeleteModal] = useState<string | any>(null)
   const [editingRecord, setEditingRecord] = useState<DataType | any>(null)
   const [refundModal, setrefundModal] = useState<string | any>(null)
-  const [canceledRows, setCanceledRows] = useState<string[]>([]);
+  const [, setCanceledRows] = useState<string[]>([]);
+
+  // Filter states
+  const [dateRange, setDateRange] = useState<any>(null);
+  const [selectedCollege, setSelectedCollege] = useState<string | null>(null);
+  const [selectedStudent, setSelectedStudent] = useState<string | null>(null);
+
+
+  const filteredData = data?.data?.filter((record: any) => {
+
+    const collegeMatch = selectedCollege ? record?.collegeId?._id === selectedCollege : true;
+
+    const studentMatch = selectedStudent ? record?._id === selectedStudent : true;
+
+    const dateMatch = dateRange
+      ? (new Date(record.createdAt) >= new Date(dateRange[0]) &&
+        new Date(record.createdAt) <= new Date(dateRange[1]))
+      : true;
+
+    return collegeMatch && studentMatch && dateMatch;
+  });
+
 
 
 
@@ -251,29 +275,54 @@ function StudentManagement() {
     }
   };
 
-
-  
-
-
   return (
     <div>
       <Divider>Student Management</Divider>
-      <div className="w-full flex gap-2 py-2 justify-end">
-        <Button type='primary' onClick={() => setAddModal(true)}>Register</Button>
+      <div className="w-full flex gap-2 py-2">
+        <RangePicker style={{ width: 200 }} onChange={(dates) => setDateRange(dates)} />
+
+        <Select
+          allowClear
+          placeholder="Filter by College"
+          style={{ width: 180 }}
+          onChange={(value) => setSelectedCollege(value)}
+          options={
+            collegedata?.data?.map((college: any) => ({
+              label: college.college,
+              value: college._id
+            }))
+          }
+        />
+        <Select
+          allowClear
+          placeholder="Select Student"
+          style={{ width: 200 }}
+          value={selectedStudent}
+          onChange={(value) => setSelectedStudent(value)}
+          options={
+            data?.data?.map((student: any) => ({
+              label: student.name,
+              value: student._id
+            }))
+          }
+        />
+
+
+        <div className='flex justify-end flex-grow'>
+          <Button type='primary' onClick={() => setAddModal(true)}>Register</Button>
+        </div>
       </div>
 
-       <Table
+      <Table
         columns={columns}
         style={{ height: '350px', overflowY: 'auto' }}
         pagination={false}
-        dataSource={data?.data}
+        dataSource={filteredData}
         loading={isLoading}
         size="middle"
         rowKey="_id"
         rowClassName={(record) => record.cancel ? 'bg-red-300' : ''}
       />
-
-
 
       <Modal
         title="Register"

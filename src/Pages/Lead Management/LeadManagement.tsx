@@ -19,6 +19,8 @@ import { useCreateRegisterfromlead } from '../../Api/Registration Table/register
 import TextArea from 'antd/es/input/TextArea';
 import { getCollegeManagement } from '../../Api/College Management/collegeMgmtApi';
 import { getAgent } from '../../Api/Agent/agentApi';
+import { DatePicker } from 'antd';
+const { RangePicker } = DatePicker;
 
 interface DataType {
   key: React.Key;
@@ -84,7 +86,7 @@ function LeadManagement() {
 
         return (
           <div className="flex gap-2">
-    
+
             <Link to='/leadhistory'>
               <Button onClick={() => {
                 dispatch(setLeadHistory(record))
@@ -101,11 +103,11 @@ function LeadManagement() {
             <Button danger disabled={isRegistered} onClick={() => handleDelete(record._id)}>
               <MdDeleteOutline />
             </Button>
-      
+
             <Button disabled={isRegistered} onClick={() => handleOpenregisterModal(record)}>
               <RiSave3Line />
             </Button>
-        
+
             <Link to='/leadcallmanagement'>
               <Button disabled={isRegistered} onClick={() => {
                 dispatch(setLeadHistory(record))
@@ -144,6 +146,25 @@ function LeadManagement() {
   const [editForm] = Form.useForm()
   const [registerForm] = Form.useForm()
   const [uploadForm] = Form.useForm()
+
+  const [dateRange, setDateRange] = useState<any>(null);
+  const [selectedSchool, setSelectedSchool] = useState<string | null>(null);
+  const [selectedStudent, setSelectedStudent] = useState<string | null>(null);
+
+
+  const filteredData = data?.data?.filter((record: any) => {
+
+    const collegeMatch = selectedSchool ? record?.schoolId?._id === selectedSchool : true;
+
+    const studentMatch = selectedStudent ? record?._id === selectedStudent : true;
+
+    const dateMatch = dateRange
+      ? (new Date(record.createdAt) >= new Date(dateRange[0]) &&
+        new Date(record.createdAt) <= new Date(dateRange[1]))
+      : true;
+
+    return collegeMatch && studentMatch && dateMatch;
+  });
 
 
   const onRegister = (value: any) => {
@@ -287,17 +308,48 @@ function LeadManagement() {
     <div>
       <Divider>Lead Management</Divider>
       <div className="w-full flex justify-end gap-3">
-        <Button type='primary' onClick={() => setUploadModal(true)}>
-          <RiAddBoxLine className='text-lg' />Upload Lead
-        </Button>
-        <Button type='primary' onClick={() => setAddModal(true)}><RiAddBoxLine className='text-lg' />Add New</Button>
+        <div className='w-full flex gap-2 py-2'>
+          <RangePicker style={{ width: 200 }} onChange={(dates) => setDateRange(dates)} />
+
+          <Select
+            allowClear
+            placeholder="Filter by School"
+            style={{ width: 180 }}
+            onChange={(value) => setSelectedSchool(value)}
+            options={
+              schooldata?.data?.map((school: any) => ({
+                label: school.name,
+                value: school._id
+              }))
+            }
+          />
+          <Select
+            allowClear
+            placeholder="Select Student"
+            style={{ width: 200 }}
+            value={selectedStudent}
+            onChange={(value) => setSelectedStudent(value)}
+            options={
+              data?.data?.map((student: any) => ({
+                label: student.name,
+                value: student._id
+              }))
+            }
+          />
+        </div>
+        <div className='flex justify-end gap-3 flex-grow'>
+          <Button type='primary' onClick={() => setUploadModal(true)}>
+            <RiAddBoxLine className='text-lg' />Upload Lead
+          </Button>
+          <Button type='primary' onClick={() => setAddModal(true)}><RiAddBoxLine className='text-lg' />Add New</Button>
+        </div>
       </div>
       <Table
         className='mt-4'
         columns={columns}
         style={{ height: '350px', overflowY: 'auto' }}
         pagination={false}
-        dataSource={data?.data}
+        dataSource={filteredData}
         loading={isLoading}
         size="middle"
         rowKey="_id"
