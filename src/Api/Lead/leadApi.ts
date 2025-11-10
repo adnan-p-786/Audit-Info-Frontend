@@ -5,6 +5,10 @@ export const getLead = ()=>{
     return apiCLient.get('/api/lead/get')
 }
 
+export const getemployeesales = ()=>{
+    return apiCLient.get('/api/lead/employee-sales')
+}
+
 export const postLead =(data:any)=>{
     return apiCLient.post('/api/lead/create',data)
 }

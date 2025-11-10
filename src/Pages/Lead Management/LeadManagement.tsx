@@ -149,21 +149,24 @@ function LeadManagement() {
 
   const [dateRange, setDateRange] = useState<any>(null);
   const [selectedSchool, setSelectedSchool] = useState<string | null>(null);
-  const [selectedStudent, setSelectedStudent] = useState<string | null>(null);
+  const [selectedBranch, setSelectedBranch] = useState<string | null>(null);
+  const [selectedStatus, setSelectedStatus] = useState<string | null>(null);
 
 
   const filteredData = data?.data?.filter((record: any) => {
 
     const collegeMatch = selectedSchool ? record?.schoolId?._id === selectedSchool : true;
 
-    const studentMatch = selectedStudent ? record?._id === selectedStudent : true;
+    const branchMatch = selectedBranch ? record?.branchId?._id === selectedBranch : true;
+
+    const statusMatch = selectedStatus ? record.status === selectedStatus : true;
 
     const dateMatch = dateRange
       ? (new Date(record.createdAt) >= new Date(dateRange[0]) &&
         new Date(record.createdAt) <= new Date(dateRange[1]))
       : true;
 
-    return collegeMatch && studentMatch && dateMatch;
+    return collegeMatch && statusMatch && branchMatch && dateMatch;
   });
 
 
@@ -313,7 +316,7 @@ function LeadManagement() {
 
           <Select
             allowClear
-            placeholder="Filter by School"
+            placeholder="Select School"
             style={{ width: 180 }}
             onChange={(value) => setSelectedSchool(value)}
             options={
@@ -325,17 +328,33 @@ function LeadManagement() {
           />
           <Select
             allowClear
-            placeholder="Select Student"
-            style={{ width: 200 }}
-            value={selectedStudent}
-            onChange={(value) => setSelectedStudent(value)}
+            placeholder="Select Status"
+            style={{ width: 150 }}
+            onChange={(value) => setSelectedStatus(value)}
+            options={[
+              { label: "Home Visit", value: "Home Visit" },
+              { label: "Office Visit", value: "Office Visit" },
+              { label: "Registered", value: "Registered" },
+              { label: "Not Registered", value: "Not Registered" },
+              { label: "Admmission", value: "Admmission" },
+              { label: "Positive", value: "Negative" },
+              { label: "Committed", value: "Committed" }
+            ]}
+          />
+
+          <Select
+            allowClear
+            placeholder="Select Branch"
+            style={{ width: 180 }}
+            onChange={(value) => setSelectedBranch(value)}
             options={
-              data?.data?.map((student: any) => ({
-                label: student.name,
-                value: student._id
+              branchdata?.data?.map((branch: any) => ({
+                label: branch.name,
+                value: branch._id
               }))
             }
           />
+
         </div>
         <div className='flex justify-end gap-3 flex-grow'>
           <Button type='primary' onClick={() => setUploadModal(true)}>

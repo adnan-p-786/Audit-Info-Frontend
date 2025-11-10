@@ -1,29 +1,16 @@
 import { Divider, Table, type TableColumnsType } from "antd";
-
+import { getemployeesales } from "../../Api/Lead/leadApi";
+import { useQuery } from "react-query";
 
 function EmployeeSales() {
+  const { data, isLoading } = useQuery('employeesales', getemployeesales);
 
   const columns: TableColumnsType<any> = [
-    {
-      title: 'Date',
-      dataIndex: 'createdAt',
-    },
-    {
-      title: 'Employee Name',
-      dataIndex: 'name',
-    },
-    {
-      title: 'Student Name',
-      dataIndex: 'course',
-    },
-    {
-      title: 'College Name',
-      dataIndex: ['collegeId', 'college'],
-    },
-    {
-      title: 'Points',
-      dataIndex: 'course',
-    },
+    { title: 'Date', dataIndex: 'createdAt' },
+    { title: 'Employee Name', dataIndex: 'employeeName' },
+    { title: 'Student Name', dataIndex: 'studentName' },
+    { title: 'College Name', dataIndex: 'collegeName' },
+    { title: 'Points', dataIndex: 'points' },
   ];
 
   return (
@@ -32,16 +19,15 @@ function EmployeeSales() {
 
       <Table
         columns={columns}
-        style={{ height: '350px', overflowY: 'auto' }}
+        dataSource={data?.data?.data || []}
+        loading={isLoading}
         pagination={false}
-        // dataSource={data?.data}
-        // loading={isLoading}
         size="middle"
         rowKey="_id"
+        style={{ height: '350px', overflowY: 'auto' }}
       />
-
     </div>
-  )
+  );
 }
 
-export default EmployeeSales
+export default EmployeeSales;
