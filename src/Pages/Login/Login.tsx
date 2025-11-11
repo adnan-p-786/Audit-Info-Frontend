@@ -1,18 +1,17 @@
 import { Button, Form, Input, Select, message } from "antd";
 import axios from "axios";
+import banner from "../../assets/content.png";
 
 function Login() {
   const [form] = Form.useForm();
 
   const onFinish = async (values) => {
     try {
-      
       const res = await axios.post("http://localhost:3000/api/user/login", values);
 
       if (res.data.success) {
         message.success("Login successful!");
         localStorage.setItem("token", res.data.data.token);
-  
         window.location.href = "/dashboard";
       } else {
         message.error(res.data.message);
@@ -23,8 +22,15 @@ function Login() {
   };
 
   return (
-    <div className="w-full h-screen flex justify-center items-center bg-amber-300">
-      <div className="bg-white px-5 py-4 w-[380px] rounded-md">
+    <div
+      className="w-full h-screen flex justify-center items-center"
+      style={{
+        backgroundImage: `url(${banner})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+      }}
+    >
+      <div className="bg-amber-400 px-5 py-6 w-[380px] rounded-md shadow-lg">
         <Form layout="vertical" form={form} onFinish={onFinish}>
           <Form.Item
             name="position"
