@@ -1,6 +1,5 @@
 import { Button, Form, Input, Select, message } from "antd";
 import axios from "axios";
-import banner from "../../assets/content.png";
 
 function Login() {
   const [form] = Form.useForm();
@@ -23,14 +22,9 @@ function Login() {
 
   return (
     <div
-      className="w-full h-screen flex justify-center items-center"
-      style={{
-        backgroundImage: `url(${banner})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-      }}
+      className="w-full h-screen flex justify-center items-center bg-amber-400"
     >
-      <div className="bg-amber-400 px-5 py-6 w-[380px] rounded-md shadow-lg">
+      <div className="bg-white px-5 py-6 w-[380px] rounded-md shadow-lg">
         <Form layout="vertical" form={form} onFinish={onFinish}>
           <Form.Item
             name="position"
