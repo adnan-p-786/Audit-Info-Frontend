@@ -1,8 +1,14 @@
 import { Button, Form, Input, Select, message } from "antd";
 import axios from "axios";
+import { useDispatch } from "react-redux";
+import { loginSuccess } from "../../Redux/authSlice";
+import { useNavigate } from "react-router-dom";
 
 function Login() {
   const [form] = Form.useForm();
+
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const onFinish = async (values) => {
     try {
@@ -10,8 +16,17 @@ function Login() {
 
       if (res.data.success) {
         message.success("Login successful!");
-        localStorage.setItem("token", res.data.data.token);
-        window.location.href = "/dashboard";
+
+        // Dispatch to Redux, NOT localStorage
+        dispatch(
+          loginSuccess({
+            user: res.data.data,
+            token: res.data.data.token,
+          })
+        );
+
+        // Navigate using React Router
+        navigate("/dashboard");
       } else {
         message.error(res.data.message);
       }

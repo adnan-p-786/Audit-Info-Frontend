@@ -1,7 +1,7 @@
 import { Button, Divider, Form, Input, message, Modal, Table, type TableColumnsType } from "antd";
 import { useQuery } from "react-query";
 import { getRegister } from "../../Api/Registration Table/registerTableApi";
-import { setStudentHistory } from '../../Redux/leadSlice';
+import { setStudentHistory } from '../../Redux/studentSlice';
 import { Link } from "react-router-dom";
 import { GrView } from "react-icons/gr";
 import { useDispatch } from "react-redux";

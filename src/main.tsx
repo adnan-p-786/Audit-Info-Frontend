@@ -19,7 +19,6 @@ import { QueryClient, QueryClientProvider } from 'react-query'
 import BranchManager from './Pages/Branch manager/BranchManager.tsx'
 import LeadHistory from './Pages/Lead Management/LeadHistory.tsx'
 import { Provider } from 'react-redux'
-import store from './App/store.ts'
 import CancelledStudents from './Pages/Reports/CancelledStudents.tsx'
 import EmployeeSales from './Pages/Reports/EmployeeSales.tsx'
 import Accounts from './Pages/Accounts/Accounts.tsx'
@@ -34,6 +33,10 @@ import StudentHistory from './Pages/Student Management/StudentHistory.tsx'
 import Login from './Pages/Login/Login.tsx'
 import AgentCollegeReport from './Pages/Reports/AgentCollegeReport.tsx'
 import SeatBookings from './Pages/Reports/SeatBookings.tsx'
+
+import { PersistGate } from "redux-persist/integration/react";
+import { persistor, store } from "./App/store.ts";
+
 
 
 
@@ -169,7 +172,9 @@ createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
       <Provider store={store}>
-        <RouterProvider router={router} />
+        <PersistGate loading={null} persistor={persistor}>
+          <RouterProvider router={router} />
+        </PersistGate>
       </Provider>
     </QueryClientProvider>
   </StrictMode>

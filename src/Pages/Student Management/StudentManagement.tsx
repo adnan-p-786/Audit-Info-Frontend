@@ -12,7 +12,7 @@ import { useCreateAddAmount } from '../../Api/Account/AccountHooks';
 import { Link } from 'react-router-dom';
 import { GrView } from 'react-icons/gr';
 import { useDispatch } from 'react-redux';
-import { setStudentHistory } from '../../Redux/leadSlice';
+import { setStudentHistory } from '../../Redux/studentSlice';
 import { CloseOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import { DatePicker } from 'antd';
 const { RangePicker } = DatePicker;
