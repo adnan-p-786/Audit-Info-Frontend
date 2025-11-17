@@ -10,7 +10,7 @@ function Login() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const onFinish = async (values) => {
+  const onFinish = async (values:any) => {
     try {
       const res = await axios.post("http://localhost:3000/api/user/login", values);
 
@@ -47,6 +47,7 @@ function Login() {
             rules={[{ required: true, message: "Please select a Position" }]}
           >
             <Select placeholder="select position">
+              <Select.Option value="Admin">Admin</Select.Option>
               <Select.Option value="SRC">SRC</Select.Option>
               <Select.Option value="SRO">SRO</Select.Option>
               <Select.Option value="Manager">Manager</Select.Option>
