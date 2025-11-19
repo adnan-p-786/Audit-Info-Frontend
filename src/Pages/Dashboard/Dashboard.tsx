@@ -7,6 +7,7 @@ import { useQuery } from "react-query";
 import { useSelector } from "react-redux";
 import { getRegister } from "../../Api/Registration Table/registerTableApi";
 import { getLead } from "../../Api/Lead/leadApi";
+import { getSro } from "../../Api/SRO/SroApi";
 
 interface DataType {
   key: string;
@@ -380,6 +381,9 @@ function ManagerDashboard() {
 //SRC
 function SRCDashboard() {
 
+  const { data, isLoading } = useQuery("Sro", getSro);
+
+
   const [time, setTime] = useState("");
 
   useEffect(() => {
@@ -440,9 +444,26 @@ function SRCDashboard() {
   }, []);
 
   const columns: TableColumnsType<DataType> = [
-    { title: "No.of", dataIndex: "name" },
-    { title: "Manager", dataIndex: "email" },
-    { title: "Admissions", dataIndex: "employee_code" },
+    {
+      title: 'Date of Joining',
+      dataIndex: 'createdAt',
+    },
+    {
+      title: 'Name',
+      dataIndex: 'name',
+    },
+    {
+      title: 'Email',
+      dataIndex: 'email',
+    },
+    {
+      title: 'Employee Code',
+      dataIndex: 'employee_code',
+    },
+    {
+      title: 'Phone Number',
+      dataIndex: 'phone_number',
+    }
   ];
 
   return (
@@ -479,8 +500,8 @@ function SRCDashboard() {
         <Table columns={columns}
           style={{ height: '165px', overflowY: 'auto' }}
           title={() => 'SRO'} pagination={false}
-          // dataSource={filteredData}
-          // loading={isLoading}
+          dataSource={data?.data}
+          loading={isLoading}
           size="middle"
           rowKey="_id"
         />
@@ -748,6 +769,22 @@ function AccountantDashboard() {
 function AdministractorDashboard() {
   const [time, setTime] = useState("");
 
+  const { data: branchdata, isLoading: branchloading } = useQuery("Branch", getBranch);
+  const { data: registerdata, isLoading: registerloading } = useQuery("register", getRegister);
+  const { data: leaddata, isLoading: leadloading } = useQuery("leads", getLead);
+
+  const registeredFiltered = registerdata?.data.filter((item: any) => item.cancel === true);
+  const Refunddata = registerdata?.data.filter((item: any) => item.status === "ForRefund");
+  const seatbookeddata = registerdata?.data.filter((item: any) => item.status === "foracknowledgment");
+
+
+
+
+
+  const totalAdmissions = registerdata?.data.length;
+  const totalLeads = leaddata?.data.length;
+  const totalBranches = branchdata?.data.length || 0;
+
 
   useEffect(() => {
     const options = {
@@ -807,9 +844,21 @@ function AdministractorDashboard() {
   }, []);
 
   const columns: TableColumnsType<DataType> = [
-    { title: "No.of", dataIndex: "name" },
-    { title: "Manager", dataIndex: "email" },
-    { title: "Admissions", dataIndex: "employee_code" },
+    { title: "No.of", render: (_text, _record, index) => index + 1, },
+    { title: "Name", dataIndex: "name" },
+    { title: "Course", dataIndex: "course" },
+  ];
+
+  const refundColumns: TableColumnsType<DataType> = [
+    { title: "No.of", render: (_text, _record, index) => index + 1, },
+    { title: "Name", dataIndex: "name" },
+    { title: "Course", dataIndex: "course" },
+  ];
+
+   const seatColumns: TableColumnsType<DataType> = [
+    { title: "No.of", render: (_text, _record, index) => index + 1, },
+    { title: "Name", dataIndex: "name" },
+    { title: "Course", dataIndex: "course" },
   ];
 
   return (
@@ -818,21 +867,27 @@ function AdministractorDashboard() {
         <div className="w-60 h-20 shadow-md rounded-md">
           <div className="mx-5 my-2">
             <h1>No.of Leads :</h1>
-            <span className="text-green-500">7</span>
+            <span className="text-green-500">
+              {leadloading ? "..." : totalLeads}
+            </span>
           </div>
         </div>
 
         <div className="w-60 h-20 shadow-md rounded-md">
           <div className="mx-5 my-2">
             <h1>No.of Admissions :</h1>
-            <span className="text-amber-500">7</span>
+            <span className="text-amber-500">
+              {registerloading ? "..." : totalAdmissions}
+            </span>
           </div>
         </div>
 
         <div className="w-60 h-20 shadow-md rounded-md">
           <div className="mx-5 my-2">
             <h1>No.of Branches :</h1>
-            <span className="text-red-500">7</span>
+            <span className="text-red-500">
+              {branchloading ? "..." : totalBranches}
+            </span>
           </div>
         </div>
 
@@ -853,29 +908,29 @@ function AdministractorDashboard() {
           <Table columns={columns}
             style={{ height: '180px', overflowY: 'auto', width: '350px' }}
             title={() => 'Cancelled Students'} pagination={false}
-            // dataSource={filteredData}
-            // loading={isLoading}
+            dataSource={registeredFiltered}
+            loading={registerloading}
             size="middle"
             rowKey="_id"
           />
         </div>
         <div className="">
-          <Table columns={columns}
+          <Table columns={refundColumns}
             style={{ height: '180px', overflowY: 'auto', width: '350px' }}
             title={() => 'Refunded Students'} pagination={false}
-            // dataSource={filteredData}
-            // loading={isLoading}
+            dataSource={Refunddata}
+            loading={registerloading}
             size="middle"
             rowKey="_id"
           />
         </div>
 
         <div className="">
-          <Table columns={columns}
+          <Table columns={seatColumns}
             style={{ height: '180px', overflowY: 'auto', width: '350px' }}
             title={() => 'Seat booked Students'} pagination={false}
-            // dataSource={filteredData}
-            // loading={isLoading}
+            dataSource={seatbookeddata}
+            loading={registerloading}
             size="middle"
             rowKey="_id"
           />
