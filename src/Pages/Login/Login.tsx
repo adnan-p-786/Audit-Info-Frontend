@@ -3,6 +3,7 @@ import axios from "axios";
 import { useDispatch } from "react-redux";
 import { loginSuccess } from "../../Redux/authSlice";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-hot-toast";
 
 function Login() {
   const [form] = Form.useForm();
@@ -15,6 +16,7 @@ function Login() {
       const res = await axios.post("http://localhost:3000/api/user/login", values);
 
       if (res.data.success) {
+        toast.success("Login successful!" ,{ duration: 4000 });
         message.success("Login successful!");
 
         // Dispatch to Redux, NOT localStorage

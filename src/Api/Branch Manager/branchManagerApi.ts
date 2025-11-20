@@ -4,6 +4,10 @@ export const getBranchManager = ()=>{
     return apiCLient.get('/api/manager/get')
 }
 
+export const getBranchManagerAdmission = ()=>{
+    return apiCLient.get('/api/manager/get-branchmanager')
+}
+
 export const postBranchManager =(data:any)=>{
     return apiCLient.post('/api/manager/create',data)
 }

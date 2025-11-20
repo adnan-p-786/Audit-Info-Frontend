@@ -8,6 +8,7 @@ import { useSelector } from "react-redux";
 import { getRegister } from "../../Api/Registration Table/registerTableApi";
 import { getLead } from "../../Api/Lead/leadApi";
 import { getSro } from "../../Api/SRO/SroApi";
+import { getBranchManagerAdmission } from "../../Api/Branch Manager/branchManagerApi";
 
 interface DataType {
   key: string;
@@ -27,7 +28,8 @@ function AdminDashboard() {
   const { data: branchdata, isLoading: branchloading } = useQuery("Branch", getBranch);
   const { data: registerdata, isLoading: registerloading } = useQuery("register", getRegister);
   const { data: leaddata, isLoading: leadloading } = useQuery("leads", getLead);
-
+  const { data: managerdata, isLoading: managerloading } = useQuery("manager", getBranchManagerAdmission);
+  
   // -------------------------------
   // Create Chart Initially
   // -------------------------------
@@ -116,10 +118,22 @@ function AdminDashboard() {
   // -------------------------------
   // Table columns
   // -------------------------------
-  const columns = [
-    { title: "No.of", dataIndex: "name" },
-    { title: "Manager", dataIndex: "email" },
-    { title: "Admissions", dataIndex: "employee_code" },
+  const branchcolumns: TableColumnsType<DataType> = [
+    { title: "No.of", render: (_text, _record, index) => index + 1, },
+    { title: "Manager", dataIndex: "name" },
+    { title: "Admissions", dataIndex: "admmissionCount" },
+  ];
+
+  const srccolumns: TableColumnsType<DataType> = [
+    { title: "No.of", render: (_text, _record, index) => index + 1, },
+    { title: "SRC", dataIndex: "name" },
+    { title: "Admissions", dataIndex: "" },
+  ];
+
+  const srocolumns: TableColumnsType<DataType> = [
+    { title: "No.of", render: (_text, _record, index) => index + 1, },
+    { title: "SRO", dataIndex: "name" },
+    { title: "Admissions", dataIndex: "" },
   ];
 
 
@@ -193,7 +207,9 @@ function AdminDashboard() {
       <div className="flex gap-20">
         <div>
           <Table
-            columns={columns}
+            columns={branchcolumns}
+            dataSource={managerdata?.data}
+            loading={managerloading}
             style={{ height: "100px", overflowY: "auto", width: "300px" }}
             title={() => "Branch Manager"}
             pagination={false}
@@ -204,7 +220,8 @@ function AdminDashboard() {
 
         <div>
           <Table
-            columns={columns}
+            columns={srccolumns}
+            dataSource={managerdata?.data}
             style={{ height: "100px", overflowY: "auto", width: "300px" }}
             title={() => "SRC"}
             pagination={false}
@@ -215,7 +232,7 @@ function AdminDashboard() {
 
         <div>
           <Table
-            columns={columns}
+            columns={srocolumns}
             style={{ height: "100px", overflowY: "auto", width: "300px" }}
             title={() => "SRO"}
             pagination={false}
@@ -235,6 +252,12 @@ function ManagerDashboard() {
   const [time, setTime] = useState("");
 
   const { data: branchdata, isLoading: branchloading } = useQuery("Branch", getBranch);
+  const { data: registerdata, isLoading: registerloading } = useQuery("register", getRegister);
+  const { data: leaddata, isLoading: leadloading } = useQuery("leads", getLead);
+
+  const totalAdmissions = registerdata?.data.length;
+  const totalLeads = leaddata?.data.length;
+  const totalBranches = branchdata?.data.length || 0;
 
   useEffect(() => {
     const options = {
@@ -305,21 +328,27 @@ function ManagerDashboard() {
         <div className="w-60 h-20 shadow-md rounded-md">
           <div className="mx-5 my-2">
             <h1>No.of Leads :</h1>
-            <span className="text-green-500">7</span>
+            <span className="text-green-500">
+              {leadloading ? "..." : totalLeads}
+            </span>
           </div>
         </div>
 
         <div className="w-60 h-20 shadow-md rounded-md">
           <div className="mx-5 my-2">
             <h1>No.of Admissions :</h1>
-            <span className="text-amber-500">7</span>
+            <span className="text-amber-500">
+              {registerloading ? "..." : totalAdmissions}
+            </span>
           </div>
         </div>
 
         <div className="w-60 h-20 shadow-md rounded-md">
           <div className="mx-5 my-2">
             <h1>No.of Branches :</h1>
-            <span className="text-red-500">7</span>
+            <span className="text-red-500">
+              {branchloading ? "..." : totalBranches}
+            </span>
           </div>
         </div>
 
@@ -855,7 +884,7 @@ function AdministractorDashboard() {
     { title: "Course", dataIndex: "course" },
   ];
 
-   const seatColumns: TableColumnsType<DataType> = [
+  const seatColumns: TableColumnsType<DataType> = [
     { title: "No.of", render: (_text, _record, index) => index + 1, },
     { title: "Name", dataIndex: "name" },
     { title: "Course", dataIndex: "course" },

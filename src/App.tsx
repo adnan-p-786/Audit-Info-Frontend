@@ -14,6 +14,7 @@ import { FaBuildingUser } from 'react-icons/fa6';
 import { TbReportAnalytics } from 'react-icons/tb';
 import { PiStudent } from 'react-icons/pi';
 import { SiContactlesspayment } from 'react-icons/si';
+import {  Toaster } from "react-hot-toast";
 
 
 function App() {
@@ -26,6 +27,7 @@ function App() {
 
   return (
     <>
+    <Toaster />
     <ConfigProvider
       theme={{
         token: {
