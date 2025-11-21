@@ -8,14 +8,9 @@ import { useSelector } from "react-redux";
 import { getRegister } from "../../Api/Registration Table/registerTableApi";
 import { getLead } from "../../Api/Lead/leadApi";
 import { getSro } from "../../Api/SRO/SroApi";
-import { getBranchManagerAdmission } from "../../Api/Branch Manager/branchManagerApi";
+import { getBranchManagerLeaderboard } from "../../Api/Branch Manager/branchManagerApi";
+import { getSrcLeaderboard } from "../../Api/SRC/SrcApi";
 
-interface DataType {
-  key: string;
-  name: string;
-  money: string;
-  address: string;
-}
 
 //Admin..........
 
@@ -28,8 +23,9 @@ function AdminDashboard() {
   const { data: branchdata, isLoading: branchloading } = useQuery("Branch", getBranch);
   const { data: registerdata, isLoading: registerloading } = useQuery("register", getRegister);
   const { data: leaddata, isLoading: leadloading } = useQuery("leads", getLead);
-  const { data: managerdata, isLoading: managerloading } = useQuery("manager", getBranchManagerAdmission);
-  
+  const { data: managerdata, isLoading: managerloading } = useQuery("manager", getBranchManagerLeaderboard);
+  const { data: srcdata, isLoading: srcloading } = useQuery("src", getSrcLeaderboard);
+
   // -------------------------------
   // Create Chart Initially
   // -------------------------------
@@ -118,19 +114,21 @@ function AdminDashboard() {
   // -------------------------------
   // Table columns
   // -------------------------------
-  const branchcolumns: TableColumnsType<DataType> = [
+  const branchcolumns: TableColumnsType<any> = [
     { title: "No.of", render: (_text, _record, index) => index + 1, },
     { title: "Manager", dataIndex: "name" },
-    { title: "Admissions", dataIndex: "admmissionCount" },
+    { title: "Admissions", dataIndex: "registrationCount",
+      render: (value) => value ?? 0,   // prevents empty cells
+    },
   ];
 
-  const srccolumns: TableColumnsType<DataType> = [
+  const srccolumns: TableColumnsType<any> = [
     { title: "No.of", render: (_text, _record, index) => index + 1, },
     { title: "SRC", dataIndex: "name" },
-    { title: "Admissions", dataIndex: "" },
+    { title: "Admissions", dataIndex: "registrationCount" },
   ];
 
-  const srocolumns: TableColumnsType<DataType> = [
+  const srocolumns: TableColumnsType<any> = [
     { title: "No.of", render: (_text, _record, index) => index + 1, },
     { title: "SRO", dataIndex: "name" },
     { title: "Admissions", dataIndex: "" },
@@ -221,7 +219,8 @@ function AdminDashboard() {
         <div>
           <Table
             columns={srccolumns}
-            dataSource={managerdata?.data}
+            dataSource={srcdata?.data}
+            loading={srcloading}
             style={{ height: "100px", overflowY: "auto", width: "300px" }}
             title={() => "SRC"}
             pagination={false}
@@ -316,7 +315,7 @@ function ManagerDashboard() {
     return () => clearInterval(interval);
   }, []);
 
-  const columns: TableColumnsType<DataType> = [
+  const columns: TableColumnsType<any> = [
     { title: "No.of", dataIndex: "name" },
     { title: "Manager", dataIndex: "email" },
     { title: "Admissions", dataIndex: "employee_code" },
@@ -472,7 +471,7 @@ function SRCDashboard() {
     return () => clearInterval(interval);
   }, []);
 
-  const columns: TableColumnsType<DataType> = [
+  const columns: TableColumnsType<any> = [
     {
       title: 'Date of Joining',
       dataIndex: 'createdAt',
@@ -713,7 +712,7 @@ function AccountantDashboard() {
     return () => clearInterval(interval);
   }, []);
 
-  const columns: TableColumnsType<DataType> = [
+  const columns: TableColumnsType<any> = [
     { title: "No.of", dataIndex: "name" },
     { title: "Manager", dataIndex: "email" },
     { title: "Admissions", dataIndex: "employee_code" },
@@ -872,19 +871,19 @@ function AdministractorDashboard() {
     return () => clearInterval(interval);
   }, []);
 
-  const columns: TableColumnsType<DataType> = [
+  const columns: TableColumnsType<any> = [
     { title: "No.of", render: (_text, _record, index) => index + 1, },
     { title: "Name", dataIndex: "name" },
     { title: "Course", dataIndex: "course" },
   ];
 
-  const refundColumns: TableColumnsType<DataType> = [
+  const refundColumns: TableColumnsType<any> = [
     { title: "No.of", render: (_text, _record, index) => index + 1, },
     { title: "Name", dataIndex: "name" },
     { title: "Course", dataIndex: "course" },
   ];
 
-  const seatColumns: TableColumnsType<DataType> = [
+  const seatColumns: TableColumnsType<any> = [
     { title: "No.of", render: (_text, _record, index) => index + 1, },
     { title: "Name", dataIndex: "name" },
     { title: "Course", dataIndex: "course" },

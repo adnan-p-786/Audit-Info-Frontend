@@ -4,6 +4,10 @@ export const getSrc = ()=>{
     return apiCLient.get('/api/src/get')
 }
 
+export const getSrcLeaderboard = ()=>{
+    return apiCLient.get('/api/src/leaderboard/src')
+}
+
 export const postSrc =(data:any)=>{
     return apiCLient.post('/api/src/create',data)
 }
