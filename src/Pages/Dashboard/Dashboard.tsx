@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import ApexCharts from "apexcharts";
 import { Select, Table } from "antd";
 import type { TableColumnsType } from "antd";
@@ -7,9 +7,10 @@ import { useQuery } from "react-query";
 import { useSelector } from "react-redux";
 import { getRegister } from "../../Api/Registration Table/registerTableApi";
 import { getLead } from "../../Api/Lead/leadApi";
-import { getSro } from "../../Api/SRO/SroApi";
+import { getSroLeaderboard } from "../../Api/SRO/SroApi";
 import { getBranchManagerLeaderboard } from "../../Api/Branch Manager/branchManagerApi";
 import { getSrcLeaderboard } from "../../Api/SRC/SrcApi";
+import { getAccount } from "../../Api/Account/AccountApi";
 
 
 //Admin..........
@@ -25,11 +26,15 @@ function AdminDashboard() {
   const { data: leaddata, isLoading: leadloading } = useQuery("leads", getLead);
   const { data: managerdata, isLoading: managerloading } = useQuery("manager", getBranchManagerLeaderboard);
   const { data: srcdata, isLoading: srcloading } = useQuery("src", getSrcLeaderboard);
+  const { data: srodata, isLoading: sroloading } = useQuery("sro", getSroLeaderboard);
 
-  // -------------------------------
-  // Create Chart Initially
-  // -------------------------------
+  // console.log("selectedBranch", registerdata?.data.branchId)
+
+
   useEffect(() => {
+    const chartEl = document.querySelector("#chart");
+    if (!chartEl) return;
+
     const options = {
       series: [
         { name: "Admissions", data: [] },
@@ -51,16 +56,14 @@ function AdminDashboard() {
       fill: { opacity: 1 },
     };
 
-    const chart = new ApexCharts(document.querySelector("#chart"), options);
+    const chart = new ApexCharts(chartEl, options);
     chart.render();
     chartRef.current = chart;
 
     return () => chart.destroy();
   }, []);
 
-  // -------------------------------
-  // Clock
-  // -------------------------------
+
   useEffect(() => {
     const updateTime = () => {
       setTime(
@@ -77,9 +80,7 @@ function AdminDashboard() {
     return () => clearInterval(interval);
   }, []);
 
-  // -------------------------------
-  // Convert API data → monthly array
-  // -------------------------------
+
   const getMonthlyCounts = (items: any[]) => {
     const monthly = Array(12).fill(0);
     items.forEach((item: any) => {
@@ -89,27 +90,37 @@ function AdminDashboard() {
     return monthly;
   };
 
+//   useEffect(() => {
+//   console.log("Branch changed:", selectedBranch);
+// }, [selectedBranch]);
+
+
   // -------------------------------
   // Update chart when branch changes
   // -------------------------------
+
+  const filteredBranch = useMemo(() => {
+    console.log("Branch changed:", selectedBranch);
+    return selectedBranch;
+  }, [selectedBranch]);
+
   useEffect(() => {
-    if (!chartRef.current || registerloading || leadloading) return;
+    if (!chartRef.current || !registerdata || !leaddata) return;
 
-    const admissions =
-      registerdata?.data.filter((x: any) => x.branchId === selectedBranch) || [];
+    const admissions = registerdata.data.filter(
+      (x: any) => !filteredBranch || x.branchId === filteredBranch
+    );
 
-    const leads =
-      leaddata?.data.filter((x: any) => x.branchId === selectedBranch) || [];
-
-    const admissionMonthly = getMonthlyCounts(admissions);
-    const leadMonthly = getMonthlyCounts(leads);
+    const leads = leaddata.data.filter(
+      (x: any) => !filteredBranch || x.branchId === filteredBranch
+    );
 
     chartRef.current.updateSeries([
-      { name: "Admissions", data: admissionMonthly },
-      { name: "Leads", data: leadMonthly },
+      { name: "Admissions", data: getMonthlyCounts(admissions) },
+      { name: "Leads", data: getMonthlyCounts(leads) },
     ]);
+  }, [registerdata, leaddata, filteredBranch]);
 
-  }, [selectedBranch, registerdata, leaddata]);
 
   // -------------------------------
   // Table columns
@@ -117,21 +128,19 @@ function AdminDashboard() {
   const branchcolumns: TableColumnsType<any> = [
     { title: "No.of", render: (_text, _record, index) => index + 1, },
     { title: "Manager", dataIndex: "name" },
-    { title: "Admissions", dataIndex: "registrationCount",
-      render: (value) => value ?? 0,   // prevents empty cells
-    },
+    { title: "Admissions", dataIndex: "registrationCount", render: (value) => value ?? 0, },
   ];
 
   const srccolumns: TableColumnsType<any> = [
     { title: "No.of", render: (_text, _record, index) => index + 1, },
     { title: "SRC", dataIndex: "name" },
-    { title: "Admissions", dataIndex: "registrationCount" },
+    { title: "Admissions", dataIndex: "registrationCount", render: (value) => value ?? 0, },
   ];
 
   const srocolumns: TableColumnsType<any> = [
     { title: "No.of", render: (_text, _record, index) => index + 1, },
     { title: "SRO", dataIndex: "name" },
-    { title: "Admissions", dataIndex: "" },
+    { title: "Admissions", dataIndex: "registrationCount", render: (value) => value ?? 0, },
   ];
 
 
@@ -184,6 +193,7 @@ function AdminDashboard() {
         Branch:
         <Select
           placeholder="Select a branch"
+          allowClear
           className="mx-3"
           style={{ width: 200 }}
           options={
@@ -193,7 +203,10 @@ function AdminDashboard() {
               label: branch.name,
             }))
           }
-          onChange={(value) => setSelectedBranch(value)}
+          onChange={(value) => {
+            console.log("Branch selected:", value);
+            setSelectedBranch(value);
+          }}
         />
       </div>
 
@@ -232,6 +245,8 @@ function AdminDashboard() {
         <div>
           <Table
             columns={srocolumns}
+            dataSource={srodata?.data}
+            loading={sroloading}
             style={{ height: "100px", overflowY: "auto", width: "300px" }}
             title={() => "SRO"}
             pagination={false}
@@ -253,6 +268,8 @@ function ManagerDashboard() {
   const { data: branchdata, isLoading: branchloading } = useQuery("Branch", getBranch);
   const { data: registerdata, isLoading: registerloading } = useQuery("register", getRegister);
   const { data: leaddata, isLoading: leadloading } = useQuery("leads", getLead);
+  const { data: srcdata, isLoading: srcloading } = useQuery("src", getSrcLeaderboard);
+  const { data: srodata, isLoading: sroloading } = useQuery("sro", getSroLeaderboard);
 
   const totalAdmissions = registerdata?.data.length;
   const totalLeads = leaddata?.data.length;
@@ -315,10 +332,17 @@ function ManagerDashboard() {
     return () => clearInterval(interval);
   }, []);
 
-  const columns: TableColumnsType<any> = [
-    { title: "No.of", dataIndex: "name" },
-    { title: "Manager", dataIndex: "email" },
-    { title: "Admissions", dataIndex: "employee_code" },
+  const srccolumns: TableColumnsType<any> = [
+    { title: "No.of", render: (_text, _record, index) => index + 1, },
+    { title: "SRC", dataIndex: "name" },
+    { title: "Admissions", dataIndex: "registrationCount", render: (value) => value ?? 0, },
+  ];
+
+
+  const srocolumns: TableColumnsType<any> = [
+    { title: "No.of", render: (_text, _record, index) => index + 1, },
+    { title: "SRC", dataIndex: "name" },
+    { title: "Admissions", dataIndex: "registrationCount", render: (value) => value ?? 0, },
   ];
 
   return (
@@ -380,7 +404,9 @@ function ManagerDashboard() {
       <h1 className="font-bold">Leaderboard :-</h1>
       <div className="flex gap-10">
         <div className="">
-          <Table columns={columns}
+          <Table columns={srccolumns}
+            loading={srcloading}
+            dataSource={srcdata?.data}
             style={{ height: '100px', overflowY: 'auto', width: '530px' }}
             title={() => 'SRC'} pagination={false}
             // dataSource={filteredData}
@@ -390,7 +416,9 @@ function ManagerDashboard() {
           />
         </div>
         <div className="">
-          <Table columns={columns}
+          <Table columns={srocolumns}
+            dataSource={srodata?.data}
+            loading={sroloading}
             style={{ height: '100px', overflowY: 'auto', width: '530px' }}
             title={() => 'SRO'} pagination={false}
             // dataSource={filteredData}
@@ -409,49 +437,53 @@ function ManagerDashboard() {
 //SRC
 function SRCDashboard() {
 
-  const { data, isLoading } = useQuery("Sro", getSro);
+  const { data, isLoading } = useQuery("Src", getSrcLeaderboard);
+  const { data: registerdata, isLoading: registerloading } = useQuery("register", getRegister);
+  const { data: leaddata, isLoading: leadloading } = useQuery("leads", getLead);
 
 
   const [time, setTime] = useState("");
 
-  useEffect(() => {
-    const options = {
-      series: [
-        {
-          name: "Admissions",
-          data: [44, 55, 57, 56, 61, 58, 63, 60, 66, 70, 75, 80],
-        },
-        {
-          name: "Leads",
-          data: [76, 85, 101, 98, 87, 105, 91, 114, 94, 110, 120, 130],
-        },
+useEffect(() => {
+  if (registerloading || leadloading) return;
+  if (!registerdata || !leaddata) return;
+
+  // Convert API data into chart series
+  const admissionData = registerdata.data.map((item: any) => item.count || 0);
+  const leadData = leaddata.data.map((item: any) => item.count || 0);
+
+  const options = {
+    series: [
+      { name: "Admissions", data: admissionData },
+      { name: "Leads", data: leadData },
+    ],
+    chart: { type: "bar", height: 250 },
+    plotOptions: {
+      bar: {
+        horizontal: false,
+        columnWidth: "75%",
+        borderRadius: 5,
+        borderRadiusApplication: "end",
+      },
+    },
+    dataLabels: { enabled: false },
+    stroke: { show: true, width: 2, colors: ["transparent"] },
+    xaxis: {
+      categories: [
+        "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+        "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
       ],
-      chart: { type: "bar", height: 250 },
-      plotOptions: {
-        bar: {
-          horizontal: false,
-          columnWidth: "75%",
-          borderRadius: 5,
-          borderRadiusApplication: "end",
-        },
-      },
-      dataLabels: { enabled: false },
-      stroke: { show: true, width: 2, colors: ["transparent"] },
-      xaxis: {
-        categories: [
-          "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-          "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
-        ],
-      },
-      yaxis: { title: { text: "Count" } },
-      fill: { opacity: 1 },
-    };
+    },
+    yaxis: { title: { text: "Count" } },
+    fill: { opacity: 1 },
+  };
 
-    const chart = new ApexCharts(document.querySelector("#chart"), options);
-    chart.render();
+  const chart = new ApexCharts(document.querySelector("#chart"), options);
+  chart.render();
 
-    return () => chart.destroy();
-  }, []);
+  return () => chart.destroy();
+}, [registerloading, leadloading, registerdata, leaddata]);
+
 
   useEffect(() => {
     const updateTime = () => {
@@ -472,27 +504,13 @@ function SRCDashboard() {
   }, []);
 
   const columns: TableColumnsType<any> = [
-    {
-      title: 'Date of Joining',
-      dataIndex: 'createdAt',
-    },
-    {
-      title: 'Name',
-      dataIndex: 'name',
-    },
-    {
-      title: 'Email',
-      dataIndex: 'email',
-    },
-    {
-      title: 'Employee Code',
-      dataIndex: 'employee_code',
-    },
-    {
-      title: 'Phone Number',
-      dataIndex: 'phone_number',
-    }
+    { title: "No.of", render: (_text, _record, index) => index + 1, },
+    { title: "SRC", dataIndex: "name" },
+    { title: "Admissions", dataIndex: "registrationCount", render: (value) => value ?? 0, },
   ];
+
+  const totalAdmissions = registerdata?.data.length;
+  const totalLeads = leaddata?.data.length;
 
   return (
     <div>
@@ -500,14 +518,19 @@ function SRCDashboard() {
         <div className="w-60 h-20 shadow-md rounded-md">
           <div className="mx-5 my-2">
             <h1>No.of Leads :</h1>
-            <span className="text-green-500">7</span>
+            <span className="text-green-500">
+              {leadloading ? "..." : totalLeads}
+
+            </span>
           </div>
         </div>
 
         <div className="w-60 h-20 shadow-md rounded-md">
           <div className="mx-5 my-2">
             <h1>No.of Admissions :</h1>
-            <span className="text-amber-500">7</span>
+            <span className="text-amber-500">
+              {registerloading ? "..." : totalAdmissions}
+            </span>
           </div>
         </div>
 
@@ -527,7 +550,7 @@ function SRCDashboard() {
       <div className="w-full">
         <Table columns={columns}
           style={{ height: '165px', overflowY: 'auto' }}
-          title={() => 'SRO'} pagination={false}
+          title={() => 'SRC'} pagination={false}
           dataSource={data?.data}
           loading={isLoading}
           size="middle"
@@ -543,6 +566,8 @@ function SRCDashboard() {
 
 function SRODashboard() {
   const [time, setTime] = useState("");
+  const { data: registerdata, isLoading: registerloading } = useQuery("register", getRegister);
+  const { data: leaddata, isLoading: leadloading } = useQuery("leads", getLead);
 
   useEffect(() => {
     const options = {
@@ -601,11 +626,9 @@ function SRODashboard() {
     return () => clearInterval(interval);
   }, []);
 
-  // const columns: TableColumnsType<DataType> = [
-  //   { title: "No.of", dataIndex: "name" },
-  //   { title: "Manager", dataIndex: "email" },
-  //   { title: "Admissions", dataIndex: "employee_code" },
-  // ];
+
+  const totalAdmissions = registerdata?.data.length;
+  const totaLleads = leaddata?.data.length;
 
   return (
     <div>
@@ -613,14 +636,19 @@ function SRODashboard() {
         <div className="w-60 h-20 shadow-md rounded-md">
           <div className="mx-5 my-2">
             <h1>No.of Leads :</h1>
-            <span className="text-green-500">7</span>
+            <span className="text-green-500">
+              {leadloading ? "..." : totaLleads}
+
+            </span>
           </div>
         </div>
 
         <div className="w-60 h-20 shadow-md rounded-md">
           <div className="mx-5 my-2">
             <h1>No.of Admissions :</h1>
-            <span className="text-amber-500">7</span>
+            <span className="text-amber-500">
+              {registerloading ? "..." : totalAdmissions}
+            </span>
           </div>
         </div>
 
@@ -652,22 +680,38 @@ function SRODashboard() {
 
 }
 
+//Accountant
+
 function AccountantDashboard() {
   const [time, setTime] = useState("");
+
+  const { data, isLoading } = useQuery("Accounts", getAccount);
+
+  const debit = data?.data?.reduce(
+    (sum: number, item: any) => sum + (item.debit || 0),
+    0
+  );
+
+  const credit = data?.data?.reduce(
+    (sum: number, item: any) => sum + (item.credit || 0),
+    0
+  );
+
+  const Total = credit + debit;
 
   useEffect(() => {
     const options = {
       series: [
         {
-          name: "Admissions",
+          name: " Debit",
           data: [44, 55, 57, 56, 61, 58, 63, 60, 66, 70, 75, 80],
         },
         {
-          name: "Leads",
+          name: "Credit",
           data: [76, 85, 101, 98, 87, 105, 91, 114, 94, 110, 120, 130],
         },
       ],
-      chart: { type: "bar", height: 250 },
+      chart: { type: "bar", height: 400 },
       plotOptions: {
         bar: {
           horizontal: false,
@@ -712,33 +756,37 @@ function AccountantDashboard() {
     return () => clearInterval(interval);
   }, []);
 
-  const columns: TableColumnsType<any> = [
-    { title: "No.of", dataIndex: "name" },
-    { title: "Manager", dataIndex: "email" },
-    { title: "Admissions", dataIndex: "employee_code" },
-  ];
 
   return (
     <div>
       <div className="flex gap-10 text-xl font-semibold">
         <div className="w-60 h-20 shadow-md rounded-md">
           <div className="mx-5 my-2">
-            <h1>No.of Leads :</h1>
-            <span className="text-green-500">7</span>
+            <h1>Debit :</h1>
+            <span className="text-green-500">
+              {isLoading ? "..." : debit}
+
+            </span>
           </div>
         </div>
 
         <div className="w-60 h-20 shadow-md rounded-md">
           <div className="mx-5 my-2">
-            <h1>No.of Admissions :</h1>
-            <span className="text-amber-500">7</span>
+            <h1>Credit :</h1>
+            <span className="text-red-500">
+              {isLoading ? "..." : credit}
+            </span>
+
           </div>
         </div>
 
         <div className="w-60 h-20 shadow-md rounded-md">
           <div className="mx-5 my-2">
-            <h1>No.of Branches :</h1>
-            <span className="text-red-500">7</span>
+            <h1>Total :</h1>
+            <span className="text-amber-600">
+              {isLoading ? "..." : Total}
+            </span>
+
           </div>
         </div>
 
@@ -752,43 +800,6 @@ function AccountantDashboard() {
 
       {/* Chart */}
       <div id="chart" className="mt-2"></div>
-
-      {/* Leaderboard */}
-      <h1 className="font-bold">Leaderboard :-</h1>
-      <div className="flex gap-20">
-        <div>
-          <Table
-            columns={columns}
-            style={{ height: "100px", overflowY: "auto", width: "300px" }}
-            title={() => "Branch Manager"}
-            pagination={false}
-            size="middle"
-            rowKey="_id"
-          />
-        </div>
-
-        <div>
-          <Table
-            columns={columns}
-            style={{ height: "100px", overflowY: "auto", width: "300px" }}
-            title={() => "SRC"}
-            pagination={false}
-            size="middle"
-            rowKey="_id"
-          />
-        </div>
-
-        <div>
-          <Table
-            columns={columns}
-            style={{ height: "100px", overflowY: "auto", width: "300px" }}
-            title={() => "SRO"}
-            pagination={false}
-            size="middle"
-            rowKey="_id"
-          />
-        </div>
-      </div>
     </div>
   );
 }
@@ -804,10 +815,6 @@ function AdministractorDashboard() {
   const registeredFiltered = registerdata?.data.filter((item: any) => item.cancel === true);
   const Refunddata = registerdata?.data.filter((item: any) => item.status === "ForRefund");
   const seatbookeddata = registerdata?.data.filter((item: any) => item.status === "foracknowledgment");
-
-
-
-
 
   const totalAdmissions = registerdata?.data.length;
   const totalLeads = leaddata?.data.length;

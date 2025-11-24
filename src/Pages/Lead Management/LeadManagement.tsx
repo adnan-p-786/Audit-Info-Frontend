@@ -180,6 +180,7 @@ function LeadManagement() {
         onSuccess() {
           message.success("Added successfully");
           setRegisterModal(false);
+          refetch();
           registerForm.resetFields();
         },
         onError() {

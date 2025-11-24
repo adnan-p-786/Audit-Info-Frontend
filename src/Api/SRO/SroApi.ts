@@ -4,6 +4,10 @@ export const getSro = ()=>{
     return apiCLient.get('/api/sro/get')
 }
 
+export const getSroLeaderboard = ()=>{
+    return apiCLient.get('/api/sro/leaderboard/sro')
+}
+
 export const postSro =(data:any)=>{
     return apiCLient.post('/api/sro/create',data)
 }
