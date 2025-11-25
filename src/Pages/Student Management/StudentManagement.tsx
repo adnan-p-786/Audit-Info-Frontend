@@ -42,7 +42,6 @@ function StudentManagement() {
 
   const dispatch = useDispatch()
 
-
   const columns: TableColumnsType<DataType> = [
     {
       title: 'Date',
@@ -94,7 +93,6 @@ function StudentManagement() {
   ];
 
   const { data, isLoading, refetch } = useQuery('Register', getRegister)
-  const { data: agentdata, isLoading: agentloading } = useQuery('agent', getAgent)
   const { data: schooldata, isLoading: schoolloading } = useQuery('school', getSchoolmanagement)
   const { data: collegedata, isLoading: collegeloading } = useQuery('college', getCollegeManagement)
   const [addModal, setAddModal] = useState(false)
@@ -124,8 +122,6 @@ function StudentManagement() {
 
     return collegeMatch && studentMatch && dateMatch;
   });
-
-
 
 
   const { mutate: Create } = useCreateRegister()
@@ -339,22 +335,6 @@ function StudentManagement() {
             </Form.Item>
 
             <Form.Item
-              name={'agentId'}
-              label="Agent"
-              rules={[{ required: true, message: "Please select Agent" }]}
-            >
-              <Select
-                placeholder="Select Agent"
-                options={
-                  !agentloading && agentdata?.data.map((branch: { _id: string; name: string }) => ({
-                    value: branch._id,
-                    label: branch.name
-                  }))
-                }
-              />
-            </Form.Item>
-
-            <Form.Item
               name={'schoolId'}
               label="School"
               rules={[{ required: true, message: "Please select School" }]}
@@ -454,22 +434,6 @@ function StudentManagement() {
 
             <Form.Item name={'name'} label="Name" rules={[{ required: true, message: "Please enter name" }]}>
               <Input placeholder='Name' />
-            </Form.Item>
-
-            <Form.Item
-              name={'agentId'}
-              label="Agent"
-              rules={[{ required: true, message: "Please select Agent" }]}
-            >
-              <Select
-                placeholder="Select Agent"
-                options={
-                  !agentloading && agentdata?.data.map((branch: { _id: string; name: string }) => ({
-                    value: branch._id,
-                    label: branch.name
-                  }))
-                }
-              />
             </Form.Item>
 
             <Form.Item

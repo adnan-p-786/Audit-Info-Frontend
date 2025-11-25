@@ -18,16 +18,12 @@ function Login() {
       if (res.data.success) {
         toast.success("Login successful!" ,{ duration: 4000 });
         message.success("Login successful!");
-
-        // Dispatch to Redux, NOT localStorage
         dispatch(
           loginSuccess({
             user: res.data.data,
             token: res.data.data.token,
           })
         );
-
-        // Navigate using React Router
         navigate("/dashboard");
       } else {
         message.error(res.data.message);

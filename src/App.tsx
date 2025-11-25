@@ -1,7 +1,4 @@
-import {
-  MenuFoldOutlined,
-  MenuUnfoldOutlined,
-} from '@ant-design/icons';
+import { MenuFoldOutlined, MenuUnfoldOutlined } from '@ant-design/icons';
 import { Button, ConfigProvider, Layout, Menu, theme } from 'antd';
 import { RiDashboardFill, RiUserVoiceFill } from 'react-icons/ri';
 import { Link, Outlet } from 'react-router-dom';
@@ -14,10 +11,14 @@ import { FaBuildingUser } from 'react-icons/fa6';
 import { TbReportAnalytics } from 'react-icons/tb';
 import { PiStudent } from 'react-icons/pi';
 import { SiContactlesspayment } from 'react-icons/si';
-import {  Toaster } from "react-hot-toast";
+import { Toaster } from "react-hot-toast";
+import { useSelector } from "react-redux";
+
 
 
 function App() {
+
+  const position = useSelector((state: any) => state.auth.user?.Position);
 
   const { Header, Sider, Content } = Layout;
   const [collapsed, setCollapsed] = useState(false);
@@ -27,159 +28,181 @@ function App() {
 
   return (
     <>
-    <Toaster />
-    <ConfigProvider
-      theme={{
-        token: {
-          colorPrimary: '#e89207',
-          colorBgContainer: '#ffffff',
-        },
-        components: {
-          Layout: {
-            siderBg: '#001529', 
-            headerBg: '#f0f2f5',
-            bodyBg: '#fafafa',
+      <Toaster />
+      <ConfigProvider
+        theme={{
+          token: {
+            colorPrimary: '#e89207',
+            colorBgContainer: '#ffffff',
           },
-          Menu: {
-            itemColor: '#ffffff',
-            itemSelectedColor: '#1890ff',
-            itemBg: '#001529',
-            itemSelectedBg: '#003a8c',
-            itemHoverColor: '#40a9ff',
-            itemHoverBg: '#000c17',
+          components: {
+            Layout: {
+              siderBg: '#001529',
+              headerBg: '#f0f2f5',
+              bodyBg: '#fafafa',
+            },
+            Menu: {
+              itemColor: '#ffffff',
+              itemSelectedColor: '#1890ff',
+              itemBg: '#001529',
+              itemSelectedBg: '#003a8c',
+              itemHoverColor: '#40a9ff',
+              itemHoverBg: '#000c17',
+            },
           },
-        },
-      }}
-    >
-      <Layout className='h-screen'>
-        <Sider className='overflow-y-scroll sidebarHidden' trigger={null} collapsible collapsed={collapsed}>
-          <div className="demo-logo-vertical" />
-          <Menu
-            theme="dark"
-            mode="inline"
-            defaultSelectedKeys={['1']}
-          >
-            <Menu.Item key={'1'} icon={<RiDashboardFill />}>
-              <Link to='/dashboard'>Dashboard</Link>
-            </Menu.Item>
-
-            <Menu.Item key={'2'} icon={<FaUserTie />}>
-              <Link to='/branchmanager'>Branch Manager</Link>
-            </Menu.Item>
-
-            <Menu.Item key={'3'} icon={<MdAccountCircle />}>
-              <Link to='/accountant'>Accountant</Link>
-            </Menu.Item>
-
-            <Menu.Item key={'4'} icon={<RiUserVoiceFill />}>
-              <Link to='/src'>SRC</Link>
-            </Menu.Item>
-
-            <Menu.Item key={'5'} icon={<FaUsersCog />}>
-              <Link to='/sro'>SRO</Link>
-            </Menu.Item>
-
-            <Menu.Item key={'6'} icon={<FaBuildingUser />}>
-              <Link to='officeadministration'>Office Administration</Link>
-            </Menu.Item>
-
-            <Menu.Item key={'7'} icon={<FaUserSecret />}>
-              <Link to='/agent'>Agent</Link>
-            </Menu.Item>
-
-            <Menu.Item key={'8'} icon={<FaUsers  />}>
-              <Link to='/leadmanagement'>Lead Management</Link>
-            </Menu.Item>
-
-            <Menu.Item key={'9'} icon={<PiStudent />}>
-              <Link to='/studentmanagement'>Student Management</Link>
-            </Menu.Item>
-
-            <SubMenu key={'10'} title="Settings" icon={<IoSettingsOutline />}>
-              <Menu.Item icon={<FaArrowRight />}>
-                <Link to='/particularmanagement'>Particular Management</Link>
+        }}
+      >
+        <Layout className='h-screen'>
+          <Sider className='overflow-y-scroll sidebarHidden' trigger={null} collapsible collapsed={collapsed}>
+            <div className="demo-logo-vertical" />
+            <Menu
+              theme="dark"
+              mode="inline"
+              defaultSelectedKeys={['1']}
+            >
+              <Menu.Item key={'1'} icon={<RiDashboardFill />}>
+                <Link to='/dashboard'>Dashboard</Link>
               </Menu.Item>
-              <Menu.Item icon={<FaArrowRight />}>
-                <Link to='/schoolmanagement'>School Management</Link>
-              </Menu.Item>
-              <Menu.Item icon={<FaArrowRight />}>
-                <Link to='/collegemanagement'>College Management</Link>
-              </Menu.Item>
-              <Menu.Item icon={<FaArrowRight />}>
-                <Link to='/branchmanagement'>Branch Management</Link>
-              </Menu.Item>
-            </SubMenu>
 
-            <SubMenu key={'11'} title="Reports" icon={<TbReportAnalytics />}>
-              <Menu.Item icon={<FaArrowRight />}>
-                <Link to='/seatbooking'>Seat Bookings</Link>
-              </Menu.Item>
-              <Menu.Item icon={<FaArrowRight />}>
-                <Link to='/employeesales'>Employee Sales</Link>
-              </Menu.Item>
-              <Menu.Item icon={<FaArrowRight />}>
-                <Link to='/agentcollegereport'>Agent College Report</Link>
-              </Menu.Item>
-              <Menu.Item icon={<FaArrowRight />}>
-                <Link to='/cancelledstudent'>Cancelled Students</Link>
-              </Menu.Item>
-              <SubMenu title='Accounts'>
-                <Menu.Item icon={<FaArrowRight />}>
-                <Link to='/accounts'>Accounts</Link>
-              </Menu.Item>
-              <Menu.Item icon={<FaArrowRight />}>
-                <Link to='/collegeaccounts'>College Account</Link>
-              </Menu.Item>
-              <Menu.Item icon={<FaArrowRight />}>
-                <Link to='/employeeaccounts'>Employee Account</Link>
-              </Menu.Item>
-              <Menu.Item icon={<FaArrowRight />}>
-                <Link to='/agentaccounts'>Agent Account</Link>
-              </Menu.Item>
-              </SubMenu>
-            </SubMenu>
+              {position !== 'Manager' && position !== 'SRC' && position !== 'SRO' && position !== 'Administractor' && position !== 'Accountant' && (
+                <Menu.Item key={'2'} icon={<FaUserTie />}>
+                  <Link to='/branchmanager'>Branch Manager</Link>
+                </Menu.Item>
+              )}
 
-            <Menu.Item key={'12'} icon={<FaUserSecret />}>
-              <Link to='/expense'>Expense</Link>
-            </Menu.Item>
+              {position !== 'Manager' && position !== 'SRC' && position !== 'SRO' && (
+                <Menu.Item key={'3'} icon={<MdAccountCircle />}>
+                  <Link to='/accountant'>Accountant</Link>
+                </Menu.Item>
+              )}
 
-            <Menu.Item key={'13'} icon={<SiContactlesspayment />}>
-              <Link to='/payment'>Payment</Link>
-            </Menu.Item>
+              {position !== 'SRC' && position !== 'SRO' && position !== 'Administractor' && position !== 'Accountant' && (
+                <Menu.Item key={'4'} icon={<RiUserVoiceFill />}>
+                  <Link to='/src'>SRC</Link>
+                </Menu.Item>
+              )}
+              {position !== 'SRO' && position !== 'Administractor' && position !== 'Accountant' && (
+              <Menu.Item key={'5'} icon={<FaUsersCog />}>
+                <Link to='/sro'>SRO</Link>
+              </Menu.Item>
+              )}
 
-            <Menu.Item key={'14'} icon={<FaBell />}>
-              <Link to='/request'>Request</Link>
-            </Menu.Item>
+              {position !== 'Manager' && position !== 'SRC' && position !== 'SRO' && position !== 'Accountant' && (
+                <Menu.Item key={'6'} icon={<FaBuildingUser />}>
+                  <Link to='officeadministration'>Office Administration</Link>
+                </Menu.Item>
+              )}
+
+              {position !== 'Manager' && position !== 'SRC' && position !== 'SRO' && position !== 'Administractor' && (
+                <Menu.Item key={'7'} icon={<FaUserSecret />}>
+                  <Link to='/agent'>Agent</Link>
+                </Menu.Item>
+              )}
 
 
-          </Menu>
-        </Sider>
-        <Layout>
-          <Header style={{ padding: 0, height:50, background: colorBgContainer }}>
-            <Button
-              type="text"
-              icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
-              onClick={() => setCollapsed(!collapsed)}
+              <Menu.Item key={'8'} icon={<FaUsers />}>
+                <Link to='/leadmanagement'>Lead Management</Link>
+              </Menu.Item>
+
+              <Menu.Item key={'9'} icon={<PiStudent />}>
+                <Link to='/studentmanagement'>Student Management</Link>
+              </Menu.Item>
+
+              {position !== 'Manager' && position !== 'SRC' && position !== 'SRO' && position !== 'Administractor' && position !== 'Accountant' && (
+                <SubMenu key={'10'} title="Settings" icon={<IoSettingsOutline />}>
+                  <Menu.Item icon={<FaArrowRight />}>
+                    <Link to='/particularmanagement'>Particular Management</Link>
+                  </Menu.Item>
+                  <Menu.Item icon={<FaArrowRight />}>
+                    <Link to='/schoolmanagement'>School Management</Link>
+                  </Menu.Item>
+                  <Menu.Item icon={<FaArrowRight />}>
+                    <Link to='/collegemanagement'>College Management</Link>
+                  </Menu.Item>
+                  <Menu.Item icon={<FaArrowRight />}>
+                    <Link to='/branchmanagement'>Branch Management</Link>
+                  </Menu.Item>
+                </SubMenu>
+              )}
+
+              {position !== 'Manager' && position !== 'SRC' && position !== 'SRO' && (
+                <SubMenu key={'11'} title="Reports" icon={<TbReportAnalytics />}>
+                  <Menu.Item icon={<FaArrowRight />}>
+                    <Link to='/seatbooking'>Seat Bookings</Link>
+                  </Menu.Item>
+                  <Menu.Item icon={<FaArrowRight />}>
+                    <Link to='/employeesales'>Employee Sales</Link>
+                  </Menu.Item>
+                  <Menu.Item icon={<FaArrowRight />}>
+                    <Link to='/agentcollegereport'>Agent College Report</Link>
+                  </Menu.Item>
+                  <Menu.Item icon={<FaArrowRight />}>
+                    <Link to='/cancelledstudent'>Cancelled Students</Link>
+                  </Menu.Item>
+                  <SubMenu title='Accounts'>
+                    <Menu.Item icon={<FaArrowRight />}>
+                      <Link to='/accounts'>Accounts</Link>
+                    </Menu.Item>
+                    <Menu.Item icon={<FaArrowRight />}>
+                      <Link to='/collegeaccounts'>College Account</Link>
+                    </Menu.Item>
+                    <Menu.Item icon={<FaArrowRight />}>
+                      <Link to='/employeeaccounts'>Employee Account</Link>
+                    </Menu.Item>
+                    <Menu.Item icon={<FaArrowRight />}>
+                      <Link to='/agentaccounts'>Agent Account</Link>
+                    </Menu.Item>
+                  </SubMenu>
+                </SubMenu>
+              )}
+
+              {position !== 'Manager' && position !== 'SRC' && position !== 'SRO' && (
+                <Menu.Item key={'12'} icon={<FaUserSecret />}>
+                  <Link to='/expense'>Expense</Link>
+                </Menu.Item>
+              )}
+
+              {position !== 'Manager' && position !== 'SRC' && position !== 'SRO' && (
+                <Menu.Item key={'13'} icon={<SiContactlesspayment />}>
+                  <Link to='/payment'>Payment</Link>
+                </Menu.Item>
+              )}
+
+              {position !== 'Manager' && position !== 'SRC' && position !== 'SRO' && (
+                <Menu.Item key={'14'} icon={<FaBell />}>
+                  <Link to='/request'>Request</Link>
+                </Menu.Item>
+              )}
+
+
+            </Menu>
+          </Sider>
+          <Layout>
+            <Header style={{ padding: 0, height: 50, background: colorBgContainer }}>
+              <Button
+                type="text"
+                icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+                onClick={() => setCollapsed(!collapsed)}
+                style={{
+                  fontSize: '14px',
+                  width: 60,
+                  height: 60,
+                }}
+              />
+            </Header>
+            <Content
               style={{
-                fontSize: '14px',
-                width: 60,
-                height: 60,
+                margin: '13px 10px',
+                padding: 24,
+                minHeight: 280,
+                background: colorBgContainer,
+                borderRadius: borderRadiusLG,
               }}
-            />
-          </Header>
-          <Content
-            style={{
-              margin: '13px 10px',
-              padding: 24,
-              minHeight: 280,
-              background: colorBgContainer,
-              borderRadius: borderRadiusLG,
-            }}
-          >
-            <Outlet />
-          </Content>
+            >
+              <Outlet />
+            </Content>
+          </Layout>
         </Layout>
-      </Layout>
       </ConfigProvider>
     </>
   )
