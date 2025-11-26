@@ -28,9 +28,6 @@ function AdminDashboard() {
   const { data: srcdata, isLoading: srcloading } = useQuery("src", getSrcLeaderboard);
   const { data: srodata, isLoading: sroloading } = useQuery("sro", getSroLeaderboard);
 
-  // console.log("selectedBranch", registerdata?.data.branchId)
-
-
   useEffect(() => {
     const chartEl = document.querySelector("#chart");
     if (!chartEl) return;
@@ -54,6 +51,14 @@ function AdminDashboard() {
       },
       yaxis: { title: { text: "Count" } },
       fill: { opacity: 1 },
+      responsive: [
+        {
+          breakpoint: 768,
+          options: {
+            legend: { position: "bottom" },
+          },
+        },
+      ],
     };
 
     const chart = new ApexCharts(chartEl, options);
@@ -62,7 +67,6 @@ function AdminDashboard() {
 
     return () => chart.destroy();
   }, []);
-
 
   useEffect(() => {
     const updateTime = () => {
@@ -80,7 +84,6 @@ function AdminDashboard() {
     return () => clearInterval(interval);
   }, []);
 
-
   const getMonthlyCounts = (items: any[]) => {
     const monthly = Array(12).fill(0);
     items.forEach((item: any) => {
@@ -90,17 +93,7 @@ function AdminDashboard() {
     return monthly;
   };
 
-  //   useEffect(() => {
-  //   console.log("Branch changed:", selectedBranch);
-  // }, [selectedBranch]);
-
-
-  // -------------------------------
-  // Update chart when branch changes
-  // -------------------------------
-
   const filteredBranch = useMemo(() => {
-    console.log("Branch changed:", selectedBranch);
     return selectedBranch;
   }, [selectedBranch]);
 
@@ -121,81 +114,68 @@ function AdminDashboard() {
     ]);
   }, [registerdata, leaddata, filteredBranch]);
 
-
-  // -------------------------------
-  // Table columns
-  // -------------------------------
+  // Tables
   const branchcolumns: TableColumnsType<any> = [
-    { title: "No.of", render: (_text, _record, index) => index + 1, },
+    { title: "No", render: (_text, _record, index) => index + 1 },
     { title: "Manager", dataIndex: "name" },
-    { title: "Admissions", dataIndex: "registrationCount", render: (value) => value ?? 0, },
+    { title: "Admissions", dataIndex: "registrationCount", render: (value) => value ?? 0 },
   ];
 
   const srccolumns: TableColumnsType<any> = [
-    { title: "No.of", render: (_text, _record, index) => index + 1, },
+    { title: "No", render: (_text, _record, index) => index + 1 },
     { title: "SRC", dataIndex: "name" },
-    { title: "Admissions", dataIndex: "registrationCount", render: (value) => value ?? 0, },
+    { title: "Admissions", dataIndex: "registrationCount", render: (value) => value ?? 0 },
   ];
 
   const srocolumns: TableColumnsType<any> = [
-    { title: "No.of", render: (_text, _record, index) => index + 1, },
+    { title: "No", render: (_text, _record, index) => index + 1 },
     { title: "SRO", dataIndex: "name" },
-    { title: "Admissions", dataIndex: "registrationCount", render: (value) => value ?? 0, },
+    { title: "Admissions", dataIndex: "registrationCount", render: (value) => value ?? 0 },
   ];
-
 
   const totalAdmissions = registerdata?.data.length;
   const totalLeads = leaddata?.data.length;
   const totalBranches = branchdata?.data.length || 0;
 
-
   return (
-    <div>
-      <div className="flex gap-10 text-xl font-semibold">
-        <div className="w-60 h-20 shadow-md rounded-md">
-          <div className="mx-5 my-2">
-            <h1>No.of Leads :</h1>
-            <span className="text-green-500">
-              {leadloading ? "..." : totalLeads}
-            </span>
-          </div>
+    <div className="w-full h-screen overflow-y-hidden">
+
+      {/* TOP CARDS */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-lg font-semibold">
+        <div className="p-3 shadow rounded bg-white">
+          <h1>No.of Leads :</h1>
+          <span className="text-green-500">
+            {leadloading ? "..." : totalLeads}
+          </span>
         </div>
 
-        <div className="w-60 h-20 shadow-md rounded-md">
-          <div className="mx-5 my-2">
-            <h1>No.of Admissions :</h1>
-            <span className="text-amber-500">
-              {registerloading ? "..." : totalAdmissions}
-            </span>
-
-          </div>
+        <div className="p-3 shadow rounded bg-white">
+          <h1>No.of Admissions :</h1>
+          <span className="text-amber-500">
+            {registerloading ? "..." : totalAdmissions}
+          </span>
         </div>
 
-        <div className="w-60 h-20 shadow-md rounded-md">
-          <div className="mx-5 my-2">
-            <h1>No.of Branches :</h1>
-            <span className="text-red-500">
-              {branchloading ? "..." : totalBranches}
-            </span>
-          </div>
+        <div className="p-3 shadow rounded bg-white">
+          <h1>No.of Branches :</h1>
+          <span className="text-red-500">
+            {branchloading ? "..." : totalBranches}
+          </span>
         </div>
 
-        <div className="w-60 h-20 shadow-md rounded-md">
-          <div className="mx-5 my-2">
-            <h1>Time</h1>
-            <span className="text-green-500">{time}</span>
-          </div>
+        <div className="p-3 shadow rounded bg-white">
+          <h1>Time</h1>
+          <span className="text-green-500">{time}</span>
         </div>
       </div>
 
-      {/* Branch Select */}
-      <div className="my-5 font-bold">
+      {/* BRANCH SELECT */}
+      <div className="my-4 font-bold flex flex-wrap items-center gap-2">
         Branch:
         <Select
-          placeholder="Select a branch"
+          placeholder="Select branch"
           allowClear
-          className="mx-3"
-          style={{ width: 200 }}
+          style={{ width: 220 }}
           options={
             !branchloading &&
             branchdata?.data.map((branch: any) => ({
@@ -203,61 +183,57 @@ function AdminDashboard() {
               label: branch.name,
             }))
           }
-          onChange={(value) => {
-            console.log("Branch selected:", value);
-            setSelectedBranch(value);
-          }}
+          onChange={(value) => setSelectedBranch(value)}
         />
       </div>
 
-      {/* Chart */}
-      <div id="chart" className="mt-2"></div>
+      {/* CHART */}
+      <div className="w-full mt-1 overflow-hidden">
+        <div id="chart" className="min-w-[350px]"></div>
+      </div>
 
-      {/* Leaderboard */}
-      <h1 className="font-bold">Leaderboard :-</h1>
-      <div className="flex gap-20">
-        <div>
-          <Table
-            columns={branchcolumns}
-            dataSource={managerdata?.data}
-            loading={managerloading}
-            style={{ height: "100px", overflowY: "auto", width: "300px" }}
-            title={() => "Branch Manager"}
-            pagination={false}
-            size="middle"
-            rowKey="_id"
-          />
-        </div>
+      {/* LEADERBOARD */}
+      <h1 className="font-bold my-2 text-lg">Leaderboard</h1>
 
-        <div>
-          <Table
-            columns={srccolumns}
-            dataSource={srcdata?.data}
-            loading={srcloading}
-            style={{ height: "100px", overflowY: "auto", width: "300px" }}
-            title={() => "SRC"}
-            pagination={false}
-            size="middle"
-            rowKey="_id"
-          />
-        </div>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-2">
 
-        <div>
-          <Table
-            columns={srocolumns}
-            dataSource={srodata?.data}
-            loading={sroloading}
-            style={{ height: "100px", overflowY: "auto", width: "300px" }}
-            title={() => "SRO"}
-            pagination={false}
-            size="middle"
-            rowKey="_id"
-          />
-        </div>
+        <Table
+          columns={branchcolumns}
+          dataSource={managerdata?.data}
+          loading={managerloading}
+          pagination={false}
+          size="middle"
+          className="h-[300px] lg:h-[220px] md:h-[250px] xl:h-[300px] overflow-auto width:[300px]"
+          rowKey="_id"
+          title={() => "Branch Manager"}
+        />
+
+        <Table
+          columns={srccolumns}
+          dataSource={srcdata?.data}
+          loading={srcloading}
+          className="h-[300px] lg:h-[220px] md:h-[250px] xl:h-[300px] overflow-auto width: [300px]"
+          title={() => "SRC"}
+          pagination={false}
+          size="middle"
+          rowKey="_id" />
+
+        <Table
+          columns={srocolumns}
+          dataSource={srodata?.data}
+          loading={sroloading}
+          pagination={false}
+          className="h-[300px] lg:h-[220px] md:h-[250px] xl:h-[300px] overflow-auto width: [300px]"
+          size="middle"
+          rowKey="_id"
+          title={() => "SRO"}
+        />
+
       </div>
     </div>
   );
 }
+
 
 
 //Manager
@@ -277,7 +253,7 @@ function ManagerDashboard() {
   const totalLeads = leaddata?.data.length;
   const totalBranches = branchdata?.data.length || 0;
 
- useEffect(() => {
+  useEffect(() => {
     const chartEl = document.querySelector("#chart");
     if (!chartEl) return;
 
@@ -300,6 +276,14 @@ function ManagerDashboard() {
       },
       yaxis: { title: { text: "Count" } },
       fill: { opacity: 1 },
+      responsive: [
+        {
+          breakpoint: 768,
+          options: {
+            legend: { position: "bottom" },
+          },
+        },
+      ],
     };
 
     const chart = new ApexCharts(chartEl, options);
@@ -336,14 +320,7 @@ function ManagerDashboard() {
     return monthly;
   };
 
-  //   useEffect(() => {
-  //   console.log("Branch changed:", selectedBranch);
-  // }, [selectedBranch]);
-
-
-  // -------------------------------
   // Update chart when branch changes
-  // -------------------------------
 
   const filteredBranch = useMemo(() => {
     console.log("Branch changed:", selectedBranch);
@@ -381,40 +358,32 @@ function ManagerDashboard() {
   ];
 
   return (
-    <div>
-      <div className="flex gap-10 text-xl font-semibold">
-        <div className="w-60 h-20 shadow-md rounded-md">
-          <div className="mx-5 my-2">
-            <h1>No.of Leads :</h1>
-            <span className="text-green-500">
-              {leadloading ? "..." : totalLeads}
-            </span>
-          </div>
+    <div className="w-full h-screen overflow-x-scroll">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-lg font-semibold">
+        <div className="p-3 shadow rounded bg-white">
+          <h1>No.of Leads :</h1>
+          <span className="text-green-500">
+            {leadloading ? "..." : totalLeads}
+          </span>
         </div>
 
-        <div className="w-60 h-20 shadow-md rounded-md">
-          <div className="mx-5 my-2">
-            <h1>No.of Admissions :</h1>
-            <span className="text-amber-500">
-              {registerloading ? "..." : totalAdmissions}
-            </span>
-          </div>
+        <div className="p-3 shadow rounded bg-white">
+          <h1>No.of Admissions :</h1>
+          <span className="text-amber-500">
+            {registerloading ? "..." : totalAdmissions}
+          </span>
         </div>
 
-        <div className="w-60 h-20 shadow-md rounded-md">
-          <div className="mx-5 my-2">
-            <h1>No.of Branches :</h1>
-            <span className="text-red-500">
-              {branchloading ? "..." : totalBranches}
-            </span>
-          </div>
+        <div className="p-3 shadow rounded bg-white">
+          <h1>No.of Branches :</h1>
+          <span className="text-red-500">
+            {branchloading ? "..." : totalBranches}
+          </span>
         </div>
 
-        <div className="w-60 h-20 shadow-md rounded-md">
-          <div className="mx-5 my-2">
-            <h1>Time</h1>
-            <span className="text-green-500">{time}</span>
-          </div>
+        <div className="p-3 shadow rounded bg-white">
+          <h1>Time</h1>
+          <span className="text-green-500">{time}</span>
         </div>
       </div>
 
@@ -443,31 +412,27 @@ function ManagerDashboard() {
       {/* Chart */}
       <div id="chart" className="mt-2"></div>
       <h1 className="font-bold">Leaderboard :-</h1>
-      <div className="flex gap-10">
-        <div className="">
-          <Table columns={srccolumns}
-            loading={srcloading}
-            dataSource={srcdata?.data}
-            style={{ height: '100px', overflowY: 'auto', width: '530px' }}
-            title={() => 'SRC'} pagination={false}
-            // dataSource={filteredData}
-            // loading={isLoading}
-            size="middle"
-            rowKey="_id"
-          />
-        </div>
-        <div className="">
-          <Table columns={srocolumns}
-            dataSource={srodata?.data}
-            loading={sroloading}
-            style={{ height: '100px', overflowY: 'auto', width: '530px' }}
-            title={() => 'SRO'} pagination={false}
-            // dataSource={filteredData}
-            // loading={isLoading}
-            size="middle"
-            rowKey="_id"
-          />
-        </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-2 w-full">
+
+        <Table
+          columns={srccolumns}
+          loading={srcloading}
+          dataSource={srcdata?.data}
+          className="h-[300px] lg:h-[220px] md:h-[220px] xl:h-[250px] overflow-auto width: [300px]"
+          title={() => 'SRC'} pagination={false}
+          size="middle"
+          rowKey="_id"
+        />
+
+        <Table
+          columns={srocolumns}
+          loading={sroloading}
+          dataSource={srodata?.data}
+          className="h-[300px] lg:h-[220px] md:h-[220px] xl:h-[250px] overflow-auto width: [300px]"
+          title={() => 'SRO'} pagination={false}
+          size="middle"
+          rowKey="_id"
+        />
       </div>
     </div>
   );
@@ -493,7 +458,6 @@ function SRCDashboard() {
       "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
     ];
 
-    // Convert to counts by month using createdAt
     const getMonthlyCounts = (arr: any[]) => {
       const counts = new Array(12).fill(0);
 
@@ -526,6 +490,14 @@ function SRCDashboard() {
       xaxis: { categories: months },
       yaxis: { title: { text: "Count" } },
       fill: { opacity: 1 },
+      responsive: [
+        {
+          breakpoint: 768,
+          options: {
+            legend: { position: "bottom" },
+          },
+        },
+      ],
     };
 
     const chart = new ApexCharts(document.querySelector("#chart"), options);
@@ -565,32 +537,25 @@ function SRCDashboard() {
   const totalLeads = leaddata?.data.length;
 
   return (
-    <div>
-      <div className="flex gap-10 text-xl font-semibold">
-        <div className="w-60 h-20 shadow-md rounded-md">
-          <div className="mx-5 my-2">
-            <h1>No.of Leads :</h1>
-            <span className="text-green-500">
-              {leadloading ? "..." : totalLeads}
-
-            </span>
-          </div>
+    <div className="w-full h-screen overflow-y-scroll">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-lg font-semibold">
+        <div className="p-3 shadow rounded bg-white">
+          <h1>No.of Leads :</h1>
+          <span className="text-green-500">
+            {leadloading ? "..." : totalLeads}
+          </span>
         </div>
 
-        <div className="w-60 h-20 shadow-md rounded-md">
-          <div className="mx-5 my-2">
-            <h1>No.of Admissions :</h1>
-            <span className="text-amber-500">
-              {registerloading ? "..." : totalAdmissions}
-            </span>
-          </div>
+        <div className="p-3 shadow rounded bg-white">
+          <h1>No.of Admissions :</h1>
+          <span className="text-amber-500">
+            {registerloading ? "..." : totalAdmissions}
+          </span>
         </div>
 
-        <div className="w-60 h-20 shadow-md rounded-md">
-          <div className="mx-5 my-2">
-            <h1>Time</h1>
-            <span className="text-green-500">{time}</span>
-          </div>
+        <div className="p-3 shadow rounded bg-white">
+          <h1>Time</h1>
+          <span className="text-green-500">{time}</span>
         </div>
       </div>
 
@@ -600,11 +565,12 @@ function SRCDashboard() {
       {/* Leaderboard */}
       <h1 className="font-bold">Leaderboard :-</h1>
       <div className="w-full">
-        <Table columns={columns}
-          style={{ height: '165px', overflowY: 'auto' }}
-          title={() => 'SRO'} pagination={false}
-          dataSource={data?.data}
+        <Table
+          columns={columns}
           loading={isLoading}
+          dataSource={data?.data}
+          className="h-[300px] lg:h-[300px] md:h-[220px] xl:h-[400px] overflow-auto width: [300px]"
+          title={() => 'SRO'} pagination={false}
           size="middle"
           rowKey="_id"
         />
@@ -650,7 +616,7 @@ function SRODashboard() {
         { name: "Admissions", data: admissionData },
         { name: "Leads", data: leadData },
       ],
-      chart: { type: "bar", height: 400 },
+      chart: { type: "bar", height: 450 },
       plotOptions: {
         bar: {
           horizontal: false,
@@ -663,6 +629,14 @@ function SRODashboard() {
       xaxis: { categories: months },
       yaxis: { title: { text: "Count" } },
       fill: { opacity: 1 },
+      responsive: [
+        {
+          breakpoint: 768,
+          options: {
+            legend: { position: "bottom" },
+          },
+        },
+      ],
     };
 
     const chart = new ApexCharts(document.querySelector("#chart"), options);
@@ -691,53 +665,33 @@ function SRODashboard() {
 
 
   const totalAdmissions = registerdata?.data.length;
-  const totaLleads = leaddata?.data.length;
+  const totalLeads = leaddata?.data.length;
 
   return (
-    <div>
-      <div className="flex gap-10 text-xl font-semibold">
-        <div className="w-60 h-20 shadow-md rounded-md">
-          <div className="mx-5 my-2">
-            <h1>No.of Leads :</h1>
-            <span className="text-green-500">
-              {leadloading ? "..." : totaLleads}
-
-            </span>
-          </div>
+    <div className="w-full">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-lg font-semibold">
+        <div className="p-3 shadow rounded bg-white">
+          <h1>No.of Leads :</h1>
+          <span className="text-green-500">
+            {leadloading ? "..." : totalLeads}
+          </span>
         </div>
 
-        <div className="w-60 h-20 shadow-md rounded-md">
-          <div className="mx-5 my-2">
-            <h1>No.of Admissions :</h1>
-            <span className="text-amber-500">
-              {registerloading ? "..." : totalAdmissions}
-            </span>
-          </div>
+        <div className="p-3 shadow rounded bg-white">
+          <h1>No.of Admissions :</h1>
+          <span className="text-amber-500">
+            {registerloading ? "..." : totalAdmissions}
+          </span>
         </div>
 
-        <div className="w-60 h-20 shadow-md rounded-md">
-          <div className="mx-5 my-2">
-            <h1>Time</h1>
-            <span className="text-green-500">{time}</span>
-          </div>
+        <div className="p-3 shadow rounded bg-white">
+          <h1>Time</h1>
+          <span className="text-green-500">{time}</span>
         </div>
       </div>
 
       {/* Chart */}
       <div id="chart" className="mt-2"></div>
-
-      {/* Leaderboard */}
-      {/* <h1 className="font-bold">Leaderboard :-</h1>
-      <div className="w-full">
-        <Table columns={columns}
-          style={{ height: '165px', overflowY: 'auto' }}
-          title={() => 'SRO'} pagination={false}
-          // dataSource={filteredData}
-          // loading={isLoading}
-          size="middle"
-          rowKey="_id"
-        />
-      </div> */}
     </div>
   );
 
@@ -794,7 +748,7 @@ function AccountantDashboard() {
         { name: "Debit", data: debitByMonth },
         { name: "Credit", data: creditByMonth },
       ],
-      chart: { type: "bar", height: 400, toolbar: { show: false } },
+      chart: { type: "bar", height: 450, toolbar: { show: false } },
       plotOptions: {
         bar: {
           horizontal: false,
@@ -822,6 +776,14 @@ function AccountantDashboard() {
         },
       },
       legend: { position: "top" },
+      responsive: [
+        {
+          breakpoint: 768,
+          options: {
+            legend: { position: "bottom" },
+          },
+        },
+      ],
     };
 
     // If chart already exists, update series/options
@@ -851,7 +813,7 @@ function AccountantDashboard() {
       if (chartInstance.current) {
         try {
           chartInstance.current.destroy();
-        } catch {}
+        } catch { }
         chartInstance.current = null;
       }
     };
@@ -877,34 +839,27 @@ function AccountantDashboard() {
   }, []);
 
   return (
-    <div>
-      <div className="flex gap-10 text-xl font-semibold">
-        <div className="w-60 h-20 shadow-md rounded-md">
-          <div className="mx-5 my-2">
-            <h1>Debit :</h1>
-            <span className="text-green-500">{isLoading ? "..." : debitTotal}</span>
-          </div>
+    <div className="w-full">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-lg font-semibold">
+
+        <div className="p-3 shadow rounded bg-white">
+          <h1>Debit :</h1>
+          <span className="text-green-500">{isLoading ? "..." : debitTotal}</span>
         </div>
 
-        <div className="w-60 h-20 shadow-md rounded-md">
-          <div className="mx-5 my-2">
-            <h1>Credit :</h1>
-            <span className="text-red-500">{isLoading ? "..." : creditTotal}</span>
-          </div>
+        <div className="p-3 shadow rounded bg-white">
+          <h1>Credit :</h1>
+          <span className="text-red-500">{isLoading ? "..." : creditTotal}</span>
         </div>
 
-        <div className="w-60 h-20 shadow-md rounded-md">
-          <div className="mx-5 my-2">
-            <h1>Total :</h1>
-            <span className="text-amber-600">{isLoading ? "..." : Total}</span>
-          </div>
+        <div className="p-3 shadow rounded bg-white">
+          <h1>Total :</h1>
+          <span className="text-amber-600">{isLoading ? "..." : Total}</span>
         </div>
 
-        <div className="w-60 h-20 shadow-md rounded-md">
-          <div className="mx-5 my-2">
-            <h1>Time</h1>
-            <span className="text-green-500">{time}</span>
-          </div>
+        <div className="p-3 shadow rounded bg-white">
+          <h1>Time</h1>
+          <span className="text-green-500">{time}</span>
         </div>
       </div>
 
@@ -931,7 +886,7 @@ function AdministractorDashboard() {
   const totalBranches = branchdata?.data.length || 0;
 
 
-   useEffect(() => {
+  useEffect(() => {
     if (registerloading || leadloading) return;
     if (!registerdata || !leaddata) return;
 
@@ -973,6 +928,14 @@ function AdministractorDashboard() {
       xaxis: { categories: months },
       yaxis: { title: { text: "Count" } },
       fill: { opacity: 1 },
+      responsive: [
+        {
+          breakpoint: 768,
+          options: {
+            legend: { position: "bottom" },
+          },
+        },
+      ],
     };
 
     const chart = new ApexCharts(document.querySelector("#chart"), options);
@@ -1018,40 +981,32 @@ function AdministractorDashboard() {
   ];
 
   return (
-    <div>
-      <div className="flex gap-10 text-xl font-semibold">
-        <div className="w-60 h-20 shadow-md rounded-md">
-          <div className="mx-5 my-2">
-            <h1>No.of Leads :</h1>
-            <span className="text-green-500">
-              {leadloading ? "..." : totalLeads}
-            </span>
-          </div>
+    <div className="h-screen w-full overflow-y-scroll">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-lg font-semibold">
+        <div className="p-3 shadow rounded bg-white">
+          <h1>No.of Leads :</h1>
+          <span className="text-green-500">
+            {leadloading ? "..." : totalLeads}
+          </span>
         </div>
 
-        <div className="w-60 h-20 shadow-md rounded-md">
-          <div className="mx-5 my-2">
-            <h1>No.of Admissions :</h1>
-            <span className="text-amber-500">
-              {registerloading ? "..." : totalAdmissions}
-            </span>
-          </div>
+        <div className="p-3 shadow rounded bg-white">
+          <h1>No.of Admissions :</h1>
+          <span className="text-amber-500">
+            {registerloading ? "..." : totalAdmissions}
+          </span>
         </div>
 
-        <div className="w-60 h-20 shadow-md rounded-md">
-          <div className="mx-5 my-2">
-            <h1>No.of Branches :</h1>
-            <span className="text-red-500">
-              {branchloading ? "..." : totalBranches}
-            </span>
-          </div>
+        <div className="p-3 shadow rounded bg-white">
+          <h1>No.of Branches :</h1>
+          <span className="text-red-500">
+            {branchloading ? "..." : totalBranches}
+          </span>
         </div>
 
-        <div className="w-60 h-20 shadow-md rounded-md">
-          <div className="mx-5 my-2">
-            <h1>Time</h1>
-            <span className="text-green-500">{time}</span>
-          </div>
+        <div className="p-3 shadow rounded bg-white">
+          <h1>Time</h1>
+          <span className="text-green-500">{time}</span>
         </div>
       </div>
 
@@ -1059,38 +1014,34 @@ function AdministractorDashboard() {
       <div id="chart" className="mt-2"></div>
 
       {/* <h1 className="font-bold">Cancelled Students :-</h1> */}
-      <div className="flex gap-5">
-        <div className="">
-          <Table columns={columns}
-            style={{ height: '180px', overflowY: 'auto', width: '350px' }}
-            title={() => 'Cancelled Students'} pagination={false}
-            dataSource={registeredFiltered}
-            loading={registerloading}
-            size="middle"
-            rowKey="_id"
-          />
-        </div>
-        <div className="">
-          <Table columns={refundColumns}
-            style={{ height: '180px', overflowY: 'auto', width: '350px' }}
-            title={() => 'Refunded Students'} pagination={false}
-            dataSource={Refunddata}
-            loading={registerloading}
-            size="middle"
-            rowKey="_id"
-          />
-        </div>
 
-        <div className="">
-          <Table columns={seatColumns}
-            style={{ height: '180px', overflowY: 'auto', width: '350px' }}
-            title={() => 'Seat booked Students'} pagination={false}
-            dataSource={seatbookeddata}
-            loading={registerloading}
-            size="middle"
-            rowKey="_id"
-          />
-        </div>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-2">
+        <Table columns={columns}
+          className="h-[300px] lg:h-[220px] md:h-[250px] xl:h-[250px] overflow-auto width:[300px"
+          title={() => 'Cancelled Students'} pagination={false}
+          dataSource={registeredFiltered}
+          loading={registerloading}
+          size="middle"
+          rowKey="_id"
+        />
+
+        <Table columns={refundColumns}
+          className="h-[300px] lg:h-[220px] md:h-[250px] xl:h-[250px] overflow-auto width:[300px] "
+          title={() => 'Refunded Students'} pagination={false}
+          dataSource={Refunddata}
+          loading={registerloading}
+          size="middle"
+          rowKey="_id"
+        />
+
+        <Table columns={seatColumns}
+          className="h-[300px] lg:h-[220px] md:h-[250px] xl:h-[250px] overflow-auto width:[300px] "
+          title={() => 'Seat booked Students'} pagination={false}
+          dataSource={seatbookeddata}
+          loading={registerloading}
+          size="middle"
+          rowKey="_id"
+        />
       </div>
     </div>
   );
@@ -1098,7 +1049,7 @@ function AdministractorDashboard() {
 
 
 
-// MAIN DASHBOARD COMPONENT (ROLE BASED)
+//DASHBOARD (ROLE BASED)
 
 const Dashboard = () => {
   const position = useSelector((state: any) => state.auth.user?.Position);

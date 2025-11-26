@@ -14,8 +14,6 @@ import { SiContactlesspayment } from 'react-icons/si';
 import { Toaster } from "react-hot-toast";
 import { useSelector } from "react-redux";
 
-
-
 function App() {
 
   const position = useSelector((state: any) => state.auth.user?.Position);
@@ -52,14 +50,21 @@ function App() {
           },
         }}
       >
-        <Layout className='h-screen'>
-          <Sider className='overflow-y-scroll sidebarHidden' trigger={null} collapsible collapsed={collapsed}>
+        <Layout className='h-screen overflow-y-hidden'>
+
+          {/* --- SIDEBAR --- */}
+          <Sider
+            className='overflow-y-scroll sidebarHidden'
+            trigger={null}
+            collapsible
+            collapsed={collapsed}
+            collapsedWidth="0"
+            breakpoint="lg"
+            onBreakpoint={(broken) => setCollapsed(broken)}
+            onCollapse={(value) => setCollapsed(value)}
+          >
             <div className="demo-logo-vertical" />
-            <Menu
-              theme="dark"
-              mode="inline"
-              defaultSelectedKeys={['1']}
-            >
+            <Menu theme="dark" mode="inline" defaultSelectedKeys={['1']}>
               <Menu.Item key={'1'} icon={<RiDashboardFill />}>
                 <Link to='/dashboard'>Dashboard</Link>
               </Menu.Item>
@@ -81,10 +86,11 @@ function App() {
                   <Link to='/src'>SRC</Link>
                 </Menu.Item>
               )}
+
               {position !== 'SRO' && position !== 'Administractor' && position !== 'Accountant' && (
-              <Menu.Item key={'5'} icon={<FaUsersCog />}>
-                <Link to='/sro'>SRO</Link>
-              </Menu.Item>
+                <Menu.Item key={'5'} icon={<FaUsersCog />}>
+                  <Link to='/sro'>SRO</Link>
+                </Menu.Item>
               )}
 
               {position !== 'Manager' && position !== 'SRC' && position !== 'SRO' && position !== 'Accountant' && (
@@ -98,7 +104,6 @@ function App() {
                   <Link to='/agent'>Agent</Link>
                 </Menu.Item>
               )}
-
 
               <Menu.Item key={'8'} icon={<FaUsers />}>
                 <Link to='/leadmanagement'>Lead Management</Link>
@@ -139,6 +144,7 @@ function App() {
                   <Menu.Item icon={<FaArrowRight />}>
                     <Link to='/cancelledstudent'>Cancelled Students</Link>
                   </Menu.Item>
+
                   <SubMenu title='Accounts'>
                     <Menu.Item icon={<FaArrowRight />}>
                       <Link to='/accounts'>Accounts</Link>
@@ -173,31 +179,37 @@ function App() {
                   <Link to='/request'>Request</Link>
                 </Menu.Item>
               )}
-
-
             </Menu>
           </Sider>
+
+          {/* --- MOBILE OVERLAY --- */}
+          {!collapsed && (
+            <div
+              className="mobileOverlay"
+              onClick={() => setCollapsed(true)}
+            ></div>
+          )}
+
+          {/* --- CONTENT AREA --- */}
           <Layout>
             <Header style={{ padding: 0, height: 50, background: colorBgContainer }}>
               <Button
                 type="text"
                 icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
                 onClick={() => setCollapsed(!collapsed)}
-                style={{
-                  fontSize: '14px',
-                  width: 60,
-                  height: 60,
-                }}
+                style={{ fontSize: '14px', width: 60, height: 60 }}
               />
             </Header>
+
             <Content
               style={{
                 margin: '13px 10px',
-                padding: 24,
+                padding: 16,
                 minHeight: 280,
                 background: colorBgContainer,
                 borderRadius: borderRadiusLG,
               }}
+              className='h-screen overflow-y-scroll'
             >
               <Outlet />
             </Content>
@@ -208,4 +220,4 @@ function App() {
   )
 }
 
-export default App
+export default App;

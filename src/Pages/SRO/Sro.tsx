@@ -140,6 +140,7 @@ function Sro() {
   const handleEdit = (record: DataType) => {
     setEditingRecord(record);
     setEditModal(true);
+    refetch();
 
 
     editForm.setFieldsValue({

@@ -1,4 +1,4 @@
-import { Button, Checkbox, Divider, Form, Input, message, Modal, Select, Table, type TableColumnsType } from 'antd';
+import { Button, Checkbox, Divider, Form, Input, message, Modal, Select, Table, Upload, type TableColumnsType } from 'antd';
 import { useState } from 'react';
 import { CiEdit } from 'react-icons/ci';
 import { MdDeleteOutline } from 'react-icons/md';
@@ -140,7 +140,7 @@ function LeadManagement() {
   const { mutate: Register } = useCreateRegisterfromlead()
   const { mutate: Update } = useUpdateLead()
   const { mutate: Delete } = useDeleteLead()
-  const { mutate: Upload } = useUploadLead()
+  const { mutate: uploadLead } = useUploadLead()
 
   const [form] = Form.useForm()
   const [editForm] = Form.useForm()
@@ -204,17 +204,17 @@ function LeadManagement() {
   }
 
   const onUpload = (values: any) => {
-    const { file } = values;
+    const file = values.file?.[0]?.originFileObj;
 
-    if (!file || !file.fileList || file.fileList.length === 0) {
+    if (!file) {
       message.error("Please select a file");
       return;
     }
 
     const formData = new FormData();
-    formData.append('file', file.fileList[0].originFileObj);
+    formData.append("file", file);
 
-    Upload(formData, {
+    uploadLead(formData, {
       onSuccess() {
         message.success("Uploaded successfully");
         refetch();
@@ -223,7 +223,7 @@ function LeadManagement() {
       },
       onError() {
         message.error("Failed to upload");
-      }
+      },
     });
   };
 
@@ -386,17 +386,21 @@ function LeadManagement() {
           <Form.Item
             name="file"
             label="Upload File"
+            valuePropName="fileList"
+            getValueFromEvent={(e) => e.fileList}
             rules={[{ required: true, message: "Please select a file to upload" }]}
           >
-            {/* <Upload
+            <Upload
               beforeUpload={() => false}
-              accept=".csv,.xlsx,.xls"
+              accept=".xlsx,.xls,.csv"
               maxCount={1}
-              listType="text"
+              className='w-full'
             >
               <Button>Select File</Button>
-            </Upload> */}
+            </Upload>
           </Form.Item>
+
+
           <Form.Item>
             <Button htmlType='submit' type="primary" className='w-full'>
               Upload
