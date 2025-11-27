@@ -56,7 +56,7 @@ function Login() {
       ">
         
         <h2 className="text-white text-2xl sm:text-3xl font-semibold text-center mb-6 drop-shadow-md">
-          Welcome Back
+          Welcome
         </h2>
 
         <Form layout="vertical" form={form} onFinish={onFinish}>

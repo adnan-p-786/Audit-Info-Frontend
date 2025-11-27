@@ -171,30 +171,41 @@ function BranchManager() {
 
 
   return (
-    <div>
+    <div className="p-2 sm:p-4 w-full">
       <Divider>Branch Manager</Divider>
-      <div className='justify-between flex mx-3 my-4'>
+
+      {/* Search + Add */}
+      <div className="flex flex-col sm:flex-row sm:justify-between gap-3 mx-3 my-4">
         <Input
           placeholder="Search Manager"
-          style={{ width: 180 }}
+          style={{ width: "100%", maxWidth: 300 }}
           value={searchText}
           onChange={(e) => setSearchText(e.target.value)}
           suffix={<SearchOutlined style={{ cursor: "pointer", color: "#888" }} />}
         />
 
-        <Button type='primary' onClick={() => setAddModal(true)}>Add</Button>
-
+        <Button
+          type="primary"
+          className="w-full sm:w-auto"
+          onClick={() => setAddModal(true)}
+        >
+          Add
+        </Button>
       </div>
 
-      <Table
-        columns={columns}
-        style={{ height: '350px', overflowY: 'auto' }}
-        pagination={false}
-        dataSource={filteredData}
-        loading={isLoading}
-        size="middle"
-        rowKey="_id"
-      />
+      {/* Responsive Table Wrapper */}
+      <div className="overflow-x-auto">
+        <Table
+          columns={columns}
+          pagination={false}
+          dataSource={filteredData}
+          loading={isLoading}
+          size="middle"
+          rowKey="_id"
+        />
+      </div>
+
+      {/* ADD Modal */}
       <Modal
         title="Add Branch Manager"
         open={addModal}
@@ -202,65 +213,65 @@ function BranchManager() {
         footer={null}
         width={800}
       >
-        <Form layout='vertical' onFinish={onFinish} form={form}>
-          <div className="grid grid-flow-row grid-cols-2 gap-x-2">
+        <Form layout="vertical" onFinish={onFinish} form={form}>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
 
-            <Form.Item name={'name'} label="Name" rules={[{ required: true, message: "Please enter name" }]}>
-              <Input placeholder='Name' />
+            <Form.Item name="name" label="Name" rules={[{ required: true }]}>
+              <Input placeholder="Name" />
             </Form.Item>
 
-            <Form.Item name={'email'} label="Email" rules={[{ required: true, message: "Please enter email" }]}>
-              <Input placeholder='Email' />
+            <Form.Item name="email" label="Email" rules={[{ required: true }]}>
+              <Input placeholder="Email" />
             </Form.Item>
 
-            <Form.Item name={'password'} label="Password" rules={[{ required: true, message: "Please enter password" }]}>
-              <Input placeholder='Password' />
+            <Form.Item name="password" label="Password" rules={[{ required: true }]}>
+              <Input placeholder="Password" />
             </Form.Item>
 
-            <Form.Item name={'employee_code'} label="Employee Code" rules={[{ required: true, message: "Please enter Employee Code" }]}>
-              <Input placeholder='Employee Code' />
+            <Form.Item name="employee_code" label="Employee Code" rules={[{ required: true }]}>
+              <Input placeholder="Employee Code" />
             </Form.Item>
 
-            <Form.Item name={'phone_number'} label="Phone Number" rules={[{ required: true, message: "Please enter Phone Number" }]}>
-              <Input placeholder='Phone Number' />
+            <Form.Item name="phone_number" label="Phone Number" rules={[{ required: true }]}>
+              <Input placeholder="Phone Number" />
             </Form.Item>
 
-            <Form.Item name={'address'} label="Address" rules={[{ required: true, message: "Please enter address" }]}>
-              <Input placeholder='Address' />
+            <Form.Item name="address" label="Address" rules={[{ required: true }]}>
+              <Input placeholder="Address" />
             </Form.Item>
 
-            <Form.Item
-              name={'branchId'}
-              label="Branch"
-              rules={[{ required: true, message: "Please select a  branch" }]}
-            >
+            <Form.Item name="branchId" label="Branch" rules={[{ required: true }]}>
               <Select
                 placeholder="Select a branch"
                 options={
-                  !branchloading && branchdata?.data.map((branch: { _id: string; name: string }) => ({
+                  !branchloading &&
+                  branchdata?.data.map((branch:{ _id: string, name: string; }) => ({
                     value: branch._id,
-                    label: branch.name
+                    label: branch.name,
                   }))
                 }
               />
             </Form.Item>
 
-            <Form.Item name={'point_amount'} label="Point Amount" rules={[{ required: true, message: "Please enter Point Amount" }]}>
-              <Input placeholder='Point Amount' />
+            <Form.Item name="point_amount" label="Point Amount" rules={[{ required: true }]}>
+              <Input placeholder="Point Amount" />
             </Form.Item>
 
-            <Form.Item name={'salary'} label="Salary" rules={[{ required: true, message: "Please enter Salary" }]}>
-              <Input placeholder='Salary' />
+            <Form.Item name="salary" label="Salary" rules={[{ required: true }]}>
+              <Input placeholder="Salary" />
             </Form.Item>
 
           </div>
+
           <Form.Item>
-            <Button htmlType='submit' type="primary" className='w-full'>Create</Button>
+            <Button htmlType="submit" type="primary" className="w-full mt-2">
+              Create
+            </Button>
           </Form.Item>
         </Form>
       </Modal>
 
-
+      {/* EDIT Modal */}
       <Modal
         title="Edit Branch Manager"
         open={editModal}
@@ -268,64 +279,65 @@ function BranchManager() {
         footer={null}
         width={800}
       >
-        <Form layout='vertical' onFinish={onUpdateFinish} form={editForm}>
-          <div className="grid grid-flow-row grid-cols-2 gap-x-2">
+        <Form layout="vertical" onFinish={onUpdateFinish} form={editForm}>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
 
-            <Form.Item name={'name'} label="Name" rules={[{ required: true, message: "Please enter name" }]}>
-              <Input placeholder='Name' />
+            <Form.Item name="name" label="Name" rules={[{ required: true }]}>
+              <Input placeholder="Name" />
             </Form.Item>
 
-            <Form.Item name={'email'} label="Email" rules={[{ required: true, message: "Please enter email" }]}>
-              <Input placeholder='Email' />
+            <Form.Item name="email" label="Email" rules={[{ required: true }]}>
+              <Input placeholder="Email" />
             </Form.Item>
 
-            <Form.Item name={'password'} label="Password" rules={[{ required: true, message: "Please enter password" }]}>
-              <Input placeholder='Password' />
+            <Form.Item name="password" label="Password" rules={[{ required: true }]}>
+              <Input placeholder="Password" />
             </Form.Item>
 
-            <Form.Item name={'employee_code'} label="Employee Code" rules={[{ required: true, message: "Please enter Employee Code" }]}>
-              <Input placeholder='Employee Code' />
+            <Form.Item name="employee_code" label="Employee Code" rules={[{ required: true }]}>
+              <Input placeholder="Employee Code" />
             </Form.Item>
 
-            <Form.Item name={'phone_number'} label="Phone Number" rules={[{ required: true, message: "Please enter Phone Number" }]}>
-              <Input placeholder='Phone Number' />
+            <Form.Item name="phone_number" label="Phone Number" rules={[{ required: true }]}>
+              <Input placeholder="Phone Number" />
             </Form.Item>
 
-            <Form.Item name={'address'} label="Address" rules={[{ required: true, message: "Please enter address" }]}>
-              <Input placeholder='Address' />
+            <Form.Item name="address" label="Address" rules={[{ required: true }]}>
+              <Input placeholder="Address" />
             </Form.Item>
 
-            <Form.Item
-              name={'branchId'}
-              label="Branch"
-              rules={[{ required: true, message: "Please select a  branch" }]}
-            >
-              <Select
+            <Form.Item name="branchId" label="Branch" rules={[{ required: true }]}>
+             <Select
                 placeholder="Select a branch"
                 options={
-                  !branchloading && branchdata?.data.map((branch: { _id: string, name: string; }) => ({
+                  !branchloading &&
+                  branchdata?.data.map((branch:{ _id: string, name: string; }) => ({
                     value: branch._id,
-                    label: branch.name
+                    label: branch.name,
                   }))
                 }
               />
             </Form.Item>
 
-            <Form.Item name={'point_amount'} label="Point Amount" rules={[{ required: true, message: "Please enter Point Amount" }]}>
-              <Input placeholder='Point Amount' />
+            <Form.Item name="point_amount" label="Point Amount" rules={[{ required: true }]}>
+              <Input placeholder="Point Amount" />
             </Form.Item>
 
-            <Form.Item name={'salary'} label="Salary" rules={[{ required: true, message: "Please enter Salary" }]}>
-              <Input placeholder='Salary' />
+            <Form.Item name="salary" label="Salary" rules={[{ required: true }]}>
+              <Input placeholder="Salary" />
             </Form.Item>
 
           </div>
+
           <Form.Item>
-            <Button htmlType='submit' type="primary" className='w-full'>Update</Button>
+            <Button htmlType="submit" type="primary" className="w-full mt-2">
+              Update
+            </Button>
           </Form.Item>
         </Form>
       </Modal>
     </div>
+
   )
 }
 

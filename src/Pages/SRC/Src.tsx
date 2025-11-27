@@ -175,9 +175,9 @@ function Src() {
   }, [selectedSrc])
 
   return (
-    <div>
+    <div className='p-2 sm:p-4 w-full'>
       <Divider>SRC</Divider>
-      <div className='justify-between flex mx-3 my-4'>
+      <div className="flex flex-col sm:flex-row sm:justify-between gap-3 mx-3 my-4">
         <Select
           placeholder="Filter by Name"
           allowClear
@@ -193,7 +193,7 @@ function Src() {
           loading={isLoading}
         />
 
-        <Button type='primary' onClick={() => setAddModal(true)}>Add</Button>
+        <Button type='primary' className="w-full sm:w-auto" onClick={() => setAddModal(true)}>Add</Button>
 
       </div>
       <Table
@@ -213,7 +213,7 @@ function Src() {
         width={800}
       >
         <Form layout='vertical' onFinish={onFinish} form={form}>
-          <div className="grid grid-flow-row grid-cols-2 gap-x-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
 
             <Form.Item name={'name'} label="Name" rules={[{ required: true, message: "Please enter name" }]}>
               <Input placeholder='Name' />
@@ -282,7 +282,7 @@ function Src() {
         width={800}
       >
         <Form layout='vertical' onFinish={onUpdateFinish} form={editForm}>
-          <div className="grid grid-flow-row grid-cols-2 gap-x-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
 
             <Form.Item name={'name'} label="Name" rules={[{ required: true, message: "Please enter name" }]}>
               <Input placeholder='Name' />
