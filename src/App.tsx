@@ -1,5 +1,5 @@
-import { MenuFoldOutlined, MenuUnfoldOutlined } from '@ant-design/icons';
-import { Button, ConfigProvider, Layout, Menu, theme } from 'antd';
+import { LogoutOutlined, MenuFoldOutlined, MenuUnfoldOutlined } from '@ant-design/icons';
+import { Button, ConfigProvider, Form, Input, Layout, Menu, Modal, theme } from 'antd';
 import { RiDashboardFill, RiUserVoiceFill } from 'react-icons/ri';
 import { Link, Outlet } from 'react-router-dom';
 import SubMenu from 'antd/es/menu/SubMenu';
@@ -16,6 +16,11 @@ import { useSelector } from "react-redux";
 
 function App() {
 
+  const [updateModal, setUpdateModal] = useState(false);
+  const [form] = Form.useForm();
+
+
+
   const position = useSelector((state: any) => state.auth.user?.Position);
 
   const { Header, Sider, Content } = Layout;
@@ -30,7 +35,7 @@ function App() {
       <ConfigProvider
         theme={{
           token: {
-            colorPrimary: '#e89207',
+            colorPrimary: '#f07416',
             colorBgContainer: '#ffffff',
           },
           components: {
@@ -192,13 +197,19 @@ function App() {
 
           {/* --- CONTENT AREA --- */}
           <Layout>
-            <Header style={{ padding: 0, height: 50, background: colorBgContainer }}>
+            <Header className='justify-between flex items-center' style={{ padding: 0, height: 50, background: colorBgContainer }}>
               <Button
                 type="text"
                 icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
                 onClick={() => setCollapsed(!collapsed)}
                 style={{ fontSize: '14px', width: 60, height: 60 }}
               />
+              {position !== 'Manager' && position !== 'SRC' && position !== 'SRO' && position !== 'Accountant' && position !== 'Administractor' && (
+                <div className='flex items-center justify-center gap-4 mx-10'>
+                  <Button onClick={(() => setUpdateModal(true))} type='primary'>Update Password</Button>
+                  <LogoutOutlined className='text-2xl cursor-pointer' />
+                </div>
+              )}
             </Header>
 
             <Content
@@ -212,7 +223,37 @@ function App() {
               className='h-screen overflow-y-scroll'
             >
               <Outlet />
+
+              <Modal
+                title="Update Password"
+                open={updateModal}
+                onCancel={() => {
+                  setUpdateModal(false);
+                  form.resetFields();
+                }}
+                footer={null}
+                width={500}
+              >
+                <Form layout="vertical" form={form}>
+                  <div>
+                    <Form.Item name={'currentPassword'} label="Current Password" rules={[{ required: true, message: "Please enter current password" }]}>
+                      <Input placeholder='Current Password' />
+                    </Form.Item>
+
+                    <Form.Item name={'newPassword'} label="New Password" rules={[{ required: true, message: "Please enter new password" }]}>
+                      <Input placeholder='New Password' />
+                    </Form.Item>
+                  </div>
+                  <Form.Item>
+                    <Button htmlType="submit" type="primary" className="w-full">
+                      Update
+                    </Button>
+                  </Form.Item>
+                </Form>
+              </Modal>
+
             </Content>
+
           </Layout>
         </Layout>
       </ConfigProvider>
