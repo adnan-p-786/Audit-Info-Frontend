@@ -22,30 +22,12 @@ import { getAgent } from '../../Api/Agent/agentApi';
 import { DatePicker } from 'antd';
 const { RangePicker } = DatePicker;
 
-interface DataType {
-  key: React.Key;
-  name: string;
-  phone_number: string;
-  date_of_joining: string;
-  status: string;
-  delete: boolean;
-  address: string;
-  mark: string;
-  subject_name: string;
-  course: string;
-  branchId: string;
-  sRCId: string;
-  sROId: string;
-  schoolId: string;
-  comment: string;
-  _id: string;
-}
 
 function LeadManagement() {
   const dispatch = useDispatch()
   const navigate = useNavigate()
 
-  const columns: TableColumnsType<DataType> = [
+  const columns: TableColumnsType<any> = [
     {
       title: 'Date',
       dataIndex: 'createdAt',
@@ -134,7 +116,7 @@ function LeadManagement() {
   const [uploadModal, setUploadModal] = useState(false)
   const [editModal, setEditModal] = useState<any>(false)
   const [registerModal, setRegisterModal] = useState<any>(false)
-  const [editingRecord, setEditingRecord] = useState<DataType | null>(null)
+  const [editingRecord, setEditingRecord] = useState<any | null>(null)
 
   const { mutate: Create } = useCreateLead()
   const { mutate: Register } = useCreateRegisterfromlead()
@@ -250,7 +232,7 @@ function LeadManagement() {
     });
   };
 
-  const handleEdit = (record: DataType) => {
+  const handleEdit = (record: any) => {
     setEditingRecord(record);
     setEditModal(true);
 
@@ -309,16 +291,20 @@ function LeadManagement() {
   };
 
   return (
-    <div>
+    <div className="p-2 sm:p-4 w-full">
       <Divider>Lead Management</Divider>
-      <div className="w-full flex justify-end gap-3">
-        <div className='w-full flex gap-2 py-2'>
-          <RangePicker style={{ width: 200 }} onChange={(dates) => setDateRange(dates)} />
+      <div className="flex flex-col gap-3 mx-3 my-4">
+        {/* Filters Row */}
+        <div className="flex flex-col sm:flex-row sm:flex-wrap gap-3">
+          <RangePicker
+            className="w-full sm:w-auto sm:min-w-[200px]"
+            onChange={(dates) => setDateRange(dates)}
+          />
 
           <Select
             allowClear
             placeholder="Select School"
-            style={{ width: 180 }}
+            className="w-full sm:w-auto sm:min-w-[180px]"
             onChange={(value) => setSelectedSchool(value)}
             options={
               schooldata?.data?.map((school: any) => ({
@@ -327,10 +313,11 @@ function LeadManagement() {
               }))
             }
           />
+
           <Select
             allowClear
             placeholder="Select Status"
-            style={{ width: 150 }}
+            className="w-full sm:w-auto sm:min-w-[150px]"
             onChange={(value) => setSelectedStatus(value)}
             options={[
               { label: "Home Visit", value: "Home Visit" },
@@ -346,7 +333,7 @@ function LeadManagement() {
           <Select
             allowClear
             placeholder="Select Branch"
-            style={{ width: 180 }}
+            className="w-full sm:w-auto sm:min-w-[180px]"
             onChange={(value) => setSelectedBranch(value)}
             options={
               branchdata?.data?.map((branch: any) => ({
@@ -355,13 +342,26 @@ function LeadManagement() {
               }))
             }
           />
-
         </div>
-        <div className='flex justify-end gap-3 flex-grow'>
-          <Button type='primary' onClick={() => setUploadModal(true)}>
-            <RiAddBoxLine className='text-lg' />Upload Lead
+
+        {/* Buttons Row */}
+        <div className='flex flex-col sm:flex-row gap-3 sm:justify-end'>
+          <Button
+            type='primary'
+            onClick={() => setUploadModal(true)}
+            className="w-full sm:w-auto"
+            icon={<RiAddBoxLine className='text-lg' />}
+          >
+            Upload Lead
           </Button>
-          <Button type='primary' onClick={() => setAddModal(true)}><RiAddBoxLine className='text-lg' />Add New</Button>
+          <Button
+            type='primary'
+            onClick={() => setAddModal(true)}
+            className="w-full sm:w-auto"
+            icon={<RiAddBoxLine className='text-lg' />}
+          >
+            Add New
+          </Button>
         </div>
       </div>
       <Table
@@ -418,7 +418,7 @@ function LeadManagement() {
       >
         <Form layout='vertical' onFinish={onFinish} form={form}>
 
-          <div className="grid grid-flow-row grid-cols-2 gap-x-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Form.Item name={'name'} label="Name" rules={[{ required: true, message: "Please enter name" }]}>
               <Input placeholder='Name' />
             </Form.Item>
@@ -506,10 +506,10 @@ function LeadManagement() {
               <Input placeholder='Course' />
             </Form.Item>
 
+            <Form.Item name={'comment'} label="Comment" rules={[{ required: true, message: "Please enter Course" }]}>
+              <TextArea rows={2} placeholder="comment" />
+            </Form.Item>
           </div>
-          <Form.Item name={'comment'} label="Comment" rules={[{ required: true, message: "Please enter Course" }]}>
-            <TextArea rows={2} placeholder="comment" />
-          </Form.Item>
 
           <Form.Item>
             <Button htmlType='submit' type="primary" className='w-full'>Create</Button>
@@ -525,7 +525,7 @@ function LeadManagement() {
         width={500}
       >
         <Form layout='vertical' onFinish={onUpdateFinish} form={editForm}>
-          <div className="grid grid-flow-row grid-cols-2 gap-x-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Form.Item name={'name'} label="Name" rules={[{ required: true, message: "Please enter name" }]}>
               <Input placeholder='Name' />
             </Form.Item>
@@ -635,7 +635,7 @@ function LeadManagement() {
         width={1250}
       >
         <Form layout='vertical' onFinish={onRegister} form={registerForm}>
-          <div className="grid grid-flow-row grid-cols-3 gap-x-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Form.Item name={'name'} label="Name" rules={[{ required: true, message: "Please enter name" }]}>
               <Input placeholder='Name' />
             </Form.Item>

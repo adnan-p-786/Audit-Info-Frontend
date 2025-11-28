@@ -1,5 +1,5 @@
 import { Button, DatePicker, Divider, Form, Input, message, Modal, Select, Switch, Table, type TableColumnsType } from "antd";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { CiEdit } from "react-icons/ci";
 import { MdDeleteOutline } from "react-icons/md";
 import { useQuery } from "react-query";
@@ -7,6 +7,7 @@ import { getOfficeAdministration } from "../../Api/Office Administration/Adminis
 import { getBranch } from "../../Api/Branch/branchApi";
 import { useCreateOfficeAdministration, useDeleteOfficeAdministration, useUpdateOfficeAdministration } from "../../Api/Office Administration/AdministrationHooks";
 import dayjs from 'dayjs';
+import { SearchOutlined } from "@ant-design/icons";
 
 interface DataType {
   key: React.Key;
@@ -81,6 +82,7 @@ function OfficeAdministration() {
   const [addModal, setAddModal] = useState(false)
   const [editModal, setEditModal] = useState(false)
   const [editingRecord, setEditingRecord] = useState<DataType | null>(null)
+  const [searchText, setSearchText] = useState("");
 
   const { mutate: Create } = useCreateOfficeAdministration()
   const { mutate: Update } = useUpdateOfficeAdministration()
@@ -160,17 +162,31 @@ function OfficeAdministration() {
     editForm.resetFields();
   };
 
+   const filteredData = useMemo(() => {
+      return data?.data?.filter((agent: any) =>
+        agent.name.toLowerCase().includes(searchText.toLowerCase())
+      );
+    }, [searchText, data]);
+
   return (
-    <div>
-      <Divider>Office Administration</Divider>
-      <div className="w-full flex justify-end my-4">
+    <div className="p-2 sm:p-4 w-full">
+      <Divider>Office Administrator</Divider>
+      <div className="flex flex-col sm:flex-row sm:justify-between gap-3 mx-3 my-4">
+        <Input
+          placeholder="Search Administrator"
+          style={{ width: "100%", maxWidth: 300 }}
+          value={searchText}
+          onChange={(e) => setSearchText(e.target.value)}
+          suffix={<SearchOutlined style={{ cursor: "pointer", color: "#888" }} />}
+        />
+
         <Button type='primary' onClick={() => setAddModal(true)}>Add</Button>
       </div>
       <Table
         columns={columns}
         style={{ height: '350px', overflowY: 'auto' }}
         pagination={false}
-        dataSource={data?.data}
+        dataSource={filteredData}
         loading={isLoading}
         size="middle"
         rowKey="_id"
@@ -183,7 +199,7 @@ function OfficeAdministration() {
         width={800}
       >
         <Form layout='vertical' onFinish={onFinish} form={form}>
-          <div className="grid grid-flow-row grid-cols-2 gap-x-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
 
             <Form.Item name={'name'} label="Name" rules={[{ required: true, message: "Please enter name" }]}>
               <Input placeholder='Name' />
@@ -248,7 +264,7 @@ function OfficeAdministration() {
         width={800}
       >
         <Form layout='vertical' onFinish={onUpdateFinish} form={editForm}>
-          <div className="grid grid-flow-row grid-cols-2 gap-x-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
 
             <Form.Item name={'name'} label="Name" rules={[{ required: true, message: "Please enter name" }]}>
               <Input placeholder='Name' />

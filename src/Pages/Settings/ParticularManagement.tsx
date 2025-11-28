@@ -12,6 +12,7 @@ interface DataType {
   name: string;
   _id: string;
 }
+
 function ParticularManagement() {
   const columns: TableColumnsType<DataType> = [
     {
@@ -108,11 +109,12 @@ function ParticularManagement() {
     setEditingRecord(null);
     editForm.resetFields();
   };
+
   return (
-    <div>
+    <div className="p-2 sm:p-4 w-full">
       <Divider>Particulars</Divider>
-      <div className="w-full flex justify-end">
-        <Button type='primary' onClick={() => setAddModal(true)}>Add</Button>
+      <div className="flex flex-col sm:flex-row justify-end gap-3 mx-3 my-4">
+        <Button type='primary' className="w-full sm:w-auto" onClick={() => setAddModal(true)}>Add</Button>
       </div>
       <Table
         columns={columns}

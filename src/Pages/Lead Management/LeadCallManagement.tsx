@@ -31,56 +31,59 @@ function LeadCallManagement() {
         }
     ];
 
-    const { data, isLoading,refetch } = useQuery(['leadhistory', leaddata?._id],() => getLeadHistory(leaddata._id),{ enabled: !!leaddata?._id });
+    const { data, isLoading, refetch } = useQuery(['leadhistory', leaddata?._id], () => getLeadHistory(leaddata._id), { enabled: !!leaddata?._id });
     const { mutate: Create } = useCreateLeadHistory()
     const [form] = Form.useForm()
 
     const onFinish = (values: any) => {
-    const payload = {
-        ...values,
-        leadId: leaddata?._id, 
+        const payload = {
+            ...values,
+            leadId: leaddata?._id,
+        };
+
+        Create(payload, {
+            onSuccess() {
+                message.success("Added successfully");
+                refetch();
+                form.resetFields();
+            },
+            onError() {
+                message.error("Failed to add");
+            }
+        });
     };
 
-    Create(payload, {
-        onSuccess() {
-            message.success("Added successfully");
-            refetch();
-            form.resetFields();
-        },
-        onError() {
-            message.error("Failed to add");
-        }
-    });
-};
-
     return (
-        <div>
+        <div className="p-2 sm:p-4 w-full">
             <Divider>Lead Call Management</Divider>
-            <div className='flex'>
-                <div className='w-[50%]'>
-                    <h1 className='font-semibold'>
+            <div className='flex flex-col lg:flex-row gap-6 mb-6'>
+                {/* Student Information Section */}
+                <div className='w-full lg:w-1/2 space-y-2'>
+                    <h1 className='font-semibold text-sm sm:text-base'>
                         Student Name: {leaddata?.name}
                     </h1>
-                    <h1 className='font-semibold'>
+                    <h1 className='font-semibold text-sm sm:text-base'>
                         SRC Name: {leaddata?.sRC}
                     </h1>
-                    <h1 className='font-semibold'>
+                    <h1 className='font-semibold text-sm sm:text-base'>
                         Phone Number: {leaddata?.phone_number}
                     </h1>
-                    <h1 className='font-semibold'>
+                    <h1 className='font-semibold text-sm sm:text-base'>
                         School Name: {leaddata?.w}
                     </h1>
-                    <h1 className='font-semibold'>
-                        Address : {leaddata?.address}
+                    <h1 className='font-semibold text-sm sm:text-base'>
+                        Address: {leaddata?.address}
                     </h1>
                 </div>
-                <div className='w-[50%]'>
+
+                {/* Form Section */}
+                <div className='w-full lg:w-1/2'>
                     <Form
                         form={form}
                         layout="vertical"
                         onFinish={onFinish}
                     >
-                        <div className='w-[450px]'>
+                        <div className='w-full max-w-[450px]'>
                             <Form.Item
                                 name="status"
                                 label="Current Status"
@@ -105,23 +108,27 @@ function LeadCallManagement() {
                             </Form.Item>
                         </div>
                         <Form.Item>
-                            <Button type="primary" htmlType="submit">
+                            <Button type="primary" htmlType="submit" className="w-full sm:w-auto">
                                 Submit
                             </Button>
                         </Form.Item>
                     </Form>
-
                 </div>
             </div>
-            <Table
-                columns={columns}
-                style={{ height: '120px', overflowY: 'auto' }}
-                pagination={false}
-                dataSource={data?.data}
-                loading={isLoading}
-                size="middle"
-                rowKey="_id"
-            />
+
+            {/* Table Section */}
+            <div className='overflow-x-auto'>
+                <Table
+                    columns={columns}
+                    className="min-w-full"
+                    scroll={{ x: 'max-content' }}
+                    pagination={false}
+                    dataSource={data?.data}
+                    loading={isLoading}
+                    size="middle"
+                    rowKey="_id"
+                />
+            </div>
         </div>
     )
 }

@@ -21,16 +21,16 @@ const Request = () => {
     const [table, setTable] = useState("Registered");
     const user = { position: "Admin", head_administractor: true };
 
-    const { data: registerData, isLoading: registerloading } = useQuery('register', getRegister);
-    const { data: admissionData, isLoading: admissionloading } = useQuery('admission', getRegister);
-    const { data: bookingData, isLoading: bookingloading } = useQuery('booking', getRegister);
-    const { data: bookingconfirmationData, isLoading: bookingconfirmationloading } = useQuery('bookingconfirmation', getRegister);
-    const { data: acknowledgmentData, isLoading: acknowledgmentloading } = useQuery('acknwoledgment', getRegister);
-    const { data: amountcollectionData, isLoading: amountcollectionloading } = useQuery('amountcollection', getRegister);
+    const { data: registerData, isLoading: registerloading, refetch: refechregister } = useQuery('register', getRegister);
+    const { data: admissionData, isLoading: admissionloading, refetch: refechAdmission } = useQuery('admission', getRegister);
+    const { data: bookingData, isLoading: bookingloading, refetch: refechBooking } = useQuery('booking', getRegister);
+    const { data: bookingconfirmationData, isLoading: bookingconfirmationloading, refetch: refechBookingconfirmation } = useQuery('bookingconfirmation', getRegister);
+    const { data: acknowledgmentData, isLoading: acknowledgmentloading, refetch: refechacknowledgment } = useQuery('acknwoledgment', getRegister);
+    const { data: amountcollectionData, isLoading: amountcollectionloading, refetch: refechAmountcollection } = useQuery('amountcollection', getRegister);
     const { data: particularData, isLoading: particularloading } = useQuery('particular', getParticular);
-    const { data: unpaidCollegeFeeData, isLoading: unpaidCollegeFeeloading } = useQuery('collegefee', getunpaidCollegeFees);
-    const { data: refundData, isLoading: refundloading } = useQuery('Refund', getRegister);
-    const { data: agentpymntData, isLoading: agentpymntloading } = useQuery('Agentpymnt', getAgentAccount);
+    const { data: unpaidCollegeFeeData, isLoading: unpaidCollegeFeeloading, refetch: refechCollegeFee } = useQuery('collegefee', getunpaidCollegeFees);
+    const { data: refundData, isLoading: refundloading, refetch: refechRefund } = useQuery('Refund', getRegister);
+    const { data: agentpymntData, isLoading: agentpymntloading, refetch: refechAgentpeyment } = useQuery('Agentpymnt', getAgentAccount);
     const [addModal, setAddModal] = useState<any>(false);
     const [addAmountModal, setAddAmountModal] = useState<any>(false);
     const [bookingModal, setbookingModal] = useState<any>(false);
@@ -71,8 +71,6 @@ const Request = () => {
     const AgentpymntFiltered = agentpymntData?.data.filter((item: any) => item.status === "foragentpayments");
 
 
-
-
     const onFinish = (value: any) => {
         Collectpayment(
             {
@@ -83,6 +81,8 @@ const Request = () => {
                 message.success("Added successfully");
                 setAddModal(false);
                 form.resetFields();
+                refechregister();
+                refechAdmission();
             },
             onError() {
                 message.error("Failed to add");
@@ -102,6 +102,8 @@ const Request = () => {
                     message.success("Added successfully");
                     setAddAmountModal(false);
                     addamountform.resetFields();
+                    refechAdmission();
+                    refechBooking();
                 },
                 onError() {
                     message.error("Failed to add");
@@ -121,6 +123,8 @@ const Request = () => {
                     message.success("Added successfully");
                     setbookingModal(false);
                     bookingform.resetFields();
+                    refechBooking();
+                    refechBookingconfirmation();
                 },
                 onError() {
                     message.error("Failed to add");
@@ -139,6 +143,8 @@ const Request = () => {
                     message.success("Added successfully");
                     setbookingconfirmationModal(false);
                     bookingconfirmationform.resetFields();
+                    refechBookingconfirmation();
+                    refechacknowledgment();
                 },
                 onError() {
                     message.error("Failed to add");
@@ -155,6 +161,7 @@ const Request = () => {
             message.success("Added successfully");
             setcollectPaymentModal(false);
             collectpymntform.resetFields();
+            refechAmountcollection();
         } catch (error) {
             message.error("Failed to add");
         }
@@ -177,6 +184,7 @@ const Request = () => {
                     message.success("aknwolegment successfully created");
                     setuploadModal(false);
                     Uploadform.resetFields();
+                    refechacknowledgment();
                 },
                 onError() {
                     message.error("Failed to add");
@@ -195,6 +203,7 @@ const Request = () => {
                     message.success("Added successfully");
                     setcollegefeesModal(false);
                     collegefeesform.resetFields();
+                    refechCollegeFee();
                 },
                 onError() {
                     message.error("Failed to add");
@@ -214,6 +223,7 @@ const Request = () => {
                     message.success("Refund Added");
                     setrefundModal(false);
                     refundform.resetFields();
+                    refechRefund();
                 },
                 onError() {
                     message.error("Failed to add");
@@ -233,6 +243,7 @@ const Request = () => {
                     message.success("peymnt Successfull");
                     setagentpymntModal(false);
                     agentpymntform.resetFields();
+                    refechAgentpeyment();
                 },
                 onError() {
                     message.error("Failed to add");
@@ -633,92 +644,71 @@ const Request = () => {
     ];
 
     return (
-        <div className="w-full py-[10px] px-[5px]">
-            <div className="w-full flex space-x-2 flex-wrap">
+        <div className="w-full py-2 px-2 sm:py-[10px] sm:px-[5px]">
+            <div className="w-full flex flex-wrap gap-2">
 
+                {/* Admission (admin + head_administractor) */}
+                {(user?.position === "Admin" || user?.position === "Administrator") &&
+                    user?.head_administractor && (
+                        <button
+                            onClick={() => setTable("Admission")}
+                            className={`${table === "Admission" ? "bg-[#F68B1F]" : "bg-[#414042]"
+                                } text-white py-1.5 px-2 sm:px-3 text-sm rounded-md hover:bg-[#F68B1F] transition-colors whitespace-nowrap`}
+                        >
+                            Admission
+                        </button>
+                    )}
 
-                {((user && user.position === "Admin") || user.position === "Administrator") && user.head_administractor && (
-                    <button
-                        onClick={() => setTable("Admission")}
-                        className={`${table === "Admission" ? "bg-[#F68B1F]" : "bg-[#414042]"} text-white py-[5px] px-[10px] rounded-md hover:bg-[#F68B1F] transition-colors`}
-                    >
-                        Admission
-                    </button>
-                )}
-
-
-
-                {(user && user.position === "Admin") || user.position === "Accountant" ? (
+                {/* Registration (Admin / Accountant) */}
+                {(user?.position === "Admin" || user?.position === "Accountant") && (
                     <button
                         onClick={() => setTable("Registered")}
-                        className={`${table === "Registered" ? "bg-[#F68B1F]" : "bg-[#414042]"} text-white py-[5px] px-[10px] rounded-md hover:bg-[#F68B1F] transition-colors`}
+                        className={`${table === "Registered" ? "bg-[#F68B1F]" : "bg-[#414042]"
+                            } text-white py-1.5 px-2 sm:px-3 text-sm rounded-md hover:bg-[#F68B1F] transition-colors whitespace-nowrap`}
                     >
                         Registration
                     </button>
-                ) : null}
+                )}
 
-
-
-                {(user && user.position === "Admin") || user.position === "Administrator" ? (
+                {/* Booking (Admin / Administrator) */}
+                {(user?.position === "Admin" || user?.position === "Administrator") && (
                     <button
                         onClick={() => setTable("Booking")}
-                        className={`${table === "Booking" ? "bg-[#F68B1F]" : "bg-[#414042]"} text-white py-[5px] px-[10px] rounded-md hover:bg-[#F68B1F] transition-colors`}
+                        className={`${table === "Booking" ? "bg-[#F68B1F]" : "bg-[#414042]"
+                            } text-white py-1.5 px-2 sm:px-3 text-sm rounded-md hover:bg-[#F68B1F] transition-colors whitespace-nowrap`}
                     >
                         Bookings
                     </button>
-                ) : null}
+                )}
 
-
-
-                {(user && user.position === "Admin") || user.position === "Accountant" ? (
+                {/* Accountant / Admin buttons */}
+                {(user?.position === "Admin" || user?.position === "Accountant") && (
                     <>
-                        <button
-                            onClick={() => setTable("Bookingconfirmation")}
-                            className={`${table === "Bookingconfirmation" ? "bg-[#F68B1F]" : "bg-[#414042]"} text-white py-[5px] px-[10px] rounded-md hover:bg-[#F68B1F] transition-colors`}
-                        >
-                            Booking Confirmation
-                        </button>
-
-                        <button
-                            onClick={() => setTable("Acknowledgement")}
-                            className={`${table === "Acknowledgement" ? "bg-[#F68B1F]" : "bg-[#414042]"} text-white py-[5px] px-[10px] rounded-md hover:bg-[#F68B1F] transition-colors`}
-                        >
-                            Acknowledgement
-                        </button>
-
-                        <button
-                            onClick={() => setTable("amount_collection")}
-                            className={`${table === "amount_collection" ? "bg-[#F68B1F]" : "bg-[#414042]"} text-white py-[5px] px-[10px] rounded-md hover:bg-[#F68B1F] transition-colors`}
-                        >
-                            Amount Collection
-                        </button>
-
-                        <button
-                            onClick={() => setTable("CollegeFees")}
-                            className={`${table === "CollegeFees" ? "bg-[#F68B1F]" : "bg-[#414042]"} text-white py-[5px] px-[10px] rounded-md hover:bg-[#F68B1F] transition-colors`}
-                        >
-                            College Fees
-                        </button>
-
-                        <button
-                            onClick={() => setTable("Refund")}
-                            className={`${table === "Refund" ? "bg-[#F68B1F]" : "bg-[#414042]"} text-white py-[5px] px-[10px] rounded-md hover:bg-[#F68B1F] transition-colors`}
-                        >
-                            Refunds
-                        </button>
-
-                        <button
-                            onClick={() => setTable("Agent")}
-                            className={`${table === "Agent" ? "bg-[#F68B1F]" : "bg-[#414042]"} text-white py-[5px] px-[10px] rounded-md hover:bg-[#F68B1F] transition-colors`}
-                        >
-                            Agent Payment
-                        </button>
+                        {[
+                            ["Bookingconfirmation", "Booking Confirmation"],
+                            ["Acknowledgement", "Acknowledgement"],
+                            ["amount_collection", "Amount Collection"],
+                            ["CollegeFees", "College Fees"],
+                            ["Refund", "Refunds"],
+                            ["Agent", "Agent Payment"],
+                        ].map(([key, label]) => (
+                            <button
+                                key={key}
+                                onClick={() => setTable(key)}
+                                className={`${table === key ? "bg-[#F68B1F]" : "bg-[#414042]"
+                                    } text-white py-1.5 px-2 sm:px-3 text-sm rounded-md hover:bg-[#F68B1F] transition-colors whitespace-nowrap`}
+                            >
+                                {label}
+                            </button>
+                        ))}
                     </>
-                ) : null}
+                )}
+
             </div>
 
+
             {table === "Registered" && (
-                <div className="mt-4">
+                <div className="mt-4 overflow-x-auto">
                     <Table
                         columns={registeredColumns}
                         dataSource={registeredFiltered}
@@ -726,19 +716,19 @@ const Request = () => {
                         rowKey="_id"
                         bordered
                         pagination={{ pageSize: 10 }}
-                        scroll={{ y: 330 }}
+                        scroll={{ x: 'max-content', y: 330 }}
                     />
                 </div>
             )}
 
             {table === "Admission" && (
-                <div className="mt-4">
+                <div className="mt-4 overflow-x-auto">
                     <Table
                         columns={admissionColumns}
                         dataSource={admissionFiltered}
                         loading={admissionloading}
                         rowKey="_id"
-                        scroll={{ y: 330 }}
+                        scroll={{ x: 'max-content', y: 330 }}
                         bordered
                         pagination={{ pageSize: 10 }}
                     />
@@ -746,7 +736,7 @@ const Request = () => {
             )}
 
             {table === "Booking" && (
-                <div className="mt-4">
+                <div className="mt-4 overflow-x-auto">
                     <Table
                         columns={bookingColumns}
                         dataSource={bookingFiltered}
@@ -754,13 +744,13 @@ const Request = () => {
                         rowKey="_id"
                         bordered
                         pagination={{ pageSize: 10 }}
-                        scroll={{ y: 330 }}
+                        scroll={{ x: 'max-content', y: 330 }}
                     />
                 </div>
             )}
 
             {table === "Bookingconfirmation" && (
-                <div className="mt-4">
+                <div className="mt-4 overflow-x-auto">
                     <Table
                         columns={bookingConfirmationColumns}
                         dataSource={bookingconfirmationFiltered}
@@ -768,13 +758,13 @@ const Request = () => {
                         rowKey="_id"
                         bordered
                         pagination={{ pageSize: 10 }}
-                        scroll={{ y: 330 }}
+                        scroll={{ x: 'max-content', y: 330 }}
                     />
                 </div>
             )}
 
             {table === "Acknowledgement" && (
-                <div className="mt-4">
+                <div className="mt-4 overflow-x-auto">
                     <Table
                         columns={aknwoledgmentColumns}
                         dataSource={AcknowledmentFiltered}
@@ -782,13 +772,13 @@ const Request = () => {
                         rowKey="_id"
                         bordered
                         pagination={{ pageSize: 10 }}
-                        scroll={{ y: 330 }}
+                        scroll={{ x: 'max-content', y: 330 }}
                     />
                 </div>
             )}
 
             {table === "CollegeFees" && (
-                <div className="mt-4">
+                <div className="mt-4 overflow-x-auto">
                     <Table
                         columns={collegefessColumns}
                         dataSource={unpaidCollegeFeeData?.data}
@@ -796,13 +786,13 @@ const Request = () => {
                         rowKey="_id"
                         bordered
                         pagination={{ pageSize: 10 }}
-                        scroll={{ y: 330 }}
+                        scroll={{ x: 'max-content', y: 330 }}
                     />
                 </div>
             )}
 
             {table === "amount_collection" && (
-                <div className="mt-4">
+                <div className="mt-4 overflow-x-auto">
                     <Table
                         columns={amountcollectionColumns}
                         dataSource={AmountcollectionFiltered}
@@ -810,13 +800,13 @@ const Request = () => {
                         rowKey="_id"
                         bordered
                         pagination={{ pageSize: 10 }}
-                        scroll={{ y: 330 }}
+                        scroll={{ x: 'max-content', y: 330 }}
                     />
                 </div>
             )}
 
             {table === "Refund" && (
-                <div className="mt-4">
+                <div className="mt-4 overflow-x-auto">
                     <Table
                         columns={RefundColumns}
                         dataSource={RefundFiltered}
@@ -824,13 +814,13 @@ const Request = () => {
                         rowKey="_id"
                         bordered
                         pagination={{ pageSize: 10 }}
-                        scroll={{ y: 330 }}
+                        scroll={{ x: 'max-content', y: 330 }}
                     />
                 </div>
             )}
 
             {table === "Agent" && (
-                <div className="mt-4">
+                <div className="mt-4 overflow-x-auto">
                     <Table
                         columns={agentpymntcolumns}
                         dataSource={AgentpymntFiltered}
@@ -838,7 +828,7 @@ const Request = () => {
                         rowKey="_id"
                         bordered
                         pagination={{ pageSize: 10 }}
-                        scroll={{ y: 330 }}
+                        scroll={{ x: 'max-content', y: 330 }}
                     />
                 </div>
             )}
@@ -852,17 +842,19 @@ const Request = () => {
                 }}
                 footer={null}
                 width={400}
+                centered
+                className="responsive-modal"
                 title={
-                    <div className="text-center">
+                    <div className="text-center px-2">
                         <ExclamationCircleOutlined style={{ fontSize: '70px', color: '#F68B1F' }} />
-                        <div className="mt-3 text-xl font-bold">Are you sure, This process cannot be undo</div>
+                        <div className="mt-3 text-lg sm:text-xl font-bold">Are you sure, This process cannot be undo</div>
                     </div>
                 }
             >
                 <Form layout='vertical' onFinish={onAddamount} form={addamountform}>
                     <div>
-                        <div className="mb-4 flex items-center justify-center">
-                            <label className="block text-gray-700 font-medium">Received Amount :</label>
+                        <div className="mb-4 flex flex-col sm:flex-row items-center justify-center">
+                            <label className="block text-gray-700 font-medium mb-2 sm:mb-0">Received Amount :</label>
                             {addAmountModal && (
                                 <p className="px-2">{addAmountModal.recived_amount}</p>
                             )}
@@ -895,19 +887,21 @@ const Request = () => {
                 }}
                 footer={null}
                 width={400}
+                centered
+                className="responsive-modal"
                 title={
-                    <div className="text-center">
+                    <div className="text-center px-2">
                         <ExclamationCircleOutlined style={{ fontSize: '70px', color: '#F68B1F' }} />
-                        <div className="mt-3 text-xl font-bold">Are you sure you want to collect payment?</div>
+                        <div className="mt-3 text-lg sm:text-xl font-bold">Are you sure you want to collect payment?</div>
                     </div>
                 }
             >
                 <Form layout='vertical' onFinish={onFinish} form={form}>
-                    <div className="flex gap-3">
+                    <div className="flex flex-col sm:flex-row gap-3">
                         <Form.Item
                             name="recieved_amount"
                             label="Received Amount"
-                            className="w-1/2"
+                            className="w-full sm:w-1/2"
                         >
                             <Input readOnly />
                         </Form.Item>
@@ -915,7 +909,7 @@ const Request = () => {
                             name="amount_type"
                             label="Payment Type"
                             rules={[{ required: true, message: "Please select payment type" }]}
-                            className="w-1/2"
+                            className="w-full sm:w-1/2"
                         >
                             <Select placeholder="Select payment type">
                                 <Select.Option value="cash">Cash</Select.Option>
@@ -937,6 +931,8 @@ const Request = () => {
                 }}
                 footer={null}
                 width={400}
+                centered
+                className="responsive-modal"
             >
                 <Form layout='vertical' onFinish={onBooking} form={bookingform}>
                     <div className="">
@@ -986,19 +982,21 @@ const Request = () => {
                 }}
                 footer={null}
                 width={450}
+                centered
+                className="responsive-modal"
                 title={
-                    <div className="text-center">
+                    <div className="text-center px-2">
                         <ExclamationCircleOutlined style={{ fontSize: '70px', color: '#F68B1F', marginTop: 25 }} />
-                        <div className="mt-5 text-3xl font-semibold">Booking Confirmation?</div>
+                        <div className="mt-5 text-2xl sm:text-3xl font-semibold">Booking Confirmation?</div>
                     </div>
                 }
             >
                 <Form layout='vertical' className='flex w-full justify-center items-center' onFinish={onBookingConfirm} form={bookingconfirmationform}>
                     <div>
                         <h1 className='text-[15px] text-center w-full my-4'>This action cannot be undo</h1>
-                        <Form.Item>
-                            <Button htmlType='submit' type="primary" className='mx-2'>Yes, Confirmed</Button>
-                            <Button onClick={onCancelBooking} type="primary" danger className='mx-2'>Cancel</Button>
+                        <Form.Item className="flex flex-col sm:flex-row gap-2 justify-center">
+                            <Button htmlType='submit' type="primary" className='w-full sm:w-auto mx-0 sm:mx-2'>Yes, Confirmed</Button>
+                            <Button onClick={onCancelBooking} type="primary" danger className='w-full sm:w-auto mx-0 sm:mx-2'>Cancel</Button>
                         </Form.Item>
                     </div>
 
@@ -1013,6 +1011,8 @@ const Request = () => {
                 }}
                 footer={null}
                 width={450}
+                centered
+                className="responsive-modal"
             >
                 <Form layout='vertical' onFinish={onuploadaknwoledgment} form={Uploadform}>
                     <div>
@@ -1041,10 +1041,12 @@ const Request = () => {
                 }}
                 footer={null}
                 width={400}
+                centered
+                className="responsive-modal"
                 title={
-                    <div className="text-center">
+                    <div className="text-center px-2">
                         <ExclamationCircleOutlined style={{ fontSize: '70px', color: '#F68B1F', marginTop: 25 }} />
-                        <div className="mt-5 text-2xl mb-8 font-semibold">Are you sure , want to collect payment</div>
+                        <div className="mt-5 text-xl sm:text-2xl mb-8 font-semibold">Are you sure , want to collect payment</div>
                     </div>
                 }
             >
@@ -1065,10 +1067,12 @@ const Request = () => {
                 }}
                 footer={null}
                 width={400}
+                centered
+                className="responsive-modal"
                 title={
-                    <div className="text-center">
+                    <div className="text-center px-2">
                         <ExclamationCircleOutlined style={{ fontSize: '70px', color: '#F68B1F', marginTop: 25 }} />
-                        <div className="mt-5 text-2xl mb-8 font-semibold">
+                        <div className="mt-5 text-xl sm:text-2xl mb-8 font-semibold">
                             Are you sure you want to collect payment?
                         </div>
                     </div>
@@ -1079,19 +1083,19 @@ const Request = () => {
                     onFinish={onCollegefeeConfirm}
                     form={collegefeesform}
                 >
-                    <div className="flex gap-5">
-                        <Form.Item name="Particular" label="Particular" className="w-1/3">
+                    <div className="flex flex-col sm:flex-row gap-3 sm:gap-5">
+                        <Form.Item name="Particular" label="Particular" className="w-full sm:w-1/3">
                             <Input readOnly bordered={false} />
                         </Form.Item>
 
-                        <Form.Item name="debit" label="Collect" className="w-1/3">
+                        <Form.Item name="debit" label="Collect" className="w-full sm:w-1/3">
                             <Input readOnly bordered={false} />
                         </Form.Item>
 
                         <Form.Item
                             name="amount_type"
                             label="Amount Type"
-                            className="w-1/3"
+                            className="w-full sm:w-1/3"
                             rules={[{ required: true, message: "Please select amount type" }]}
                         >
                             <Select placeholder="Select amount type">
@@ -1118,9 +1122,11 @@ const Request = () => {
                 }}
                 footer={null}
                 width={350}
+                centered
+                className="responsive-modal"
                 title={
-                    <div className="text-center">
-                        <div className="mt-5 text-2xl mb-8 font-bold">
+                    <div className="text-center px-2">
+                        <div className="mt-5 text-xl sm:text-2xl mb-8 font-bold">
                             Send Refund Amount
                         </div>
                     </div>
@@ -1131,20 +1137,20 @@ const Request = () => {
                     onFinish={onConfirmRefund}
                     form={refundform}
                 >
-                    <div className="text-center items-center flex">
+                    <div className="text-center items-center flex flex-col sm:flex-row">
 
-                        <Form.Item name="Particular" label="Particular" className="w-1/3">
-                            <h1 className='text-left pl-2'>Refund</h1>
+                        <Form.Item name="Particular" label="Particular" className="w-full sm:w-1/3">
+                            <h1 className='text-center sm:text-left pl-2'>Refund</h1>
                         </Form.Item>
 
-                        <Form.Item name="credit" label="Amount" className="w-1/3">
+                        <Form.Item name="credit" label="Amount" className="w-full sm:w-1/3">
                             <Input readOnly bordered={false} />
                         </Form.Item>
 
                         <Form.Item
                             name="amount_type"
                             label="Amount Type"
-                            className="w-1/3"
+                            className="w-full sm:w-1/3"
                             rules={[{ required: true, message: "Please select amount type" }]}
                         >
                             <Select placeholder="Select amount type">
@@ -1171,10 +1177,12 @@ const Request = () => {
                 }}
                 footer={null}
                 width={350}
+                centered
+                className="responsive-modal"
                 title={
-                    <div className="text-center">
+                    <div className="text-center px-2">
                         <ExclamationCircleOutlined style={{ fontSize: '70px', color: '#F68B1F', marginTop: 25 }} />
-                        <div className="mt-5 text-2xl mb-8 font-semibold">
+                        <div className="mt-5 text-xl sm:text-2xl mb-8 font-semibold">
                             Are you sure you want to Pay amount?
                         </div>
                     </div>
@@ -1185,20 +1193,20 @@ const Request = () => {
                     onFinish={onConfirmAgentpymnt}
                     form={agentpymntform}
                 >
-                    <div className="text-center items-center flex">
+                    <div className="text-center items-center flex flex-col sm:flex-row">
 
-                        <Form.Item name="Particular" label="Particular" className="w-1/3">
-                            <h1 className='text-left'>Commission</h1>
+                        <Form.Item name="Particular" label="Particular" className="w-full sm:w-1/3">
+                            <h1 className='text-center sm:text-left'>Commission</h1>
                         </Form.Item>
 
-                        <Form.Item name="credit" label="Amount" className="w-1/3">
+                        <Form.Item name="credit" label="Amount" className="w-full sm:w-1/3">
                             <Input readOnly bordered={false} />
                         </Form.Item>
 
                         <Form.Item
                             name="amount_type"
                             label="Amount Type"
-                            className="w-1/3"
+                            className="w-full sm:w-1/3"
                             rules={[{ required: true, message: "Please select amount type" }]}
                         >
                             <Select placeholder="Select amount type">

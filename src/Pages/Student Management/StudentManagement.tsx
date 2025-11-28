@@ -274,13 +274,16 @@ function StudentManagement() {
   return (
     <div>
       <Divider>Student Management</Divider>
-      <div className="w-full flex gap-2 py-2">
-        <RangePicker style={{ width: 200 }} onChange={(dates) => setDateRange(dates)} />
+      <div className="w-full flex flex-col sm:flex-row gap-2 py-2">
+        <RangePicker
+          className="w-full sm:w-auto sm:min-w-[200px]"
+          onChange={(dates) => setDateRange(dates)}
+        />
 
         <Select
           allowClear
           placeholder="Filter by College"
-          style={{ width: 180 }}
+          className="w-full sm:w-auto sm:min-w-[180px]"
           onChange={(value) => setSelectedCollege(value)}
           options={
             collegedata?.data?.map((college: any) => ({
@@ -289,10 +292,11 @@ function StudentManagement() {
             }))
           }
         />
+
         <Select
           allowClear
           placeholder="Select Student"
-          style={{ width: 200 }}
+          className="w-full sm:w-auto sm:min-w-[200px]"
           value={selectedStudent}
           onChange={(value) => setSelectedStudent(value)}
           options={
@@ -303,9 +307,14 @@ function StudentManagement() {
           }
         />
 
-
-        <div className='flex justify-end flex-grow'>
-          <Button type='primary' onClick={() => setAddModal(true)}>Register</Button>
+        <div className='flex justify-end sm:flex-grow w-full sm:w-auto'>
+          <Button
+            type='primary'
+            onClick={() => setAddModal(true)}
+            className="w-full sm:w-auto"
+          >
+            Register
+          </Button>
         </div>
       </div>
 
@@ -328,7 +337,7 @@ function StudentManagement() {
         width={1250}
       >
         <Form layout='vertical' onFinish={onFinish} form={form}>
-          <div className="grid grid-flow-row grid-cols-3 gap-x-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
 
             <Form.Item name={'name'} label="Name" rules={[{ required: true, message: "Please enter name" }]}>
               <Input placeholder='Name' />
@@ -430,7 +439,7 @@ function StudentManagement() {
         width={800}
       >
         <Form layout='vertical' onFinish={onUpdateFinish} form={editForm}>
-          <div className="grid grid-flow-row grid-cols-3 gap-x-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
 
             <Form.Item name={'name'} label="Name" rules={[{ required: true, message: "Please enter name" }]}>
               <Input placeholder='Name' />

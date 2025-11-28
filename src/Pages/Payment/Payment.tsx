@@ -89,10 +89,10 @@ function Payment() {
 
 
   return (
-    <div>
+    <div className="p-2 sm:p-4 w-full">
       <Divider>Payments</Divider>
 
-      <div className="flex justify-end mx-5 my-5">
+      <div className="flex flex-col sm:flex-row justify-end gap-3 mx-3 my-4">
         <Button type="primary" onClick={() => setAddModal(true)}>
           Add
         </Button>

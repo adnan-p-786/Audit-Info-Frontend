@@ -17,8 +17,8 @@ function StudentHistory() {
 
   const { data, isLoading, refetch } = useQuery('student', () => getCollegeFees(studentdata._id))
   const { data: particulardata, isLoading: particularloading } = useQuery('particular', getParticular)
-  const { data: transactiondata, isLoading: transactionloading } = useQuery('transaction', ()=> getTransaction(studentdata._id))
-  const { data: servicechargedata, isLoading: servicechargeloading, isRefetching:reload} = useQuery('servicecharge', () => getServiceCharge(studentdata._id))
+  const { data: transactiondata, isLoading: transactionloading } = useQuery('transaction', () => getTransaction(studentdata._id))
+  const { data: servicechargedata, isLoading: servicechargeloading, isRefetching: reload } = useQuery('servicecharge', () => getServiceCharge(studentdata._id))
 
   const [addcollegefees, setAddCollegeFees] = useState<any>(false)
   const [addserviceCharge, setAddserviceCharge] = useState<any>(false)
@@ -164,76 +164,127 @@ function StudentHistory() {
 
   return (
     <div>
-      <div className="flex">
-        <div className="w-[50%]">
-          <h1 className='font-semibold text-md'>Student Name: <span className="font-normal text-sm">{studentdata?.name}</span></h1>
-          <h1 className='font-semibold text-md'>Address: <span className="font-normal text-sm">{studentdata?.address}</span></h1>
-          <h1 className='font-semibold text-md'>School: <span className="font-normal text-sm">{studentdata?.schoolId?.name}</span></h1>
-          <h1 className='font-semibold text-md'>Phone Number: <span className="font-normal text-sm">{studentdata?.phone_number}</span></h1>
-          <h1 className="font-semibold text-md">Certificates:{" "}<span className="font-normal text-sm">{studentdata?.certificates?.join(", ")}</span></h1>
+      {/* Student Information Section */}
+      <div className="flex flex-col lg:flex-row gap-6 mb-6">
+        <div className="w-full lg:w-1/2 space-y-2">
+          <h1 className='font-semibold text-sm sm:text-md'>
+            Student Name: <span className="font-normal text-sm">{studentdata?.name}</span>
+          </h1>
+          <h1 className='font-semibold text-sm sm:text-md'>
+            Address: <span className="font-normal text-sm">{studentdata?.address}</span>
+          </h1>
+          <h1 className='font-semibold text-sm sm:text-md'>
+            School: <span className="font-normal text-sm">{studentdata?.schoolId?.name}</span>
+          </h1>
+          <h1 className='font-semibold text-sm sm:text-md'>
+            Phone Number: <span className="font-normal text-sm">{studentdata?.phone_number}</span>
+          </h1>
+          <h1 className="font-semibold text-sm sm:text-md">
+            Certificates: <span className="font-normal text-sm">{studentdata?.certificates?.join(", ")}</span>
+          </h1>
         </div>
-        <div className="w-[50%]">
-          <h1 className="font-semibold text-md">College: <span className="font-normal text-sm">{studentdata?.collegeId?.college}</span></h1>
-          <h1 className="font-semibold text-md">Course: <span className="font-normal text-sm">{studentdata?.course}</span></h1>
-          <h1 className="font-semibold text-md">SRC: <span className="font-normal text-sm">{studentdata?.srcId?.name}</span></h1>
-          <h1 className="font-semibold text-md">SRO: <span className="font-normal text-sm">{studentdata?.sroId?.name}</span></h1>
-          <h1 className="font-semibold text-md">Branch: <span className="font-normal text-sm">{studentdata?.branchId?.name}</span></h1>
-          <h1 className="font-semibold text-md">Comment: <span className="font-normal text-sm">{studentdata?.comment}</span></h1>
+        <div className="w-full lg:w-1/2 space-y-2">
+          <h1 className="font-semibold text-sm sm:text-md">
+            College: <span className="font-normal text-sm">{studentdata?.collegeId?.college}</span>
+          </h1>
+          <h1 className="font-semibold text-sm sm:text-md">
+            Course: <span className="font-normal text-sm">{studentdata?.course}</span>
+          </h1>
+          <h1 className="font-semibold text-sm sm:text-md">
+            SRC: <span className="font-normal text-sm">{studentdata?.srcId?.name}</span>
+          </h1>
+          <h1 className="font-semibold text-sm sm:text-md">
+            SRO: <span className="font-normal text-sm">{studentdata?.sroId?.name}</span>
+          </h1>
+          <h1 className="font-semibold text-sm sm:text-md">
+            Branch: <span className="font-normal text-sm">{studentdata?.branchId?.name}</span>
+          </h1>
+          <h1 className="font-semibold text-sm sm:text-md">
+            Comment: <span className="font-normal text-sm">{studentdata?.comment}</span>
+          </h1>
         </div>
       </div>
-      <div className="flex my-4 justify-between">
+
+      {/* Fee Information Section */}
+      <div className="flex flex-col sm:flex-row my-4 gap-6 sm:justify-between">
         <div>
-          <h1 className="underline font-bold mx-8">College Fee</h1>
-          <h1 className="font-bold">Total Fee: {studentdata?.total_fee}</h1>
-          <h1 className="font-bold">Fee Balance:</h1>
+          <h1 className="underline font-bold mb-2">College Fee</h1>
+          <h1 className="font-bold text-sm">Total Fee: {studentdata?.total_fee}</h1>
+          <h1 className="font-bold text-sm">Fee Balance:</h1>
         </div>
-        <div className="mx-15">
-          <h1 className="underline font-bold mx-8">Service</h1>
-          <h1 className="font-bold">Total Service Charge: </h1>
-          <h1 className="font-bold">Service Balance:</h1>
+        <div>
+          <h1 className="underline font-bold mb-2">Service</h1>
+          <h1 className="font-bold text-sm">Total Service Charge:</h1>
+          <h1 className="font-bold text-sm">Service Balance:</h1>
         </div>
       </div>
-      <div className="flex justify-between">
-        <Button type="primary" className="mb-4" onClick={() => setAddCollegeFees(true)} >Add Fees</Button>
-        <Button type="primary" className="mb-4" onClick={() => setAddserviceCharge(true)} >Add Service Amount</Button>
-      </div>
-      <div className="flex gap-5">
-        <Table
-          columns={columns}
-          style={{ height: '100px', overflowY: 'auto', width: '50%' }}
-          pagination={false}
-          dataSource={data?.data}
-          loading={isLoading}
-          size="small"
-          rowKey="_id"
-        />
 
-        <Table
-          columns={servicecolumns}
-          style={{ height: '100px', overflowY: 'auto', width: '50%' }}
-          pagination={false}
-          dataSource={servicechargedata?.data}
-          loading={servicechargeloading}
-          size="small"
-          rowKey="_id"
-        />
+      {/* Action Buttons */}
+      <div className="flex flex-col sm:flex-row gap-3 mb-4">
+        <Button
+          type="primary"
+          onClick={() => setAddCollegeFees(true)}
+          className="w-full sm:w-auto"
+        >
+          Add Fees
+        </Button>
+        <Button
+          type="primary"
+          onClick={() => setAddserviceCharge(true)}
+          className="w-full sm:w-auto"
+        >
+          Add Service Amount
+        </Button>
       </div>
+
+      {/* Tables Section */}
+      <div className="flex flex-col lg:flex-row gap-5 mb-6">
+        <div className="w-full lg:w-1/2 overflow-x-auto">
+          <Table
+            columns={columns}
+            scroll={{ x: 'max-content' }}
+            pagination={false}
+            dataSource={data?.data}
+            loading={isLoading}
+            size="small"
+            rowKey="_id"
+          />
+        </div>
+
+        <div className="w-full lg:w-1/2 overflow-x-auto">
+          <Table
+            columns={servicecolumns}
+            scroll={{ x: 'max-content' }}
+            pagination={false}
+            dataSource={servicechargedata?.data}
+            loading={servicechargeloading}
+            size="small"
+            rowKey="_id"
+          />
+        </div>
+      </div>
+
+      {/* Transaction Section */}
       <div>
-        <div className="flex gap-90 py-3">
+        <div className="flex flex-col sm:flex-row sm:justify-between py-3 gap-2">
           <h1 className="font-bold">Student Transactions</h1>
-          <h1 className="font-bold">Balance :</h1>
+          <h1 className="font-bold">Balance:</h1>
         </div>
-        <Table
-          columns={Transactioncolumns}
-          style={{ height: '120px', overflowY: 'auto', width: '60%' }}
-          pagination={false}
-          dataSource={transactiondata?.data}
-          loading={transactionloading}
-          size="small"
-          rowKey="_id"
-        />
+        <div className="overflow-x-auto">
+          <Table
+            columns={Transactioncolumns}
+            className="w-full"
+            scroll={{ x: 'max-content' }}
+            pagination={false}
+            dataSource={transactiondata?.data}
+            loading={transactionloading}
+            size="small"
+            rowKey="_id"
+          />
+        </div>
       </div>
 
+      {/* Add Fees Modal */}
       <Modal
         title="Add Fees"
         open={addcollegefees}
@@ -277,8 +328,6 @@ function StudentHistory() {
             <Form.Item name="directPay" label="Direct Pay" valuePropName="checked" initialValue={false}>
               <Switch />
             </Form.Item>
-
-
           </div>
           <Form.Item>
             <Button htmlType='submit' type="primary" className='w-full'>Submit</Button>
@@ -286,6 +335,7 @@ function StudentHistory() {
         </Form>
       </Modal>
 
+      {/* Add Service Charge Modal */}
       <Modal
         title="Add Service Charge"
         open={addserviceCharge}
@@ -295,7 +345,6 @@ function StudentHistory() {
       >
         <Form layout='vertical' onFinish={onFinishServiceCharge} form={addServiceChargeform}>
           <div>
-
             <Form.Item name={'credit'} label="Amount" rules={[{ required: true, message: "Please enter amount" }]}>
               <Input placeholder='Amount' />
             </Form.Item>
@@ -310,7 +359,6 @@ function StudentHistory() {
                 <Select.Option value="online">Bank</Select.Option>
               </Select>
             </Form.Item>
-
           </div>
           <Form.Item>
             <Button htmlType='submit' type="primary" className='w-full'>Submit</Button>

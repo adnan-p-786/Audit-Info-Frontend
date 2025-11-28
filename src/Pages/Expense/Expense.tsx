@@ -88,27 +88,27 @@ function Expense() {
   }, [selectedBranch])
 
   return (
-    <div>
+    <div className="p-2 sm:p-4 w-full">
       <Divider>Expense</Divider>
 
-        <div className='px-4 flex justify-between my-4'>
-          <Select
-            placeholder="Filter by Branch"
-            allowClear
-            style={{ width: 200 }}
-            value={selectedBranch || undefined}
-            onChange={(value) => setSelectedBranch(value)}
-            options={
-              branchdata?.data.map((branch: { _id: string; name: string }) => ({
-                value: branch._id,
-                label: branch.name,
-              }))
-            }
-            loading={branchloading}
-          />
-          <Button type='primary' onClick={() => setAddModal(true)}>Add</Button>
+      <div className="flex flex-col sm:flex-row sm:justify-between gap-3 mx-3 my-4">
+        <Select
+          placeholder="Filter by Branch"
+          allowClear
+          style={{ width: 200 }}
+          value={selectedBranch || undefined}
+          onChange={(value) => setSelectedBranch(value)}
+          options={
+            branchdata?.data.map((branch: { _id: string; name: string }) => ({
+              value: branch._id,
+              label: branch.name,
+            }))
+          }
+          loading={branchloading}
+        />
+        <Button type='primary' className="w-full sm:w-auto" onClick={() => setAddModal(true)}>Add</Button>
 
-        </div>
+      </div>
 
       <Table
         columns={columns}
@@ -128,7 +128,7 @@ function Expense() {
         width={400}
       >
         <Form layout='vertical' onFinish={onFinish} form={form}>
-          <div className="">
+          <div>
 
             <Form.Item name={'amount'} label="Amount" rules={[{ required: true, message: "Please enter amount   " }]}>
               <Input placeholder='Amount' />
