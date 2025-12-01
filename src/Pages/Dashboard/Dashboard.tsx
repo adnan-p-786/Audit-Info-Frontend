@@ -138,7 +138,7 @@ function AdminDashboard() {
   const totalBranches = branchdata?.data.length || 0;
 
   return (
-    <div className="w-full h-screen overflow-y-hidden">
+    <div className="w-full h-screen">
 
       {/* TOP CARDS */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-lg font-semibold">
@@ -195,7 +195,7 @@ function AdminDashboard() {
       {/* LEADERBOARD */}
       <h1 className="font-bold my-2 text-lg">Leaderboard</h1>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-2">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-2 overflow-auto">
 
         <Table
           columns={branchcolumns}
@@ -203,7 +203,7 @@ function AdminDashboard() {
           loading={managerloading}
           pagination={false}
           size="middle"
-          className="h-[300px] lg:h-[220px] md:h-[250px] xl:h-[300px] overflow-auto width:[300px]"
+          className="h-[300px] lg:h-[220px] md:h-[250px] xl:h-[300px] width:[300px]"
           rowKey="_id"
           title={() => "Branch Manager"}
         />
@@ -216,7 +216,8 @@ function AdminDashboard() {
           title={() => "SRC"}
           pagination={false}
           size="middle"
-          rowKey="_id" />
+          rowKey="_id"
+        />
 
         <Table
           columns={srocolumns}
@@ -358,7 +359,7 @@ function ManagerDashboard() {
   ];
 
   return (
-    <div className="w-full h-screen overflow-x-scroll">
+    <div className="w-full h-screen">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-lg font-semibold">
         <div className="p-3 shadow rounded bg-white">
           <h1>No.of Leads :</h1>
@@ -537,7 +538,7 @@ function SRCDashboard() {
   const totalLeads = leaddata?.data.length;
 
   return (
-    <div className="w-full h-screen overflow-y-scroll">
+    <div className="w-full h-screen">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-lg font-semibold">
         <div className="p-3 shadow rounded bg-white">
           <h1>No.of Leads :</h1>
@@ -564,7 +565,7 @@ function SRCDashboard() {
 
       {/* Leaderboard */}
       <h1 className="font-bold">Leaderboard :-</h1>
-      <div className="w-full">
+      <div className="w-full overflow-auto">
         <Table
           columns={columns}
           loading={isLoading}
@@ -668,7 +669,7 @@ function SRODashboard() {
   const totalLeads = leaddata?.data.length;
 
   return (
-    <div className="w-full">
+    <div className="w-full h-screen">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-lg font-semibold">
         <div className="p-3 shadow rounded bg-white">
           <h1>No.of Leads :</h1>
@@ -839,7 +840,7 @@ function AccountantDashboard() {
   }, []);
 
   return (
-    <div className="w-full">
+    <div className="w-full h-screen">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-lg font-semibold">
 
         <div className="p-3 shadow rounded bg-white">
@@ -981,7 +982,7 @@ function AdministractorDashboard() {
   ];
 
   return (
-    <div className="h-screen w-full overflow-y-scroll">
+    <div className="h-screen w-full">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-lg font-semibold">
         <div className="p-3 shadow rounded bg-white">
           <h1>No.of Leads :</h1>

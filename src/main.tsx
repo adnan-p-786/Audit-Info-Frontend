@@ -3,7 +3,7 @@ import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.tsx'
 import Dashboard from './Pages/Dashboard/Dashboard.tsx'
-import { createBrowserRouter, Navigate, RouterProvider } from 'react-router-dom'
+import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import Accountant from './Pages/Accountant/Accountant.tsx'
 import Src from './Pages/SRC/Src.tsx'
 import Sro from './Pages/SRO/Sro.tsx'
@@ -36,23 +36,27 @@ import SeatBookings from './Pages/Reports/SeatBookings.tsx'
 
 import { PersistGate } from "redux-persist/integration/react";
 import { persistor, store } from "./App/store.ts";
-
+import { LoginProtect, RouteProtect } from '../Provider/routerProvider.tsx';
 
 
 
 const router = createBrowserRouter([
   {
     path: "/login",
-    element: <Login />,
+    element: (
+      <LoginProtect>
+        <Login />
+      </LoginProtect>
+    ),
   },
   {
     path: "/",
-    element: <App />,
+    element: (
+      <RouteProtect>
+        <App />
+      </RouteProtect>
+    ),
     children: [
-      {
-        path: "/",
-        element: <Navigate to="/login" replace />,
-      },
       {
         path: "/dashboard",
         element: <Dashboard />,

@@ -1,14 +1,4 @@
-import {
-  Button,
-  Divider,
-  Form,
-  Input,
-  message,
-  Modal,
-  Select,
-  Table,
-  type TableColumnsType,
-} from "antd";
+import { Button, Divider, Form, Input, message, Modal, Select, Table, type TableColumnsType } from "antd";
 import { useQuery } from "react-query";
 import { useState } from "react";
 import { getPayments } from "../../Api/payment/paymentApi";
@@ -33,19 +23,19 @@ function Payment() {
   const [loadingUsers, setLoadingUsers] = useState(false);
 
   const handleUserTypeChange = async (value: string) => {
-  form.setFieldsValue({ userId: undefined });
-  setFilteredUsers([]);
+    form.setFieldsValue({ userId: undefined });
+    setFilteredUsers([]);
 
-  const selectedType = value.toLowerCase();
+    const selectedType = value.toLowerCase();
 
-  const filtered =
-    userdata?.data?.filter(
-      (user: { position: string }) =>
-        user.position?.toLowerCase() === selectedType
-    ) || [];
+    const filtered =
+      userdata?.data?.filter(
+        (user: { position: string }) =>
+          user.position?.toLowerCase() === selectedType
+      ) || [];
 
-  setFilteredUsers(filtered);
-};
+    setFilteredUsers(filtered);
+  };
 
 
   const onFinish = (value: any) => {

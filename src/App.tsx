@@ -1,7 +1,7 @@
-import { LogoutOutlined, MenuFoldOutlined, MenuUnfoldOutlined } from '@ant-design/icons';
-import { Button, ConfigProvider, Form, Input, Layout, Menu, Modal, theme } from 'antd';
+import { ExclamationCircleOutlined, LogoutOutlined, MenuFoldOutlined, MenuUnfoldOutlined } from '@ant-design/icons';
+import { Button, ConfigProvider, Form, Input, Layout, Menu, message, Modal, theme } from 'antd';
 import { RiDashboardFill, RiUserVoiceFill } from 'react-icons/ri';
-import { Link, Outlet } from 'react-router-dom';
+import { Link, Outlet, useNavigate } from 'react-router-dom';
 import SubMenu from 'antd/es/menu/SubMenu';
 import { IoSettingsOutline } from 'react-icons/io5';
 import { useState } from 'react';
@@ -11,14 +11,66 @@ import { FaBuildingUser } from 'react-icons/fa6';
 import { TbReportAnalytics } from 'react-icons/tb';
 import { PiStudent } from 'react-icons/pi';
 import { SiContactlesspayment } from 'react-icons/si';
-import { Toaster } from "react-hot-toast";
-import { useSelector } from "react-redux";
+import toast, { Toaster } from "react-hot-toast";
+import { useDispatch, useSelector } from "react-redux";
+import { useUpdatePassword } from './Api/User/userHooks';
+import axios from 'axios';
+import { logout } from './Redux/authSlice';
+
+
 
 function App() {
 
   const [updateModal, setUpdateModal] = useState(false);
+  const [logoutModal, setLogoutModal] = useState(false);
   const [form] = Form.useForm();
+  const { mutate: change } = useUpdatePassword();
+  const email = useSelector((state: any) => state.auth.user?.Email);
 
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+
+  const onFinish = (value: any) => {
+    change(
+      {
+        email: email,
+        currentPassword: value.currentPassword,
+        newPassword: value.newPassword,
+      },
+      {
+        onSuccess() {
+          message.success("Updated successfully");
+          setUpdateModal(false);
+          form.resetFields();
+        },
+        onError() {
+          message.error("Failed to Update Password");
+        }
+      }
+    );
+  };
+
+  const onLogout = async (values: any) => {
+    try {
+      const res = await axios.post("http://localhost:3000/api/user/logout", values);
+
+      if (res.data.success) {
+        toast.success("Logout successful!", { duration: 4000 });
+        message.success("Logout successful!");
+
+        dispatch(
+          logout()
+        );
+
+        navigate("/Login");
+      } else {
+        message.error(res.data.message);
+      }
+    } catch (err) {
+      message.error("Login failed");
+    }
+  };
 
 
   const position = useSelector((state: any) => state.auth.user?.Position);
@@ -204,12 +256,12 @@ function App() {
                 onClick={() => setCollapsed(!collapsed)}
                 style={{ fontSize: '14px', width: 60, height: 60 }}
               />
-              {position !== 'Manager' && position !== 'SRC' && position !== 'SRO' && position !== 'Accountant' && position !== 'Administractor' && (
-                <div className='flex items-center justify-center gap-4 mx-10'>
+              <div className='flex items-center justify-center gap-4 mx-10'>
+                {position !== 'Manager' && position !== 'SRC' && position !== 'SRO' && position !== 'Accountant' && position !== 'Administractor' && (
                   <Button onClick={(() => setUpdateModal(true))} type='primary'>Update Password</Button>
-                  <LogoutOutlined className='text-2xl cursor-pointer' />
-                </div>
-              )}
+                )}
+                <Button onClick={(() => setLogoutModal(true))} className='text-2xl cursor-pointer'><LogoutOutlined /></Button>
+              </div>
             </Header>
 
             <Content
@@ -232,10 +284,14 @@ function App() {
                   form.resetFields();
                 }}
                 footer={null}
-                width={500}
+                width={400}
               >
-                <Form layout="vertical" form={form}>
+                <Form layout="vertical" form={form} onFinish={onFinish}>
                   <div>
+                    <Form.Item name={'email'} label="Email" rules={[{ required: true, message: "Please enter your password" }]}>
+                      <Input placeholder='Email' />
+                    </Form.Item>
+
                     <Form.Item name={'currentPassword'} label="Current Password" rules={[{ required: true, message: "Please enter current password" }]}>
                       <Input placeholder='Current Password' />
                     </Form.Item>
@@ -247,6 +303,31 @@ function App() {
                   <Form.Item>
                     <Button htmlType="submit" type="primary" className="w-full">
                       Update
+                    </Button>
+                  </Form.Item>
+                </Form>
+              </Modal>
+
+              <Modal
+                title={
+                  <div className="text-center px-2">
+                    <ExclamationCircleOutlined style={{ fontSize: '70px', color: '#F68B1F', marginTop: 25 }} />
+                    <div className="mt-5 text-xl sm:text-2xl mb-8 font-semibold">
+                      Are you sure want to Logout
+                    </div>
+                  </div>
+                }
+                open={logoutModal}
+                onCancel={() => {
+                  setLogoutModal(false);
+                }}
+                footer={null}
+                width={400}
+              >
+                <Form layout="vertical" onFinish={onLogout} form={form}>
+                  <Form.Item>
+                    <Button htmlType="submit" type="primary" className="w-full">
+                      Logout
                     </Button>
                   </Form.Item>
                 </Form>
